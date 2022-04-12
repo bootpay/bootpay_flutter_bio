@@ -1,0 +1,53 @@
+PODS:
+  - bootpay_bio (0.0.1):
+    - Flutter
+  - bootpay_webview_flutter (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+  - fluttertoast (0.0.2):
+    - Flutter
+    - Toast
+  - package_info (0.0.1):
+    - Flutter
+  - shared_preferences_ios (0.0.1):
+    - Flutter
+  - Toast (4.0.0)
+
+DEPENDENCIES:
+  - bootpay_bio (from `.symlinks/plugins/bootpay_bio/ios`)
+  - bootpay_webview_flutter (from `.symlinks/plugins/bootpay_webview_flutter/ios`)
+  - Flutter (from `Flutter`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
+  - package_info (from `.symlinks/plugins/package_info/ios`)
+  - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
+
+SPEC REPOS:
+  trunk:
+    - Toast
+
+EXTERNAL SOURCES:
+  bootpay_bio:
+    :path: ".symlinks/plugins/bootpay_bio/ios"
+  bootpay_webview_flutter:
+    :path: ".symlinks/plugins/bootpay_webview_flutter/ios"
+  Flutter:
+    :path: Flutter
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
+  package_info:
+    :path: ".symlinks/plugins/package_info/ios"
+  shared_preferences_ios:
+    :path: ".symlinks/plugins/shared_preferences_ios/ios"
+
+SPEC CHECKSUMS:
+  bootpay_bio: 0d4b0013db4c9c03de1e3cc4b66b2e9df2b8b61b
+  bootpay_webview_flutter: b136b15869e909a7bb729081d73276c855a9926c
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  fluttertoast: 16fbe6039d06a763f3533670197d01fc73459037
+  package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
+  shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
+  Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.11.2
