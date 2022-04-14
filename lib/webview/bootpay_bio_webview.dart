@@ -9,6 +9,8 @@ import 'package:bootpay_bio/controller/bio_controller.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/models/wallet/bio_metric.dart';
 import 'package:bootpay_bio/models/wallet/next_job.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:bootpay_webview_flutter/webview_flutter.dart';
 import 'package:get/get.dart';
@@ -24,6 +26,7 @@ class BootpayBioWebView extends WebView {
   // Payload;
   // Event
   // controller
+
   final Key? key;
   final BioPayload? payload;
   final BootpayDefaultCallback? onCancel;
@@ -74,6 +77,28 @@ class BootpayBioWebView extends WebView {
       // controller.
     });
   }
+
+  Future<void> requestAddBioData() async {
+    String script = await BioConstants.getJSBiometricAuthenticate(payload!);
+    print('requestAddBioData : $script');
+    _controller.future.then((controller) {
+      controller.evaluateJavascript(
+          script
+      );
+      // controller.
+    });
+  }
+
+  Future<void> requestBioForPay(String otp, String? cardQuota) async {
+    String script = await BioConstants.getJSBioOTPPay(payload!, otp, cardQuota ?? "0");
+    print('requestBioForPay : $script');
+    _controller.future.then((controller) {
+      controller.evaluateJavascript(
+          script
+      );
+      // controller.
+    });
+  }
 }
 
 class _BootpayWebViewState extends State<BootpayBioWebView> {
@@ -81,6 +106,9 @@ class _BootpayWebViewState extends State<BootpayBioWebView> {
   // final String INAPP_URL = 'https://inapp.bootpay.co.kr/3.3.3/production.html';
   final String INAPP_URL = 'https://webview.bootpay.co.kr/4.0.0/';
   bool isClosed = false;
+  final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers = {
+    Factory(() => EagerGestureRecognizer())
+  };
 
   final BioController c = Get.find<BioController>();
 
@@ -102,6 +130,7 @@ class _BootpayWebViewState extends State<BootpayBioWebView> {
       key: widget.key,
       initialUrl: INAPP_URL,
       javascriptMode: JavascriptMode.unrestricted,
+      gestureRecognizers: gestureRecognizers,
       onWebViewCreated: (WebViewController webViewController) {
         widget._controller.complete(webViewController);
       },
@@ -130,7 +159,7 @@ class _BootpayWebViewState extends State<BootpayBioWebView> {
               controller.evaluateJavascript(script);
             }
             // controller.evaluateJavascript(getBootpayJS());
-            controller.evaluateJavascript(getBootpayJS());
+            controller.evaluateJavascript(await getBootpayJS());
           });
         }
 
@@ -226,7 +255,7 @@ extension BootpayMethod on _BootpayWebViewState {
     });
   }
 
-  String getBootpayJS() {
+  Future<String> getBootpayJS() async {
     if(widget.payload == null) return "";
 
     String script = "";
@@ -244,13 +273,13 @@ extension BootpayMethod on _BootpayWebViewState {
       script = BioConstants.getJSBioOTPPay(widget.payload!, c.otp, "${c.selectedQuota}");
     } else if([BioConstants.REQUEST_ADD_BIOMETRIC,
                BioConstants.REQUEST_ADD_BIOMETRIC_FOR_PAY].contains(c.requestType.value)) {
-      script = BioConstants.getJSBiometricAuthenticate(widget.payload!);
+      script = await BioConstants.getJSBiometricAuthenticate(widget.payload!);
     } else if(BioConstants.REQUEST_TOTAL_PAY == c.requestType.value) {
       script = BioConstants.getJSTotalPay(widget.payload!);
     } else if(BioConstants.REQUEST_DELETE_CARD == c.requestType.value) {
       script = BioConstants.getJSDestroyWallet(widget.payload!);
     }
-    print(script);
+    print("script: $script");
 
     return "setTimeout(function() {" + script + "}, 50);";
     // c.requestType.value == BioConstants.REQUEST_PASSWORD_TOKEN
@@ -379,6 +408,7 @@ extension BootpayCallback on _BootpayWebViewState {
     return JavascriptChannel(
         name: 'BootpayCancel',
         onMessageReceived: (JavascriptMessage message) {
+          print('BootpayCancel');
           // print("21431: " + message.message);
           // print(widget.onCancel != null);
           if (this.widget.onCancel != null)
@@ -390,6 +420,9 @@ extension BootpayCallback on _BootpayWebViewState {
     return JavascriptChannel(
         name: 'BootpayError',
         onMessageReceived: (JavascriptMessage message) {
+          print('BootpayError');
+          c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
+
           if (this.widget.onError != null)
             this.widget.onError!(message.message);
         });
@@ -399,6 +432,7 @@ extension BootpayCallback on _BootpayWebViewState {
     return JavascriptChannel(
         name: 'BootpayClose',
         onMessageReceived: (JavascriptMessage message) {
+          print("BootpayClose: ${c.requestType.value}");
 
           NextJob job = NextJob();
           if([BioConstants.REQUEST_PASSWORD_TOKEN_FOR_ADD_CARD,
@@ -482,6 +516,7 @@ extension BootpayCallback on _BootpayWebViewState {
     return JavascriptChannel(
         name: 'BootpayEasySuccess',
         onMessageReceived: (JavascriptMessage message) {
+          print('BootpayEasySuccess: ${c.requestType}, ${message.message}');
 
           NextJob job = NextJob();
           if([BioConstants.REQUEST_PASSWORD_TOKEN,
@@ -490,7 +525,7 @@ extension BootpayCallback on _BootpayWebViewState {
             BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY
           ].contains(c.requestType.value)) {
             job.type = c.requestType.value;
-            job.token = message.message;
+            job.token = message.message.replaceAll("\"", "");
             if (widget.onNextJob != null) widget.onNextJob!(job);
           } else if(c.requestType.value == BioConstants.REQUEST_ADD_BIOMETRIC_FOR_PAY) {
             BioMetric bioMetric = BioMetric.fromJson(json.decode(message.message));

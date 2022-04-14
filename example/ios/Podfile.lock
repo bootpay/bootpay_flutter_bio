@@ -7,6 +7,8 @@ PODS:
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
+  - local_auth (0.0.1):
+    - Flutter
   - package_info (0.0.1):
     - Flutter
   - shared_preferences_ios (0.0.1):
@@ -18,6 +20,7 @@ DEPENDENCIES:
   - bootpay_webview_flutter (from `.symlinks/plugins/bootpay_webview_flutter/ios`)
   - Flutter (from `Flutter`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
+  - local_auth (from `.symlinks/plugins/local_auth/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
 
@@ -34,6 +37,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
+  local_auth:
+    :path: ".symlinks/plugins/local_auth/ios"
   package_info:
     :path: ".symlinks/plugins/package_info/ios"
   shared_preferences_ios:
@@ -44,6 +49,7 @@ SPEC CHECKSUMS:
   bootpay_webview_flutter: b136b15869e909a7bb729081d73276c855a9926c
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   fluttertoast: 16fbe6039d06a763f3533670197d01fc73459037
+  local_auth: 1740f55d7af0a2e2a8684ce225fe79d8931e808c
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196

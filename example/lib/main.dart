@@ -252,7 +252,7 @@ class _MyAppState extends State<MyApp> {
         print('------- onCancel: $data');
       },
       onError: (String data) {
-        print('------- onCancel: $data');
+        print('------- onError: $data');
       },
       onClose: () {
         print('------- onClose');

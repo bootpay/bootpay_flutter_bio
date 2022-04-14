@@ -34,9 +34,11 @@ class BioController extends GetxController {
 
     String deviceId = await UserInfo.getBootpayUUID();
 
+    print("요청: deviceId: $deviceId, userToken: $userToken");
+
     var res = await _provider.getWalletList(deviceId, userToken);
 
-    print("요청:  ${res.body} ");
+    print("응답:  ${res.body} ");
 
     if(res.statusCode == HttpStatus.ok) {
       resWallet.value = ResWalletList.fromJson(res.body);

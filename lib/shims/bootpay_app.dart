@@ -1,7 +1,7 @@
 
 import 'dart:io';
 import 'package:bootpay_bio/models/bio_payload.dart';
-import 'package:bootpay_bio/webview/bio_container.dart';
+import 'package:bootpay_bio/bio_container.dart';
 import 'package:bootpay_bio/webview/bootpay_bio_webview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +12,8 @@ import '../bootpay_bio_api.dart';
 
 class BootpayPlatform extends BootpayBioApi{
 
-  BootpayBioWebView? webView;
+  // BootpayBioWebView? webView;
+  BioContainer? bioContainer;
 
   @override
   void request(
@@ -48,24 +49,26 @@ class BootpayPlatform extends BootpayBioApi{
 
     if(context == null) return;
 
+    bioContainer = BioContainer(
+      key: key,
+      payload: payload,
+      showCloseButton: showCloseButton,
+      closeButton: closeButton,
+      onCancel: onCancel,
+      onError: onError,
+      onClose: onClose,
+      onCloseHardware: onCloseHardware,
+      onReady: onReady,
+      onConfirm: onConfirm,
+      onDone: onDone,
+    );
+
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
         return SafeArea(
-            child: BioContainer(
-              key: key,
-              payload: payload,
-              showCloseButton: showCloseButton,
-              closeButton: closeButton,
-              onCancel: onCancel,
-              onError: onError,
-              onClose: onClose,
-              onCloseHardware: onCloseHardware,
-              onReady: onReady,
-              onConfirm: onConfirm,
-              onDone: onDone,
-            )
+            child: bioContainer!
         );
       },
     ).whenComplete(() {
@@ -86,23 +89,30 @@ class BootpayPlatform extends BootpayBioApi{
 
   @override
   void removePaymentWindow(BuildContext context) {
-    if(webView != null) {
+
+    // Navigator.of(context).pop();
+    if(bioContainer != null) {
       // webView!.removePaymentWindow();
       Navigator.of(context).pop();
-      webView = null;
+      bioContainer = null;
     }
   }
 
   @override
   void dismiss(BuildContext context) {
-    if(webView != null) {
+    // print('dismiss11');
+
+    // Navigator.of(context).pop();
+    if(bioContainer != null) {
+      print('dismiss22');
       Navigator.of(context).pop();
-      webView = null;
+      bioContainer = null;
     }
   }
 
   @override
   void transactionConfirm(String data) {
-    if(webView != null) webView!.transactionConfirm(data);
+    // if(webView != null) webView!.transactionConfirm(data);
+    bioContainer?.transactionConfirm(data);
   }
 }

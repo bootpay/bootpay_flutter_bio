@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:bootpay/user_info.dart';
 import 'package:bootpay_bio/constants/bio_constants.dart';
 import 'package:bootpay_bio/constants/card_code.dart';
 import 'package:bootpay_bio/controller/bio_controller.dart';
@@ -8,27 +7,31 @@ import 'package:bootpay_bio/models/wallet/next_job.dart';
 import 'package:bootpay_bio/models/wallet/wallet_data.dart';
 import 'package:bootpay_bio/webview/bootpay_bio_webview.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vibration/vibration.dart';
 
-import '../bootpay_bio.dart';
+import 'bootpay_bio.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+
 import 'package:otp/otp.dart';
 
 
-List<String> imgList = [
-  'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
-  'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
-  'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80',
-  'https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=89719a0d55dd05e2deae4120227e6efc&auto=format&fit=crop&w=1953&q=80',
-  'https://images.unsplash.com/photo-1508704019882-f9cf40e475b4?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=8c6e5e3aba713b17aa1fe71ab4f0ae5b&auto=format&fit=crop&w=1352&q=80',
-  'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a0c8d632e977f94e5d312d9893258f59&auto=format&fit=crop&w=1355&q=80'
-];
+enum _SupportState {
+  unknown,
+  supported,
+  unsupported,
+}
 
 class BioContainer extends StatefulWidget {
   Key? key;
-  // BootpayBioWebView? webView;
+  BootpayBioWebView? webView;
   BioPayload? payload;
   bool? showCloseButton;
 
@@ -57,17 +60,27 @@ class BioContainer extends StatefulWidget {
 
   @override
   BioRouterState createState() => BioRouterState();
+
+  transactionConfirm(String data) {
+    webView?.transactionConfirm(data);
+  }
 }
 
 class BioRouterState extends State<BioContainer> {
   DateTime? currentBackPressTime = DateTime.now();
 
+
   final BioController c = Get.put(BioController());
   bool isShowWebView = false;
 
-  BootpayBioWebView? webView;
+  // BootpayBioWebView? webView;
 
-
+  final LocalAuthentication auth = LocalAuthentication();
+  _SupportState _supportState = _SupportState.unknown;
+  bool? _canCheckBiometrics;
+  List<BiometricType>? _availableBiometrics;
+  String _authorized = 'Not Authorized';
+  bool _isAuthenticating = false;
 
   // init
   @override
@@ -76,10 +89,16 @@ class BioRouterState extends State<BioContainer> {
     // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
     c.getWalletList(widget.payload?.userToken ?? "");
     createWebView();
+
+    auth.isDeviceSupported().then(
+          (bool isSupported) => setState(() => _supportState = isSupported
+          ? _SupportState.supported
+          : _SupportState.unsupported),
+    );
   }
 
   createWebView() {
-    webView = BootpayBioWebView(
+    widget.webView = BootpayBioWebView(
       payload: widget.payload,
       showCloseButton: widget.showCloseButton,
       key: widget.key,
@@ -249,7 +268,7 @@ class BioRouterState extends State<BioContainer> {
           children: [
             Container(height: 30.0, color: Colors.white),
             Expanded(
-              child: webView!,
+              child: widget.webView!,
             ),
             Container(height: 10.0, color: Colors.white),
           ],
@@ -264,7 +283,7 @@ class BioRouterState extends State<BioContainer> {
         //   return Future.value(false);
         // }
         // return Future.value(true);
-        if(webView?.onCloseHardware != null) webView?.onCloseHardware!();
+        if(widget.webView?.onCloseHardware != null) widget.webView?.onCloseHardware!();
         return Future.value(true);
       },
     );
@@ -293,8 +312,8 @@ class BioRouterState extends State<BioContainer> {
       return;
     }
 
-    if(!await isAbleBioAuthDevice()) {
-      print(3);
+    if(await isAbleBioAuthDevice()) {
+      print(33);
       goBioForPay();
       return;
     } else if(nowAbleBioAuthDevice()) {
@@ -327,8 +346,69 @@ class BioRouterState extends State<BioContainer> {
     showWebView();
   }
 
-  goBiometricAuth() {
+  requestAddBioData(int type) {
+    c.requestType.value = type;
+    if(isShowWebView == true) {
+      widget.webView?.requestAddBioData();
+    } else {
+      showWebView();
+    }
+  }
 
+  goBiometricAuth() async {
+    print("goBiometricAuth call");
+    final LocalAuthentication localAuth = LocalAuthentication();
+    // bool canCheckBiometrics = await localAuth.canCheckBiometrics;
+    if(_supportState != _SupportState.supported) {
+      // print('생체인식 할 수 없습니다');
+      Fluttertoast.showToast(
+          msg: "생체인식이 지원되지 않는 기기입니다. 비밀번호 결제로 진행합니다.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+      return;
+    }
+    try {
+      bool authenticated = await localAuth.authenticate(
+          localizedReason:
+          '생체인식 정보를 스캔해주세요',
+          useErrorDialogs: true,
+          stickyAuth: true,
+          biometricOnly: true);
+      print('auth: ${authenticated}');
+      if(authenticated) {
+        onAuthenticationSucceeded();
+      }
+    } on PlatformException catch (e) {
+      print(e);
+    }
+  }
+
+  onAuthenticationSucceeded() {
+    print('onAuthenticationSucceeded');
+
+    onVibration();
+    if(c.requestType.value == BioConstants.REQUEST_ADD_BIOMETRIC) {
+      print(11);
+      requestAddBioData(BioConstants.REQUEST_ADD_BIOMETRIC);
+    } else if(c.requestType.value == BioConstants.REQUEST_BIOAUTH_FOR_BIO_FOR_PAY) {
+      print(22);
+      requestAddBioData(BioConstants.REQUEST_ADD_BIOMETRIC_FOR_PAY);
+    } else if(c.requestType.value == BioConstants.REQUEST_BIO_FOR_PAY) {
+      print(33);
+      requestBioForPay();
+    }
+  }
+
+  onVibration() async {
+    print("vibrate: ${await Vibration.hasVibrator() ?? false}");
+    if (await Vibration.hasVibrator() ?? false) {
+      Vibration.vibrate(duration: 200, amplitude: 64);
+    }
   }
 
   onNextJob(NextJob data) async {
@@ -368,10 +448,13 @@ class BioRouterState extends State<BioContainer> {
 
     await c.getWalletList(userToken);
 
+    print("biometric_confirmed: ${c.resWallet.value.biometric?.biometric_confirmed}");
+
     if(requestBioPay == true) {
       requestBioForPay();
       return;
     }
+
 
     if(c.resWallet.value.biometric?.biometric_confirmed == false) {
       final prefs = await SharedPreferences.getInstance();
@@ -393,14 +476,31 @@ class BioRouterState extends State<BioContainer> {
     String secretKey = prefs.getString("biometric_secret_key") ?? '';
     int serverUnixTime = c.resWallet.value.biometric?.server_unixtime ?? 0;
 
+    print("key11: $secretKey, time: $serverUnixTime, otp: ${c.otp}");
+    // secretKey = "K56426RANZ6PVLSWLZDVUETKZRT6EMHP";
+    // serverUnixTime = 1646728335;
+
     c.otp = getOTPValue(secretKey, serverUnixTime);
+    // c.otp = getOTPValue('K56426RANZ6PVLSWLZDVUETKZRT6EMHP', 1646728335);
+
+    print("key22: $secretKey, time: $serverUnixTime, otp: ${c.otp}");
+
     c.requestType.value = BioConstants.REQUEST_BIO_FOR_PAY;
-    showWebView();
+    if(isShowWebView == true) {
+      widget.webView?.requestBioForPay(c.otp, null);
+    } else {
+      showWebView();
+    }
+    // showWebView();
   }
 
   String getOTPValue(String secretKey, int serverTime) {
-    // Generate TOTP code. (String versin of function incase of leading 0)
-    return OTP.generateTOTPCodeString(secretKey, serverTime);
+    try {
+      return OTP.generateTOTPCodeString(secretKey, serverTime * 1000, length: 8, interval: 30, algorithm: Algorithm.SHA512, isGoogle: true);
+    } catch(e) {
+      print(e);
+      return "";
+    }
   }
 
   setPasswordToken(String token) async {
@@ -426,6 +526,7 @@ class BioRouterState extends State<BioContainer> {
   Future<bool> didAbleBioAuthDevice() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String biometric_secret_key =  prefs.getString('biometric_secret_key') ?? '';
+    print("didAbleBioAuthDevice: ${biometric_secret_key}, ${c.resWallet.value.biometric?.biometric_confirmed}, ${(c.resWallet.value.biometric?.biometric_confirmed ?? false) && biometric_secret_key.isNotEmpty}");
     return (c.resWallet.value.biometric?.biometric_confirmed ?? false) && biometric_secret_key.isNotEmpty;
   }
 

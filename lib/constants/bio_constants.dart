@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bootpay/user_info.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/models/boot_extra.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class BioConstants {
@@ -154,14 +155,16 @@ class BioConstants {
     // var token = payload.userToken ?? "";
     payload.authenticateType = "otp";
     payload.token = otp;
-    if(payload.price! >= 50000) {
-      payload.extra ??= BootExtra();
-      payload.extra?.cardQuota = cardQuota;
-    }
+    // if(payload.price! >= 50000) {
+    //   payload.extra ??= BootExtra();
+    //   payload.extra?.cardQuota = cardQuota;
+    // }
+    payload.extra ??= BootExtra();
+    payload.extra?.cardQuota = cardQuota;
 
-    return "BootpaySDK.requestWalletPayment('" +
+    return "BootpaySDK.requestWalletPayment(" +
         payload.toString() +
-        "')" +
+        ")" +
         ".then( function (data) {" +
         easySuccess() +
         "}, function (data) {" +
@@ -171,16 +174,28 @@ class BioConstants {
   }
 
 
-  static String getJSBiometricAuthenticate(BioPayload payload) {
+  static Future<String> getJSBiometricAuthenticate(BioPayload payload) async {
+    String? token = payload.token;
+    if(token == null || token.isEmpty) {
+      final prefs = await SharedPreferences.getInstance();
+      token = prefs.getString("password_token");
+    }
+    String os = "";
+    if(Platform.isAndroid) {
+      os = "android";
+    } else if(Platform.isIOS) {
+      os = "ios";
+    }
+
     var otpPayload = {
       "userToken": payload.userToken,
-      "os": "android",
-      "token": payload.token
+      "os": os,
+      "token": token
     };
 
-    return "BootpaySDK.requestWalletPayment('" +
+    return "BootpaySDK.createBiometricAuthenticate(" +
         json.encode(otpPayload) +
-        "')" +
+        ")" +
         ".then( function (data) {" +
         easySuccess() +
         "}, function (data) {" +
