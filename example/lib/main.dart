@@ -180,7 +180,7 @@ class _MyAppState extends State<MyApp> {
     var res = await _provider.getRestToken('5b9f51264457636ab9a07cde', 'sfilSOSVakw+PZA+PRux4Iuwm7a//9CXXudCq9TMDHk=');
 
     var user = User();
-    user.id = '123411ad';
+    user.id = '123411ad122dd112';
     user.gender = 1;
     user.email = 'test1234@gmail.com';
     user.phone = '01012345678';
@@ -217,7 +217,7 @@ class _MyAppState extends State<MyApp> {
     // bioPayload.method = 'card';
     // payload.methods = ['card', 'phone', 'vbank', 'bank', 'kakao'];
     bioPayload.orderName = '플리츠레이어 카라숏원피스'; //결제할 상품명
-    bioPayload.price = 1000.0; //정기결제시 0 혹은 주석
+    bioPayload.price =  1000.0; //정기결제시 0 혹은 주석
 
     bioPayload.orderId = DateTime.now().millisecondsSinceEpoch.toString(); //주문번호, 개발사에서 고유값으로 지정해야함
     bioPayload.metadata = {

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bootpay/user_info.dart';
+import 'package:bootpay_bio/config/bio_config.dart';
 import 'package:bootpay_bio/constants/bio_constants.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/models/res/res_wallet_list.dart';
@@ -15,18 +16,26 @@ import 'package:fluttertoast/fluttertoast.dart';
 class BioController extends GetxController {
   var otp = "";
   var selectedQuota = 0;
-  BioPayload? bioPayload;
+  // BioPayload? bioPayload;
   // var walletList = <Rx<WalletData>>[].obs;
   var resWallet = ResWalletList().obs;
   var requestType = BioConstants.REQUEST_TYPE_NONE.obs;
   var selectedCardIndex = 0;
 
   final ApiProvider _provider = ApiProvider();
+  final List<String> cardQuotaList = ['일시불', "2개월", "3개월", "4개월", "5개월", "6개월",
+    "7개월","8개월","9개월","10개월","11개월","12개월"];
 
   void initValues() {
     otp = "";
     selectedQuota = 0;
-    bioPayload = null;
+  }
+
+  void setCardQuota(String value) {
+    int index = cardQuotaList.indexOf(value);
+    if(index <= -1) return;
+    if(index == 0) { selectedQuota = index; }
+    else { selectedQuota = index + 1; }
   }
 
   Future<bool> getWalletList(String userToken) async {
@@ -34,11 +43,11 @@ class BioController extends GetxController {
 
     String deviceId = await UserInfo.getBootpayUUID();
 
-    print("요청: deviceId: $deviceId, userToken: $userToken");
+    BootpayPrint("요청: deviceId: $deviceId, userToken: $userToken");
 
     var res = await _provider.getWalletList(deviceId, userToken);
 
-    print("응답:  ${res.body} ");
+    BootpayPrint("응답:  ${res.body} ");
 
     if(res.statusCode == HttpStatus.ok) {
       resWallet.value = ResWalletList.fromJson(res.body);

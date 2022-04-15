@@ -19,6 +19,7 @@ class BioConstants {
   // static const int REQUEST_TYPE_RESULT_FAILED = -100; //생체인증 이용 불가시 비밀번호로 간편결제
 
   static const bool DEBUG = true;
+  static const bool PRINT_ABLE = true;
 
   static const int REQUEST_TYPE_NONE = -1;
   static const int REQUEST_PASSWORD_TOKEN = 10; //최초요청시 - 비밀번호 설정하기
@@ -107,7 +108,13 @@ class BioConstants {
     var script = "if (window.BootpayError && window.BootpayError.postMessage) { BootpayError.postMessage(JSON.stringify(data)); }";
     // var script = "BootpayError.postMessage(JSON.stringify(data));";
     return "else { $script };";
+  }
 
+
+  static String easyError() {
+    var script = "if (window.BootpayEasyError && window.BootpayEasyError.postMessage) { BootpayEasyError.postMessage(JSON.stringify(data)); }";
+    // var script = "BootpayError.postMessage(JSON.stringify(data));";
+    return "else { $script };";
   }
 
 
@@ -120,7 +127,7 @@ class BioConstants {
         easySuccess() +
         "}, function (data) {" +
         cancel() +
-        error() +
+        easyError() +
         "})";
   }
 
@@ -133,7 +140,7 @@ class BioConstants {
         easySuccess() +
         "}, function (data) {" +
         cancel() +
-        error() +
+        easyError() +
         "})";
   }
 
@@ -146,7 +153,7 @@ class BioConstants {
         easySuccess() +
         "}, function (data) {" +
         cancel() +
-        error() +
+        easyError() +
         "})";
   }
 
@@ -169,7 +176,7 @@ class BioConstants {
         easySuccess() +
         "}, function (data) {" +
         cancel() +
-        error() +
+        easyError() +
         "})";
   }
 
@@ -200,7 +207,7 @@ class BioConstants {
         easySuccess() +
         "}, function (data) {" +
         cancel() +
-        error() +
+        easyError() +
         "})";
   }
 
@@ -220,7 +227,7 @@ class BioConstants {
         easySuccess() +
         "}, function (data) {" +
         cancel() +
-        error() +
+        easyError() +
         "})";
   }
 
@@ -239,7 +246,7 @@ class BioConstants {
         easySuccess() +
         "}, function (data) {" +
         cancel() +
-        error() +
+        easyError() +
         "})";
   }
 }

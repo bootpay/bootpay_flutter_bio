@@ -86,8 +86,8 @@ class BioPayload  {
 
     metadata = json["metadata"];
 
-    if(json["extra"] != null) extra = BootExtra.fromJson(json["extra"]);
     if(json["user"] != null) user = User.fromJson(json["user"]);
+    if(json["extra"] != null) extra = BootExtra.fromJson(json["extra"]);
     if(json["items"] != null) items = json["items"].map((e) => Item.fromJson(e)).toList();
 
     names = json["names"];
@@ -118,11 +118,11 @@ class BioPayload  {
     } else if(this.method != null && this.method!.length > 0) {
       result['method'] = this.method;
     }
-    if(extra != null) {
-      result['extra'] = extra!.toJson();
-    }
     if(user != null) {
       result['user'] = user!.toJson();
+    }
+    if(extra != null) {
+      result['extra'] = extra!.toJson();
     }
     if(items!.length > 0) {
       result['items'] = items!.map((e) => e.toJson()).toList();
@@ -157,7 +157,7 @@ class BioPayload  {
      user_token: '$userToken',       
      metadata: ${getMetadataStringAndroid()},
      extra: ${json.encode(extra?.toJson()).replaceAll("\"", "'")},
-     user_info: ${user.toString()},
+     user: ${user.toString()},
      items: ${getItems()}
    }
     """;

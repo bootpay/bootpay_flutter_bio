@@ -72,12 +72,8 @@ class BootpayPlatform extends BootpayBioApi{
         );
       },
     ).whenComplete(() {
-      print('Hey there, I\'m calling after hide bottomSheet');
+      // print('Hey there, I\'m calling after hide bottomSheet');
     });
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => BioRouter(webView, payload)),
-    // );
   }
 
   @override
@@ -100,11 +96,7 @@ class BootpayPlatform extends BootpayBioApi{
 
   @override
   void dismiss(BuildContext context) {
-    // print('dismiss11');
-
-    // Navigator.of(context).pop();
     if(bioContainer != null) {
-      print('dismiss22');
       Navigator.of(context).pop();
       bioContainer = null;
     }
