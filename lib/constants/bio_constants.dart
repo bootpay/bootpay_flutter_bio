@@ -25,6 +25,7 @@ class BioConstants {
   static const int REQUEST_PASSWORD_TOKEN = 10; //최초요청시 - 비밀번호 설정하기
   static const int REQUEST_PASSWORD_TOKEN_FOR_ADD_CARD = 11; //카드 등록 전 토큰이 없을 때
   static const int REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY = 12; //생체인증 결제 전 토큰이 없을 때
+
   static const int REQUEST_BIOAUTH_FOR_BIO_FOR_PAY = 13; //생체인증 결제 전 기기등록이 안 됬을때
 
   static const int REQUEST_ADD_BIOMETRIC = 15; //생체인식 정보등록
@@ -36,6 +37,7 @@ class BioConstants {
   static const int REQUEST_ADD_CARD_NONE = 21;  //카드 등록 수행 후 NONE 처리 (이벤트가 재귀함수 호출되지 않도록)
   static const int REQUEST_BIO_FOR_PAY = 30; //결제를 위해 생체인증 진행
   static const int REQUEST_PASSWORD_FOR_PAY = 40; //비밀번호로 결제 진행
+  static const int REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY = 41; //비밀번호 결제 전 토큰이 없을 때
   static const int REQUEST_TOTAL_PAY = 50; //통합결제
 
   static const int REQUEST_PASSWORD_TOKEN_DELETE_CARD = 60; //카드 삭제
@@ -123,6 +125,27 @@ class BioConstants {
     return "BootpaySDK.requestPasswordToken('" +
         token +
         "')" +
+        ".then( function (data) {" +
+        easySuccess() +
+        "}, function (data) {" +
+        cancel() +
+        easyError() +
+        "})";
+  }
+
+
+  static Future<String> getJSPasswordPay(BioPayload payload) async {
+    payload.authenticateType = "token";
+    String? token = payload.token;
+    if(token == null || token.isEmpty) {
+      final prefs = await SharedPreferences.getInstance();
+      token = prefs.getString("password_token");
+    }
+    payload.token = token;
+
+    return "BootpaySDK.requestWalletPayment(" +
+        payload.toString() +
+        ")" +
         ".then( function (data) {" +
         easySuccess() +
         "}, function (data) {" +
@@ -239,9 +262,9 @@ class BioConstants {
       "token": payload.token,
     };
 
-    return "BootpaySDK.destroyWallet('" +
+    return "BootpaySDK.destroyWallet(" +
         json.encode(wallet) +
-        "')" +
+        ")" +
         ".then( function (data) {" +
         easySuccess() +
         "}, function (data) {" +

@@ -43,5 +43,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+    <key>NSFaceIDUsageDescription</key>
+    <string>결제 진행시 권한이 필요합니다</string>
 </dict>
 </plist>

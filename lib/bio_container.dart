@@ -383,13 +383,29 @@ class BioRouterState extends State<BioContainer> {
   }
 
   requestDeleteCard() {
-    c.requestType.value = BioConstants.REQUEST_PASSWORD_FOR_PAY;
+    c.requestType.value = BioConstants.REQUEST_DELETE_CARD;
     showWebView();
   }
 
-  requestPasswordForPay() {
-    c.requestType.value = BioConstants.REQUEST_DELETE_CARD;
+  requestPasswordForPay() async {
+    BootpayPrint("requestPasswordForPay call");
+
+    // showWebView();
+    if(!await isAblePasswordToken()) {
+      BootpayPrint(2);
+      c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY;
+      showWebView();
+      return;
+    }
+
+    c.requestType.value = BioConstants.REQUEST_PASSWORD_FOR_PAY;
     showWebView();
+
+    // if(isShowWebView == true) {
+    //   widget.webView?.requestPasswordForPay();
+    // } else {
+    //   showWebView();
+    // }
   }
 
   requestAddBioData(int type) {
@@ -402,37 +418,56 @@ class BioRouterState extends State<BioContainer> {
   }
 
   goBiometricAuth() async {
-    BootpayPrint("goBiometricAuth call");
+    BootpayPrint("goBiometricAuth call: ${_supportState}");
     final LocalAuthentication localAuth = LocalAuthentication();
     // bool canCheckBiometrics = await localAuth.canCheckBiometrics;
     if(_supportState != _SupportState.supported) {
       Fluttertoast.showToast(
           msg: "생체인식이 지원되지 않는 기기입니다. 비밀번호 결제로 진행합니다.",
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
+          gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.black54,
           textColor: Colors.white,
           fontSize: 16.0
       );
       return;
     }
+    if(!await localAuth.canCheckBiometrics) {
+      Fluttertoast.showToast(
+          msg: "생체인식이 여러번 실패하여 비밀번호 결제로 진행됩니다.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black54,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+      requestPasswordForPay();
+      return;
+    }
+
     try {
       bool authenticated = await localAuth.authenticate(
           localizedReason:
-          '생체인식 정보를 스캔해주세요',
+          '인증 후 결제가 진행됩니다',
           androidAuthStrings: AndroidAuthMessages(
-              signInTitle: '생체 인증',
-            biometricHint: '결제를 진행하시려면'
+            signInTitle: '생체 인증',
+            biometricHint: ''
           ),
-          useErrorDialogs: true,
-          stickyAuth: true,
-          biometricOnly: true);
+          iOSAuthStrings: IOSAuthMessages(
+            localizedFallbackTitle: "비밀번호를 입력해주세요"
+          ),
+          useErrorDialogs: true);
       if(authenticated) {
         onAuthenticationSucceeded();
       }
     } on PlatformException catch (e) {
+      if(widget.onError != null) { widget.onError!(e.toString()); }
+      if(widget.onClose != null) { widget.onClose!(); }
+      print(e);
       BootpayPrint(e);
+      // Widget.on
     }
   }
 
@@ -457,7 +492,7 @@ class BioRouterState extends State<BioContainer> {
     BootpayPrint("onNextJob: ${data.toJson()}");
 
     if(data.initToken) {
-      // setPasswordToken("");
+      setPasswordToken("");
       widget.payload?.token = "";
     } else if(data.token.isNotEmpty) {
       setPasswordToken(data.token.replaceAll("\"", ""));
@@ -476,6 +511,8 @@ class BioRouterState extends State<BioContainer> {
       addNewCard();
     } else if(data.nextType == BioConstants.NEXT_JOB_ADD_DELETE_CARD) {
       requestDeleteCard();
+    } else if(data.nextType == BioConstants.REQUEST_PASSWORD_FOR_PAY) {
+      requestPasswordForPay();
     } else if(data.nextType == BioConstants.NEXT_JOB_GET_WALLET_LIST) {
       if(data.type == BioConstants.REQUEST_ADD_BIOMETRIC_FOR_PAY) {
         getWalletList(true);

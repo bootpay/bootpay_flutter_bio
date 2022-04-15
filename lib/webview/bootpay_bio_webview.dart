@@ -113,6 +113,20 @@ class BootpayBioWebView extends WebView {
       // controller.
     });
   }
+
+
+  Future<void> requestPasswordForPay() async {
+    String script = await BioConstants.getJSPasswordPay(payload!);
+    BootpayPrint('requestPasswordForPay : $script');
+    _controller?.future.then((controller) {
+      controller.evaluateJavascript(
+          script
+      );
+      // controller.
+    });
+  }
+
+
 }
 
 class _BootpayWebViewState extends State<BootpayBioWebView> {
@@ -275,17 +289,21 @@ extension BootpayMethod on _BootpayWebViewState {
   Future<String> getBootpayJS() async {
     if(widget.payload == null) return "";
 
+    BootpayPrint("getBootpayJS call: ${c.requestType.value}");
+
     String script = "";
     if([BioConstants.REQUEST_PASSWORD_TOKEN,
         BioConstants.REQUEST_PASSWORD_TOKEN_FOR_ADD_CARD,
         BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY,
+        BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY,
         BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD].contains(c.requestType.value)) {
       // contro
       script = BioConstants.getJSPasswordToken(widget.payload!);
 
+    } else if(BioConstants.REQUEST_PASSWORD_FOR_PAY == c.requestType.value) {
+      script = await BioConstants.getJSPasswordPay(widget.payload!);
     } else if(BioConstants.REQUEST_ADD_CARD == c.requestType.value) {
       script = BioConstants.getJSAddCard(widget.payload!);
-
     } else if(BioConstants.REQUEST_BIO_FOR_PAY == c.requestType.value) {
       script = BioConstants.getJSBioOTPPay(widget.payload!, c.otp, "${c.selectedQuota}");
     } else if([BioConstants.REQUEST_ADD_BIOMETRIC,
@@ -299,95 +317,7 @@ extension BootpayMethod on _BootpayWebViewState {
     BootpayPrint("script: $script");
 
     return "setTimeout(function() {" + script + "}, 50);";
-    // c.requestType.value == BioConstants.REQUEST_PASSWORD_TOKEN
-
-    // if(CurrentBioRequest.getInstance().requestType == BioConstants.REQUEST_PASSWORD_TOKEN ||
-    //     CurrentBioRequest.getInstance().requestType == BioConstants.REQUEST_PASSWORD_TOKEN_FOR_ADD_CARD ||
-    //     CurrentBioRequest.getInstance().requestType == BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY ||
-    //     CurrentBioRequest.getInstance().requestType == BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD) {
-    //   callJavaScript(BioConstants.getJSPasswordToken(payload));
-    // } else if(CurrentBioRequest.getInstance().requestType == BioConstants.REQUEST_ADD_CARD) {
-    //   callJavaScript(BioConstants.getJSAddCard(payload));
-    // } else if(CurrentBioRequest.getInstance().requestType == BioConstants.REQUEST_BIO_FOR_PAY) {
-    //   callJavaScript(BioConstants.getJSBioOTPPay(payload));
-    // } else if(CurrentBioRequest.getInstance().requestType == BioConstants.REQUEST_ADD_BIOMETRIC ||
-    //     CurrentBioRequest.getInstance().requestType == BioConstants.REQUEST_ADD_BIOMETRIC_FOR_PAY) {
-    //   callJavaScript(BioConstants.getJSBiometricAuthenticate(payload));
-    // } else if(CurrentBioRequest.getInstance().requestType == BioConstants.REQUEST_TOTAL_PAY) {
-    //   callJavaScript(BioConstants.getJSTotalPay(payload));
-    // } else if(CurrentBioRequest.getInstance().requestType == BioConstants.REQUEST_DELETE_CARD) {
-    //   callJavaScript(BioConstants.getJSDestroyWallet(payload));
-    // }
-
-    // String script = "Bootpay.requestPayment(" +
-    //     "${this.widget.payload.toString()}" +
-    //     ")" +
-    //     ".then( function (res) {" +
-    //     confirm() +
-    //     issued() +
-    //     done() +
-    //     "}, function (res) {" +
-    //     error() +
-    //     cancel() +
-    //     "})";
-    //
-    // print(script);
-    //
-    // return "setTimeout(function() {" + script + "}, 50);";
   }
-
-
-
-  // String error() {
-  //   return ".error(function (data) { if (window.BootpayError && window.BootpayError.postMessage) { BootpayError.postMessage(JSON.stringify(data)); } })";
-  // }
-  //
-  // String cancel() {
-  //   return ".cancel(function (data) { if (window.BootpayCancel && window.BootpayCancel.postMessage) { BootpayCancel.postMessage(JSON.stringify(data)); } })";
-  // }
-  //
-  // String ready() {
-  //   return ".ready(function (data) { if (window.BootpayReady && window.BootpayReady.postMessage) { BootpayReady.postMessage(JSON.stringify(data)); } })";
-  // }
-  //
-  // String confirm() {
-  //   return ".confirm(function (data) { if (window.BootpayConfirm && window.BootpayConfirm.postMessage) { BootpayConfirm.postMessage(JSON.stringify(data)); } })";
-  // }
-  //
-  // String close() {
-  //   return ".close(function (data) { if (window.BootpayClose && window.BootpayClose.postMessage) { BootpayClose.postMessage(JSON.stringify(data)); } })";
-  // }
-  //
-  // String done() {
-  //   return ".done(function (data) { if (window.BootpayDone && window.BootpayDone.postMessage) { BootpayDone.postMessage(JSON.stringify(data)); } })";
-  // }
-
-  // String confirm() {
-  //   return "if (res.event === 'confirm') { if (window.BootpayConfirm && window.BootpayConfirm.postMessage) { BootpayConfirm.postMessage(JSON.stringify(res)); } }";
-  // }
-  //
-  //
-  // String done() {
-  //   return "else if (res.event === 'done') { if (window.BootpayDone && window.BootpayDone.postMessage) { BootpayDone.postMessage(JSON.stringify(res)); } }";
-  // }
-  //
-  //
-  // String issued() {
-  //   return "else if (res.event === 'issued') { if (window.BootpayIssued && window.BootpayIssued.postMessage) { BootpayIssued.postMessage(JSON.stringify(res)); } }";
-  // }
-  //
-  // String error() {
-  //   return "if (res.event === 'error') { console.log(1234);  if (window.BootpayError && window.BootpayError.postMessage) { BootpayError.postMessage(JSON.stringify(res)); } }";
-  // }
-  //
-  // String cancel() {
-  //   return "else if (res.event === 'cancel') { if (window.BootpayCancel && window.BootpayCancel.postMessage) { BootpayCancel.postMessage(JSON.stringify(res)); } }";
-  // }
-  //
-  // String close() {
-  //   return "document.addEventListener('bootpayclose', function (e) { if (window.BootpayClose && window.BootpayClose.postMessage) { BootpayClose.postMessage('결제창이 닫혔습니다'); } });";
-  // }
-
 
 
   Future<String> getAnalyticsData() async {
@@ -454,13 +384,16 @@ extension BootpayCallback on _BootpayWebViewState {
           NextJob job = NextJob();
           if([BioConstants.REQUEST_PASSWORD_TOKEN_FOR_ADD_CARD,
             BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY,
+            BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY,
             BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD,
             BioConstants.REQUEST_ADD_CARD,
+            BioConstants.REQUEST_BIO_FOR_PAY,
             BioConstants.REQUEST_ADD_BIOMETRIC_FOR_PAY,
           ].contains(c.requestType.value)) {
             job.type = c.requestType.value;
 
             if(BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY == c.requestType.value ||
+                BioConstants.REQUEST_BIO_FOR_PAY == c.requestType.value ||
                 BioConstants.REQUEST_ADD_BIOMETRIC_FOR_PAY == c.requestType.value) {
               job.nextType = BioConstants.NEXT_JOB_RETRY_PAY;
             } else if(BioConstants.REQUEST_PASSWORD_TOKEN_FOR_ADD_CARD == c.requestType.value) {
@@ -469,6 +402,8 @@ extension BootpayCallback on _BootpayWebViewState {
               job.nextType = BioConstants.NEXT_JOB_ADD_DELETE_CARD;
             } else if(BioConstants.REQUEST_ADD_CARD == c.requestType.value) {
               job.nextType = BioConstants.NEXT_JOB_GET_WALLET_LIST;
+            } else if(BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY == c.requestType.value) {
+              job.nextType = BioConstants.REQUEST_PASSWORD_FOR_PAY;
             }
 
             if (widget.onNextJob != null) widget.onNextJob!(job);
@@ -478,8 +413,8 @@ extension BootpayCallback on _BootpayWebViewState {
             //   job.initToken = true;
             //   if (widget.onNextJob != null) widget.onNextJob!(job);
             // }
-            job.initToken = true;
-            if (widget.onNextJob != null) widget.onNextJob!(job);
+            // job.initToken = true;
+            // if (widget.onNextJob != null) widget.onNextJob!(job);
             if (widget.onClose != null) widget.onClose!();
           }
 
@@ -535,6 +470,11 @@ extension BootpayCallback on _BootpayWebViewState {
         onMessageReceived: (JavascriptMessage message) {
           BootpayPrint('BootpayEasyError: ${c.requestType}, ${message.message}');
 
+          NextJob job = NextJob();
+          // job.type = c.requestType.value;
+          job.initToken = true;
+          if (widget.onNextJob != null) widget.onNextJob!(job);
+
           c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
 
           if (this.widget.onError != null) this.widget.onError!(message.message);
@@ -566,6 +506,7 @@ extension BootpayCallback on _BootpayWebViewState {
             job.biometricDeviceUuid = bioMetric.biometricDeviceUuid ?? '';
             if (widget.onNextJob != null) widget.onNextJob!(job);
           } else {
+            c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
             if (widget.onDone != null) widget.onDone!(message.message);
           }
         });
