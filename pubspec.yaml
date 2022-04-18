@@ -16,7 +16,6 @@ dependencies:
   intl: ^0.17.0
   otp: ^3.0.2
   local_auth: ^1.1.11
-#  vibration: ^1.7.3
   vibration: ^1.7.4-nullsafety.0
 
 dev_dependencies:

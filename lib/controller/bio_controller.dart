@@ -57,7 +57,7 @@ class BioController extends GetxController {
 
 
     Fluttertoast.showToast(
-        msg: res.body ?? '지갑정보 조회에 실패하였습니다',
+        msg: res.body?.toString() ?? '지갑정보 조회에 실패하였습니다',
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,

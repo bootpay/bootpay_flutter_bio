@@ -1,4 +1,5 @@
 import 'package:bootpay_bio/bootpay_bio.dart';
+import 'package:bootpay_bio/config/bio_config.dart';
 import 'package:bootpay_bio/constants/bio_constants.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/models/bio_price.dart';
@@ -145,7 +146,7 @@ class _MyAppState extends State<MyApp> {
       bioPayload.iosApplicationId = '5b8f6a4d396fa665fdc2b5e9'; // ios application id
     }
 
-    bioPayload.pg = 'welcome';
+    bioPayload.pg = 'nicepay';
     bioPayload.method = 'card';
     // payload.methods = ['card', 'phone', 'vbank', 'bank', 'kakao'];
     bioPayload.orderName = '테스트 상품'; //결제할 상품명
@@ -192,8 +193,10 @@ class _MyAppState extends State<MyApp> {
     }
     var res = await _provider.getRestToken(restApplicationId, pk);
 
+    BootpayPrint("getRestToken: ${res.body}");
+
     var user = User();
-    user.id = '123411ad122dd112';
+    user.id = '123411ad122dd1123';
     user.gender = 1;
     user.email = 'test1234@gmail.com';
     user.phone = '01012345678';
@@ -202,6 +205,7 @@ class _MyAppState extends State<MyApp> {
     user.area = '서울';
 
     res = await _provider.getEasyPayUserToken(res.body['access_token'], user);
+    BootpayPrint("getEasyPayUserToken: ${res.body}");
     goBootpayRequest(context, res.body["user_token"], user);
   }
 

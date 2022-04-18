@@ -1,9 +1,18 @@
 
 import 'package:get/get.dart';
 
+import '../constants/bio_constants.dart';
+
 class ApiProvider extends GetConnect {
   // get defaultUrl => 'https://api.bootpay.co.kr';
-  get defaultUrl => 'https://dev-api.bootpay.co.kr';
+  // get defaultUrl => 'https://dev-api.bootpay.co.kr';
+  String get defaultUrl {
+    if(BioConstants.DEBUG) {
+      return 'https://dev-api.bootpay.co.kr';
+    } else {
+      return 'https://api.bootpay.co.kr';
+    }
+  }
 
 
 

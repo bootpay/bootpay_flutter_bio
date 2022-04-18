@@ -460,6 +460,7 @@ class BioRouterState extends State<BioContainer> {
           iOSAuthStrings: IOSAuthMessages(
             localizedFallbackTitle: "비밀번호를 입력해주세요"
           ),
+          // stickyAuth: true,
           useErrorDialogs: true);
       if(authenticated) {
         onAuthenticationSucceeded();

@@ -21,8 +21,11 @@ class ApiProvider extends GetConnect {
       'private_key': privateKey
     };
 
+    String url = "$defaultUrl/v2/request/token";
+    print(url);
+
     return post(
-        "$defaultUrl/v2/request/token",
+        url,
         payload,
         contentType: 'application/json',
         headers: {
@@ -41,8 +44,11 @@ class ApiProvider extends GetConnect {
       'phone': user.phone,
     };
 
+    String url = "$defaultUrl/v2/request/user/token";
+    print(url);
+
     return post(
-        "$defaultUrl/v2/request/user/token",
+        url,
         payload,
         contentType: 'application/json',
         headers: {
