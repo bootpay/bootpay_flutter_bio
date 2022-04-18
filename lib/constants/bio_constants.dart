@@ -18,7 +18,7 @@ class BioConstants {
   // static const int REQUEST_TYPE_PASSWORD_PAY = 7; //생체인증 이용 불가시 비밀번호로 간편결제
   // static const int REQUEST_TYPE_RESULT_FAILED = -100; //생체인증 이용 불가시 비밀번호로 간편결제
 
-  static const bool DEBUG = true;
+  static const bool DEBUG = false;
   static const bool PRINT_ABLE = true;
 
   static const int REQUEST_TYPE_NONE = -1;
@@ -142,6 +142,9 @@ class BioConstants {
       token = prefs.getString("password_token");
     }
     payload.token = token;
+    if(payload.price! < 50000) {
+      payload.extra?.cardQuota = "0";
+    }
 
     return "BootpaySDK.requestWalletPayment(" +
         payload.toString() +

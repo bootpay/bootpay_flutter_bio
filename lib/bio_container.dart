@@ -399,13 +399,13 @@ class BioRouterState extends State<BioContainer> {
     }
 
     c.requestType.value = BioConstants.REQUEST_PASSWORD_FOR_PAY;
-    showWebView();
+    // showWebView();
 
-    // if(isShowWebView == true) {
-    //   widget.webView?.requestPasswordForPay();
-    // } else {
-    //   showWebView();
-    // }
+    if(isShowWebView == true) {
+      widget.webView?.requestPasswordForPay();
+    } else {
+      showWebView();
+    }
   }
 
   requestAddBioData(int type) {
@@ -433,19 +433,21 @@ class BioRouterState extends State<BioContainer> {
       );
       return;
     }
-    if(!await localAuth.canCheckBiometrics) {
-      Fluttertoast.showToast(
-          msg: "생체인식이 여러번 실패하여 비밀번호 결제로 진행됩니다.",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black54,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
-      requestPasswordForPay();
-      return;
-    }
+    // await  localAuth.
+
+    // if(!await localAuth.canCheckBiometrics) {
+    //   Fluttertoast.showToast(
+    //       msg: "생체인식이 여러번 실패하여 비밀번호 결제로 진행됩니다.",
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.BOTTOM,
+    //       timeInSecForIosWeb: 1,
+    //       backgroundColor: Colors.black54,
+    //       textColor: Colors.white,
+    //       fontSize: 16.0
+    //   );
+    //   requestPasswordForPay();
+    //   return;
+    // }
 
     try {
       bool authenticated = await localAuth.authenticate(

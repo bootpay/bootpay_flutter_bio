@@ -9,6 +9,7 @@ import 'package:bootpay_bio/controller/bio_controller.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/models/wallet/bio_metric.dart';
 import 'package:bootpay_bio/models/wallet/next_job.dart';
+import 'package:bootpay_bio/shims/bootpay_app.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -104,6 +105,8 @@ class BootpayBioWebView extends WebView {
   }
 
   Future<void> requestBioForPay(String otp, String? cardQuota) async {
+    BootpayPrint('requestBioForPay : $cardQuota');
+
     String script = await BioConstants.getJSBioOTPPay(payload!, otp, cardQuota ?? "0");
     BootpayPrint('requestBioForPay : $script');
     _controller?.future.then((controller) {
@@ -356,8 +359,7 @@ extension BootpayCallback on _BootpayWebViewState {
         name: 'BootpayCancel',
         onMessageReceived: (JavascriptMessage message) {
           BootpayPrint('BootpayCancel');
-          // print("21431: " + message.message);
-          // print(widget.onCancel != null);
+          c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
           if (this.widget.onCancel != null)
             this.widget.onCancel!(message.message);
         });
@@ -499,13 +501,17 @@ extension BootpayCallback on _BootpayWebViewState {
           } else if(c.requestType.value == BioConstants.REQUEST_ADD_BIOMETRIC_FOR_PAY) {
             BioMetric bioMetric = BioMetric.fromJson(json.decode(message.message));
 
-            NextJob job = NextJob();
+            // NextJob job = NextJob();
             job.type = c.requestType.value;
             job.nextType = BioConstants.NEXT_JOB_GET_WALLET_LIST;
             job.biometricSecretKey = bioMetric.biometricSecretKey ?? '';
             job.biometricDeviceUuid = bioMetric.biometricDeviceUuid ?? '';
             if (widget.onNextJob != null) widget.onNextJob!(job);
           } else {
+            if(c.requestType.value == BioConstants.REQUEST_PASSWORD_FOR_PAY) {
+              job.initToken = true;
+              if (widget.onNextJob != null) widget.onNextJob!(job);
+            }
             c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
             if (widget.onDone != null) widget.onDone!(message.message);
           }

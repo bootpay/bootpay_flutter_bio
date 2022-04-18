@@ -1,4 +1,5 @@
 import 'package:bootpay_bio/bootpay_bio.dart';
+import 'package:bootpay_bio/constants/bio_constants.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/models/bio_price.dart';
 import 'package:bootpay_bio/models/boot_extra.dart';
@@ -28,17 +29,19 @@ class _MyAppState extends State<MyApp> {
   String _data = ""; // 서버승인을 위해 사용되기 위한 변수
 
   String get applicationId {
-    return Bootpay().applicationId(
-        '5b8f6a4d396fa665fdc2b5eb',
-        '5b9f51264457636ab9a07cdc',
-        '5b9f51264457636ab9a07cdd'
-    );
-
-    // return Bootpay().applicationId(
-    //     '5b8f6a4d396fa665fdc2b5e7',
-    //     '5b8f6a4d396fa665fdc2b5e8',
-    //     '5b8f6a4d396fa665fdc2b5e9'
-    // );
+    if(BioConstants.DEBUG) {
+      return Bootpay().applicationId(
+          '5b8f6a4d396fa665fdc2b5eb',
+          '5b9f51264457636ab9a07cdc',
+          '5b9f51264457636ab9a07cdd'
+      );
+    } else {
+      return Bootpay().applicationId(
+          '5b8f6a4d396fa665fdc2b5e7',
+          '5b8f6a4d396fa665fdc2b5e8',
+          '5b8f6a4d396fa665fdc2b5e9'
+      );
+    }
   }
 
   @override
@@ -132,13 +135,15 @@ class _MyAppState extends State<MyApp> {
     item2.price = 500; // 상품의 가격
     List<BootItem> itemList = [item1, item2];
 
-    // bioPayload.webApplicationId = '5b8f6a4d396fa665fdc2b5e7'; // web application id
-    // bioPayload.androidApplicationId = '5b8f6a4d396fa665fdc2b5e8'; // android application id
-    // bioPayload.iosApplicationId = '5b8f6a4d396fa665fdc2b5e9'; // ios application id
-    bioPayload.webApplicationId = '5b9f51264457636ab9a07cdb'; // web application id
-    bioPayload.androidApplicationId = '5b9f51264457636ab9a07cdc'; // android application id
-    bioPayload.iosApplicationId = '5b9f51264457636ab9a07cdd'; // ios application id
-
+    if(BioConstants.DEBUG) {
+      bioPayload.webApplicationId = '5b9f51264457636ab9a07cdb'; // web application id
+      bioPayload.androidApplicationId = '5b9f51264457636ab9a07cdc'; // android application id
+      bioPayload.iosApplicationId = '5b9f51264457636ab9a07cdd'; // ios application id
+    } else {
+      bioPayload.webApplicationId = '5b8f6a4d396fa665fdc2b5e7'; // web application id
+      bioPayload.androidApplicationId = '5b8f6a4d396fa665fdc2b5e8'; // android application id
+      bioPayload.iosApplicationId = '5b8f6a4d396fa665fdc2b5e9'; // ios application id
+    }
 
     bioPayload.pg = 'welcome';
     bioPayload.method = 'card';
@@ -176,8 +181,16 @@ class _MyAppState extends State<MyApp> {
 
   //버튼클릭시 부트페이 결제요청 실행
   Future<void> goBootpayTest(BuildContext context) async {
-    // var res = await _provider.getRestToken('5b8f6a4d396fa665fdc2b5ea', 'rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=');
-    var res = await _provider.getRestToken('5b9f51264457636ab9a07cde', 'sfilSOSVakw+PZA+PRux4Iuwm7a//9CXXudCq9TMDHk=');
+    String restApplicationId = "";
+    String pk = "";
+    if(BioConstants.DEBUG) {
+      restApplicationId = "5b9f51264457636ab9a07cde";
+      pk = "sfilSOSVakw+PZA+PRux4Iuwm7a//9CXXudCq9TMDHk=";
+    } else {
+      restApplicationId = "5b8f6a4d396fa665fdc2b5ea";
+      pk = "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=";
+    }
+    var res = await _provider.getRestToken(restApplicationId, pk);
 
     var user = User();
     user.id = '123411ad122dd112';
@@ -209,9 +222,16 @@ class _MyAppState extends State<MyApp> {
 
     var bioPayload = BioPayload();
     bioPayload.userToken = easyUserToken;
-    bioPayload.webApplicationId = '5b9f51264457636ab9a07cdb'; // web application id
-    bioPayload.androidApplicationId = '5b9f51264457636ab9a07cdc'; // android application id
-    bioPayload.iosApplicationId = '5b9f51264457636ab9a07cdd'; // ios application id
+    if(BioConstants.DEBUG) {
+      bioPayload.webApplicationId = '5b9f51264457636ab9a07cdb'; // web application id
+      bioPayload.androidApplicationId = '5b9f51264457636ab9a07cdc'; // android application id
+      bioPayload.iosApplicationId = '5b9f51264457636ab9a07cdd'; // ios application id
+    } else {
+      bioPayload.webApplicationId = '5b8f6a4d396fa665fdc2b5e7'; // web application id
+      bioPayload.androidApplicationId = '5b8f6a4d396fa665fdc2b5e8'; // android application id
+      bioPayload.iosApplicationId = '5b8f6a4d396fa665fdc2b5e9'; // ios application id
+    }
+
 
     bioPayload.pg = 'payapp';
     // bioPayload.method = 'card';
