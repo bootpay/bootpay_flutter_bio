@@ -45,7 +45,23 @@ public class MainActivity extends FlutterFragmentActivity {
     }
 }
 ```
- 
+
+
+또는
+
+코틀린일 경우 아래와 같이 MainActivity.kt 파일을 수정합니다
+
+```kotlin
+import io.flutter.embedding.android.FlutterFragmentActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugins.GeneratedPluginRegistrant
+
+class MainActivity: FlutterFragmentActivity() {
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        GeneratedPluginRegistrant.registerWith(flutterEngine)
+    }
+}
+``` 
 
  `AndroidManifest.xml` 파일에 아래 2개의 권한을 추가해줍니다.
 
