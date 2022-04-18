@@ -450,6 +450,7 @@ class BioRouterState extends State<BioContainer> {
     // }
 
     try {
+      BootpayPrint("goBiometricAuth authenticate call: ${_supportState}");
       bool authenticated = await localAuth.authenticate(
           localizedReason:
           '인증 후 결제가 진행됩니다',

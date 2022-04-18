@@ -389,13 +389,13 @@ extension BootpayCallback on _BootpayWebViewState {
             BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY,
             BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD,
             BioConstants.REQUEST_ADD_CARD,
-            BioConstants.REQUEST_BIO_FOR_PAY,
+            // BioConstants.REQUEST_BIO_FOR_PAY,
             BioConstants.REQUEST_ADD_BIOMETRIC_FOR_PAY,
           ].contains(c.requestType.value)) {
             job.type = c.requestType.value;
 
             if(BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY == c.requestType.value ||
-                BioConstants.REQUEST_BIO_FOR_PAY == c.requestType.value ||
+                // BioConstants.REQUEST_BIO_FOR_PAY == c.requestType.value ||
                 BioConstants.REQUEST_ADD_BIOMETRIC_FOR_PAY == c.requestType.value) {
               job.nextType = BioConstants.NEXT_JOB_RETRY_PAY;
             } else if(BioConstants.REQUEST_PASSWORD_TOKEN_FOR_ADD_CARD == c.requestType.value) {
