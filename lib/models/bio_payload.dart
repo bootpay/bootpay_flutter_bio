@@ -47,7 +47,7 @@ class BioPayload  {
   // String? userToken = '';
 
   // Extra? extra = Extra();
-  BootExtra? extra = BootExtra();
+  Extra? extra = Extra();
   User? user = User();
   // List<Item>? items = [];
   List<BootItem>? items = [];
@@ -87,7 +87,7 @@ class BioPayload  {
     metadata = json["metadata"];
 
     if(json["user"] != null) user = User.fromJson(json["user"]);
-    if(json["extra"] != null) extra = BootExtra.fromJson(json["extra"]);
+    if(json["extra"] != null) extra = Extra.fromJson(json["extra"]);
     if(json["items"] != null) items = json["items"].map((e) => Item.fromJson(e)).toList();
 
     names = json["names"];

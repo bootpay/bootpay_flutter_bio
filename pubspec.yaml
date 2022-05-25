@@ -1,6 +1,6 @@
 name: bootpay_bio
 description:  A Bootpay bio plugin that provides payment api on Android, iOS.
-version: 0.0.3
+version: 4.0.7
 
 homepage: https://www.bootpay.co.kr
 repository: https://github.com/bootpay/bootpay_flutter_bio.git
@@ -13,15 +13,15 @@ dependencies:
   flutter:
     sdk: flutter
   fluttertoast: ^8.0.9
-  bootpay: 1.9.1
-  carousel_slider: ^4.0.0
+  bootpay: 4.0.7
+  carousel_slider: ^4.1.1
   intl: ^0.17.0
-  otp: ^3.0.2
-  local_auth: ^1.1.11
+  otp: ^3.0.4
+  local_auth: ^2.1.0
   vibration: ^1.7.4-nullsafety.0
-  shared_preferences: ^2.0.13
-  get: ^4.6.1
-  bootpay_webview_flutter: 2.2.21
+  shared_preferences: ^2.0.15
+  get: ^4.6.5
+  bootpay_webview_flutter: ^3.2.1
 
 dev_dependencies:
   flutter_test:

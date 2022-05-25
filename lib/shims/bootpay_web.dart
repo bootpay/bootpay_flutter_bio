@@ -7,6 +7,7 @@
 // import 'package:bootpay/api/bootpay_analytics.dart';
 // import 'package:bootpay/model/stat_item.dart';
 
+import 'package:bootpay/bootpay.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:flutter/material.dart';
 
@@ -95,7 +96,7 @@ class BootpayPlatform extends BootpayBioApi{
   }
 
   @override
-  void transactionConfirm(String data) {
+  void transactionConfirm() {
     throw UnimplementedError('bootpayBio web not support yet');
   }
 

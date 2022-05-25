@@ -1,5 +1,6 @@
 
 import 'dart:io';
+import 'package:bootpay/bootpay.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/bio_container.dart';
 import 'package:bootpay_bio/webview/bootpay_bio_webview.dart';
@@ -103,8 +104,8 @@ class BootpayPlatform extends BootpayBioApi{
   }
 
   @override
-  void transactionConfirm(String data) {
+  void transactionConfirm() {
     // if(webView != null) webView!.transactionConfirm(data);
-    bioContainer?.transactionConfirm(data);
+    bioContainer?.transactionConfirm();
   }
 }

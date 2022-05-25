@@ -1,7 +1,7 @@
 
+import 'package:bootpay/bootpay.dart';
 import 'package:flutter/widgets.dart';
 
-import 'bootpay_bio.dart';
 import 'models/bio_payload.dart';
 
 
@@ -24,7 +24,7 @@ abstract class BootpayBioApi {
       });
 
   String applicationId(String webApplicationId, String androidApplicationId, String iosApplicationId);
-  void transactionConfirm(String data);
+  void transactionConfirm();
   void removePaymentWindow(BuildContext context);
   void dismiss(BuildContext context);
 }

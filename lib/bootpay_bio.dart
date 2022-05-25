@@ -1,12 +1,13 @@
+import 'package:bootpay/bootpay.dart';
 import 'package:flutter/material.dart';
 
 import 'bootpay_bio_api.dart';
 import 'models/bio_payload.dart';
 import 'shims/bootpay_platform.dart';
 
-typedef void BootpayDefaultCallback(String data);
-typedef bool BootpayConfirmCallback(String data);
-typedef void BootpayCloseCallback();
+// typedef void BootpayDefaultCallback(String data);
+// typedef bool BootpayConfirmCallback(String data);
+// typedef void BootpayCloseCallback();
 
 class BootpayBio extends BootpayBioApi{
   static final BootpayBio _bootpay = BootpayBio._internal();
@@ -56,8 +57,8 @@ class BootpayBio extends BootpayBioApi{
   }
 
   @override
-  void transactionConfirm(String data) {
-    _platform.transactionConfirm(data);
+  void transactionConfirm() {
+    _platform.transactionConfirm();
   }
 
   @override

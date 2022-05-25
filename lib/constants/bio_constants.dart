@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bootpay/model/extra.dart';
 import 'package:bootpay/user_info.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/models/boot_extra.dart';
@@ -192,7 +193,7 @@ class BioConstants {
     //   payload.extra ??= BootExtra();
     //   payload.extra?.cardQuota = cardQuota;
     // }
-    payload.extra ??= BootExtra();
+    payload.extra ??= Extra();
     payload.extra?.cardQuota = cardQuota;
 
     return "BootpaySDK.requestWalletPayment(" +

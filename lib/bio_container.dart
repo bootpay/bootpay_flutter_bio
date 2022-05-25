@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:bootpay/bootpay.dart';
 import 'package:bootpay_bio/constants/bio_constants.dart';
 import 'package:bootpay_bio/constants/card_code.dart';
 import 'package:bootpay_bio/controller/bio_controller.dart';
@@ -12,12 +13,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
-import 'package:local_auth/auth_strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
 
 import 'bootpay_bio.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:local_auth_android/local_auth_android.dart';
+import 'package:local_auth_ios/local_auth_ios.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 
@@ -64,8 +66,8 @@ class BioContainer extends StatefulWidget {
   @override
   BioRouterState createState() => BioRouterState();
 
-  transactionConfirm(String data) {
-    webView?.transactionConfirm(data);
+  transactionConfirm() {
+    webView?.transactionConfirm();
   }
 }
 
@@ -114,7 +116,7 @@ class BioRouterState extends State<BioContainer> {
       onError: widget.onError,
       onClose: widget.onClose,
       onCloseHardware: widget.onCloseHardware,
-      onReady: widget.onReady,
+      onIssued: widget.onReady,
       onConfirm: widget.onConfirm,
       onDone: widget.onDone,
       onNextJob: onNextJob,
@@ -451,18 +453,37 @@ class BioRouterState extends State<BioContainer> {
 
     try {
       BootpayPrint("goBiometricAuth authenticate call: ${_supportState}");
+
       bool authenticated = await localAuth.authenticate(
-          localizedReason:
-          '인증 후 결제가 진행됩니다',
-          androidAuthStrings: AndroidAuthMessages(
-            signInTitle: '생체 인증',
-            biometricHint: ''
-          ),
-          iOSAuthStrings: IOSAuthMessages(
-            localizedFallbackTitle: "비밀번호를 입력해주세요"
-          ),
-          // stickyAuth: true,
-          useErrorDialogs: true);
+          localizedReason: '인증 후 결제가 진행됩니다',
+          authMessages:  const <AuthMessages>[
+            AndroidAuthMessages(
+                signInTitle: '생체 인증',
+                biometricHint: ''
+            ),
+            IOSAuthMessages(
+              localizedFallbackTitle: "비밀번호를 입력해주세요"
+            ),
+          ],
+          options: const AuthenticationOptions(
+            useErrorDialogs: true
+          )
+      );
+
+
+      // bool authenticated = await localAuth.authenticate(
+      //     localizedReason:
+      //     '인증 후 결제가 진행됩니다',
+      //     androidAuthStrings: AndroidAuthMessages(
+      //       signInTitle: '생체 인증',
+      //       biometricHint: ''
+      //     ),
+      //     iOSAuthStrings: IOSAuthMessages(
+      //       localizedFallbackTitle: "비밀번호를 입력해주세요"
+      //     ),
+      //     // stickyAuth: true,
+      //     useErrorDialogs: true);
+
       if(authenticated) {
         onAuthenticationSucceeded();
       }
@@ -507,6 +528,7 @@ class BioRouterState extends State<BioContainer> {
       final prefs = await SharedPreferences.getInstance();
       prefs.setString("biometric_device_uuid", data.biometricDeviceUuid);
       prefs.setString("biometric_secret_key", data.biometricSecretKey);
+      prefs.setInt("server_unixtime", data.serverUnixtime);
     }
 
     if(data.nextType == BioConstants.NEXT_JOB_RETRY_PAY) {
@@ -555,6 +577,7 @@ class BioRouterState extends State<BioContainer> {
   requestBioForPay() async {
     final prefs = await SharedPreferences.getInstance();
     String secretKey = prefs.getString("biometric_secret_key") ?? '';
+    // int serverUnixTime = prefs.getInt("server_unixtime") ?? 0;
     int serverUnixTime = c.resWallet.value.biometric?.server_unixtime ?? 0;
 
 

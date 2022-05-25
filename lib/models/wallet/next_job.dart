@@ -6,6 +6,7 @@ class NextJob {
   String token = "";
   String biometricDeviceUuid = "";
   String biometricSecretKey = "";
+  int serverUnixtime = 0;
 
   NextJob();
 
@@ -22,7 +23,7 @@ class NextJob {
     "initToken": initToken,
     "token": token,
     "biometricDeviceUuid": biometricDeviceUuid,
-    "biometricSecretKey": biometricSecretKey
-
+    "biometricSecretKey": biometricSecretKey,
+    "serverUnixtime": serverUnixtime,
   };
 }

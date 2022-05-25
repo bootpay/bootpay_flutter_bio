@@ -3,13 +3,13 @@ import 'package:bootpay_bio/config/bio_config.dart';
 import 'package:bootpay_bio/constants/bio_constants.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/models/bio_price.dart';
-import 'package:bootpay_bio/models/boot_extra.dart';
 import 'package:bootpay_bio/models/boot_item.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:bootpay/model/stat_item.dart';
 import 'package:bootpay/model/user.dart';
+import 'package:bootpay/model/extra.dart';
 
 import 'deprecated/api_provider.dart';
 import 'package:bootpay/bootpay.dart';
@@ -75,8 +75,8 @@ class _MyAppState extends State<MyApp> {
 
   //통계용 함수
   bootpayAnalyticsUserTrace() async {
-    String? ver;
-    if(kIsWeb) ver = '1.0'; //web 일 경우 버전 지정, 웹이 아닌 android, ios일 경우 package_info 통해 자동으로 생성
+    // String? ver;
+    // if(kIsWeb) ver = '1.0'; //web 일 경우 버전 지정, 웹이 아닌 android, ios일 경우 package_info 통해 자동으로 생성
 
 
     await Bootpay().userTrace(
@@ -86,14 +86,13 @@ class _MyAppState extends State<MyApp> {
         birth: '19941014',
         area: '서울',
         applicationId: applicationId,
-        ver: ver
     );
   }
 
   //통계용 함수
   bootpayAnalyticsPageTrace() async {
-    String? ver;
-    if(kIsWeb) ver = '1.0'; //web 일 경우 버전 지정, 웹이 아닌 android, ios일 경우 package_info 통해 자동으로 생성
+    // String? ver;
+    // if(kIsWeb) ver = '1.0'; //web 일 경우 버전 지정, 웹이 아닌 android, ios일 경우 package_info 통해 자동으로 생성
 
     StatItem item1 = StatItem();
     item1.itemName = "미키 마우스"; // 주문정보에 담길 상품명
@@ -116,8 +115,7 @@ class _MyAppState extends State<MyApp> {
         pageType: 'sub_page_1234',
         applicationId: applicationId,
         userId: 'user_1234',
-        items: items,
-        ver: ver
+        items: items
     );
   }
 
@@ -146,8 +144,8 @@ class _MyAppState extends State<MyApp> {
       bioPayload.iosApplicationId = '5b8f6a4d396fa665fdc2b5e9'; // ios application id
     }
 
-    bioPayload.pg = 'nicepay';
-    bioPayload.method = 'card';
+    bioPayload.pg = '나이스페이';
+    bioPayload.method = '카드';
     // payload.methods = ['card', 'phone', 'vbank', 'bank', 'kakao'];
     bioPayload.orderName = '테스트 상품'; //결제할 상품명
     bioPayload.price = 1000.0; //정기결제시 0 혹은 주석
@@ -168,7 +166,7 @@ class _MyAppState extends State<MyApp> {
     user.phone = "010-1234-5678";
     user.addr = '서울시 동작구 상도로 222';
 
-    BootExtra extra = BootExtra(); // 결제 옵션
+    Extra extra = Extra(); // 결제 옵션
     extra.appScheme = 'bootpayFlutterExample';
     extra.cardQuota = "3";
     // extra.clo
@@ -196,7 +194,7 @@ class _MyAppState extends State<MyApp> {
     BootpayPrint("getRestToken: ${res.body}");
 
     var user = User();
-    user.id = '123411ad122dd11234';
+    user.id = '123411aaaaaaaaaaaabd4ss11';
     user.gender = 1;
     user.email = 'test1234@gmail.com';
     user.phone = '01012345678';
@@ -237,7 +235,7 @@ class _MyAppState extends State<MyApp> {
     }
 
 
-    bioPayload.pg = 'payapp';
+    bioPayload.pg = '나이스페이';
     // bioPayload.method = 'card';
     // payload.methods = ['card', 'phone', 'vbank', 'bank', 'kakao'];
     bioPayload.orderName = '플리츠레이어 카라숏원피스'; //결제할 상품명
@@ -253,7 +251,7 @@ class _MyAppState extends State<MyApp> {
     bioPayload.items = itemList; // 상품정보 배열
 
 
-    BootExtra extra = BootExtra(); // 결제 옵션
+    Extra extra = Extra(); // 결제 옵션
     extra.appScheme = 'bootpayFlutterExample';
     extra.cardQuota = "3";
 
@@ -280,7 +278,7 @@ class _MyAppState extends State<MyApp> {
       },
       onClose: () {
         print('------- onClose');
-        BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+        // BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
         //TODO - 원하시는 라우터로 페이지 이동
       },
       onCloseHardware: () {
