@@ -110,6 +110,11 @@ class MainActivity: FlutterFragmentActivity() {
 ```
 
 ## 결제하기
+
+
+![bootpay_flutter_bio](https://raw.githubusercontent.com/bootpay/git-open-resources/main/flutter_bio.gif)
+![bootpay_flutter_password](https://raw.githubusercontent.com/bootpay/git-open-resources/main/flutter_password.gif)
+
 ```dart 
 
 import 'package:bootpay_bio/bootpay_bio.dart';
