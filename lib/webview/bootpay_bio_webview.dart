@@ -432,17 +432,22 @@ extension BootpayCallback on _BootpayWebViewState {
         onMessageReceived: (JavascriptMessage message) {
           BootpayPrint('BootpayError: ${c.requestType}, ${message.message}');
 
-          final data = json.decode(message.message);
-          if(data["error_code"] == "USER_PW_TOKEN_NOT_FOUND" || data["error_code"] == "USER_PW_TOKEN_EXPIRED") {
-            NextJob job = NextJob();
-            job.nextType = BioConstants.REQUEST_PASSWORD_FOR_PAY;
-            if (widget.onNextJob != null) widget.onNextJob!(job);
-          } else {
-            c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
+          c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
 
-            if (this.widget.onError != null)
-              this.widget.onError!(message.message);
-          }
+          if (this.widget.onError != null)
+            this.widget.onError!(message.message);
+
+          // final data = json.decode(message.message);
+          // if(data["error_code"] == "USER_PW_TOKEN_NOT_FOUND" || data["error_code"] == "USER_PW_TOKEN_EXPIRED") {
+          //   NextJob job = NextJob();
+          //   job.nextType = BioConstants.REQUEST_PASSWORD_FOR_PAY;
+          //   if (widget.onNextJob != null) widget.onNextJob!(job);
+          // } else {
+          //   c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
+          //
+          //   if (this.widget.onError != null)
+          //     this.widget.onError!(message.message);
+          // }
 
 
 
@@ -492,12 +497,7 @@ extension BootpayCallback on _BootpayWebViewState {
               if (widget.onClose != null) widget.onClose!();
               BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
             }
-
-            // if(![BioConstants.REQUEST_BIO_FOR_PAY,
-            //   BioConstants.REQUEST_PASSWORD_FOR_PAY].contains(c.requestType.value)) {
-            //   if (widget.onClose != null) widget.onClose!();
-            //   BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
-            // }
+ 
           }
 
 
@@ -602,15 +602,30 @@ extension BootpayCallback on _BootpayWebViewState {
         onMessageReceived: (JavascriptMessage message) {
           BootpayPrint('BootpayEasyError: ${c.requestType}, ${message.message}');
 
-          NextJob job = NextJob();
-          // job.type = c.requestType.value;
-          job.initToken = true;
-          job.type = BioConstants.REQUEST_TYPE_NONE;
-          if (widget.onNextJob != null) widget.onNextJob!(job);
 
-          c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
 
-          if (this.widget.onError != null) this.widget.onError!(message.message);
+          final data = json.decode(message.message);
+          if(data["error_code"] == "USER_PW_TOKEN_NOT_FOUND" || data["error_code"] == "USER_PW_TOKEN_EXPIRED") {
+            NextJob job = NextJob();
+            job.initToken = true;
+            job.nextType = BioConstants.REQUEST_PASSWORD_FOR_PAY;
+            if (widget.onNextJob != null) widget.onNextJob!(job);
+          } else {
+            c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
+
+            if (this.widget.onError != null)
+              this.widget.onError!(message.message);
+          }
+
+          // NextJob job = NextJob();
+          // // job.type = c.requestType.value;
+          // job.initToken = true;
+          // job.type = BioConstants.REQUEST_TYPE_NONE;
+          // if (widget.onNextJob != null) widget.onNextJob!(job);
+          //
+          // c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
+          //
+          // if (this.widget.onError != null) this.widget.onError!(message.message);
         });
   }
 
