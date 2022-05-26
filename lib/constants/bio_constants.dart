@@ -20,7 +20,6 @@ class BioConstants {
   // static const int REQUEST_TYPE_RESULT_FAILED = -100; //생체인증 이용 불가시 비밀번호로 간편결제
 
   static const bool DEBUG = false;
-  static const bool PRINT_ABLE = true;
 
   static const int REQUEST_TYPE_NONE = -1;
   static const int REQUEST_PASSWORD_TOKEN = 10; //최초요청시 - 비밀번호 설정하기

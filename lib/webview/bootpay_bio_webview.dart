@@ -166,6 +166,17 @@ class BootpayBioWebView extends WebView {
     });
   }
 
+  Future<void> requestPasswordToken() async {
+    String script = BioConstants.getJSPasswordToken(payload!);
+    BootpayPrint('requestPasswordToken : $script');
+    _controller?.future.then((controller) {
+      controller.evaluateJavascript(
+          callJavascriptAsync(script)
+      );
+      // controller.
+    });
+  }
+
 
   Future<void> requestPasswordForPay() async {
     String script = await BioConstants.getJSPasswordPay(payload!);
@@ -454,7 +465,7 @@ extension BootpayCallback on _BootpayWebViewState {
             BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD,
             BioConstants.REQUEST_ADD_CARD,
             // BioConstants.REQUEST_BIO_FOR_PAY,
-            BioConstants.REQUEST_ADD_BIOMETRIC_FOR_PAY,
+            BioConstants.REQUEST_ADD_BIOMETRIC_FOR_PAY
           ].contains(c.requestType.value)) {
             job.type = c.requestType.value;
 
@@ -470,6 +481,9 @@ extension BootpayCallback on _BootpayWebViewState {
               job.nextType = BioConstants.NEXT_JOB_GET_WALLET_LIST;
             } else if(BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY == c.requestType.value) {
               job.nextType = BioConstants.REQUEST_PASSWORD_FOR_PAY;
+              if(message.message != "결제창이 닫혔습니다") {
+                job.token = message.message;
+              }
             }
 
             if (widget.onNextJob != null) widget.onNextJob!(job);
@@ -478,6 +492,12 @@ extension BootpayCallback on _BootpayWebViewState {
               if (widget.onClose != null) widget.onClose!();
               BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
             }
+
+            // if(![BioConstants.REQUEST_BIO_FOR_PAY,
+            //   BioConstants.REQUEST_PASSWORD_FOR_PAY].contains(c.requestType.value)) {
+            //   if (widget.onClose != null) widget.onClose!();
+            //   BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+            // }
           }
 
 
@@ -598,13 +618,15 @@ extension BootpayCallback on _BootpayWebViewState {
     return JavascriptChannel(
         name: 'BootpayEasySuccess',
         onMessageReceived: (JavascriptMessage message) {
-          BootpayPrint('BootpayEasySuccess: ${c.requestType}');
+          BootpayPrint('BootpayEasySuccess: ${c.requestType}, ${message.message}');
+          // return;
 
           NextJob job = NextJob();
           if([BioConstants.REQUEST_PASSWORD_TOKEN,
             BioConstants.REQUEST_PASSWORD_TOKEN_FOR_ADD_CARD,
             BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD,
-            BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY
+            BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY,
+            BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY
           ].contains(c.requestType.value)) {
             job.type = c.requestType.value;
             job.token = message.message.replaceAll("\"", "");

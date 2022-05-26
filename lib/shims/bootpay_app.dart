@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'package:bootpay/bootpay.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
@@ -6,50 +5,53 @@ import 'package:bootpay_bio/bio_container.dart';
 import 'package:bootpay_bio/webview/bootpay_bio_webview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../bootpay_bio.dart';
 import '../bootpay_bio_api.dart';
+import '../controller/bio_controller.dart';
+import '../password_container.dart';
 
-
-class BootpayPlatform extends BootpayBioApi{
-
-  // BootpayBioWebView? webView;
+class BootpayPlatform extends BootpayBioApi {
   BioContainer? bioContainer;
+  final BioController c = Get.put(BioController());
 
   @override
-  void request(
-      {
-        Key? key,
-        BuildContext? context,
-        BioPayload? payload,
-        bool? showCloseButton,
-        Widget? closeButton,
-        BootpayDefaultCallback? onCancel,
-        BootpayDefaultCallback? onError,
-        BootpayCloseCallback? onClose,
-        BootpayCloseCallback? onCloseHardware,
-        BootpayDefaultCallback? onReady,
-        BootpayConfirmCallback? onConfirm,
-        BootpayDefaultCallback? onDone
-      }) {
+  void requestPaymentBio(
+      {Key? key,
+      BuildContext? context,
+      BioPayload? payload,
+      bool? showCloseButton,
+      Widget? closeButton,
+      BootpayDefaultCallback? onCancel,
+      BootpayDefaultCallback? onError,
+      BootpayCloseCallback? onClose,
+      BootpayCloseCallback? onCloseHardware,
+      BootpayDefaultCallback? onReady,
+      BootpayConfirmCallback? onConfirm,
+      BootpayDefaultCallback? onDone}) {
 
+    if (context == null) return;
 
-    // webView = BootpayBioWebView(
-    //   payload: payload,
-    //   showCloseButton: showCloseButton,
-    //   key: key,
-    //   closeButton: closeButton,
-    //   onCancel: onCancel,
-    //   onError: onError,
-    //   onClose: onClose,
-    //   onCloseHardware: onCloseHardware,
-    //   onReady: onReady,
-    //   onConfirm: onConfirm,
-    //   onDone: onDone,
-    // );
+    c.isPasswordMode = false;
 
-    if(context == null) return;
+    showModalBioContainer(key, payload, showCloseButton, closeButton, onCancel,
+        onError, onClose, onCloseHardware, onReady, onConfirm, onDone, context);
+  }
 
+  void showModalBioContainer(
+      Key? key,
+      BioPayload? payload,
+      bool? showCloseButton,
+      Widget? closeButton,
+      BootpayDefaultCallback? onCancel,
+      BootpayDefaultCallback? onError,
+      BootpayCloseCallback? onClose,
+      BootpayCloseCallback? onCloseHardware,
+      BootpayDefaultCallback? onReady,
+      BootpayConfirmCallback? onConfirm,
+      BootpayDefaultCallback? onDone,
+      BuildContext context) {
     bioContainer = BioContainer(
       key: key,
       payload: payload,
@@ -68,9 +70,7 @@ class BootpayPlatform extends BootpayBioApi{
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return SafeArea(
-            child: bioContainer!
-        );
+        return SafeArea(child: bioContainer!);
       },
     ).whenComplete(() {
       // print('Hey there, I\'m calling after hide bottomSheet');
@@ -78,34 +78,85 @@ class BootpayPlatform extends BootpayBioApi{
   }
 
   @override
-  String applicationId(String webApplicationId, String androidApplicationId, String iosApplicationId) {
-    if(Platform.isIOS) return iosApplicationId;
-    else return androidApplicationId;
+  void requestPaymentPassword(
+      {Key? key,
+      BuildContext? context,
+      BioPayload? payload,
+      bool? showCloseButton,
+      Widget? closeButton,
+      BootpayDefaultCallback? onCancel,
+      BootpayDefaultCallback? onError,
+      BootpayCloseCallback? onClose,
+      BootpayCloseCallback? onCloseHardware,
+      BootpayDefaultCallback? onReady,
+      BootpayConfirmCallback? onConfirm,
+      BootpayDefaultCallback? onDone}) {
+    // TODO: implement requestPaymentPassword
+
+
+    if (context == null) return;
+
+    c.isPasswordMode = true;
+
+
+    showModalBioContainer(key, payload, showCloseButton, closeButton, onCancel,
+        onError, onClose, onCloseHardware, onReady, onConfirm, onDone, context);
+
+    // passwordContainer = PasswordContainer(
+    //   key: key,
+    //   payload: payload,
+    //   showCloseButton: showCloseButton,
+    //   closeButton: closeButton,
+    //   onCancel: onCancel,
+    //   onError: onError,
+    //   onClose: onClose,
+    //   onCloseHardware: onCloseHardware,
+    //   onReady: onReady,
+    //   onConfirm: onConfirm,
+    //   onDone: onDone,
+    // );
+    //
+    // showModalBottomSheet<void>(
+    //   context: context,
+    //   isScrollControlled: true,
+    //   builder: (BuildContext context) {
+    //     return SafeArea(child: passwordContainer!);
+    //   },
+    // ).whenComplete(() {
+    //   // print('Hey there, I\'m calling after hide bottomSheet');
+    // });
   }
 
+  @override
+  String applicationId(String webApplicationId, String androidApplicationId,
+      String iosApplicationId) {
+    if (Platform.isIOS)
+      return iosApplicationId;
+    else
+      return androidApplicationId;
+  }
 
   @override
   void removePaymentWindow(BuildContext context) {
-
-    // Navigator.of(context).pop();
-    if(bioContainer != null) {
-      // webView!.removePaymentWindow();
-      Navigator.of(context).pop();
-      bioContainer = null;
-    }
+    dismiss(context);
   }
 
   @override
   void dismiss(BuildContext context) {
-    if(bioContainer != null) {
+    if (bioContainer != null) {
       Navigator.of(context).pop();
       bioContainer = null;
     }
+    // else if (passwordContainer != null) {
+    //   Navigator.of(context).pop();
+    //   passwordContainer = null;
+    // }
   }
 
   @override
   void transactionConfirm() {
     // if(webView != null) webView!.transactionConfirm(data);
     bioContainer?.transactionConfirm();
+    // passwordContainer?.transactionConfirm();
   }
 }

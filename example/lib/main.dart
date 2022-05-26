@@ -29,6 +29,9 @@ class _MyAppState extends State<MyApp> {
   BioPayload bioPayload = BioPayload();
   String _data = ""; // 서버승인을 위해 사용되기 위한 변수
 
+  final String PAY_TYPE_BIO = "bio";
+  final String PAY_TYPE_PASSWORD = "password";
+
   String get applicationId {
     if(BioConstants.DEBUG) {
       return Bootpay().applicationId(
@@ -58,14 +61,23 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         body: Builder(builder: (BuildContext context) {
-          return Container(
-            color: Colors.green,
-            child: Center(
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Center(
                 child: TextButton(
-                  onPressed: () => goBootpayTest(context),
-                  child: Text('부트페이 결제테스트'),
-                )
-            ),
+                  onPressed: () => goBootpayTest(context, PAY_TYPE_BIO),
+                  child: Text('생체인식 결제 테스트'),
+                ),
+              ),
+              Center(
+                child: TextButton(
+                  onPressed: () => goBootpayTest(context, PAY_TYPE_PASSWORD),
+                  child: Text('비밀번호 간편결제 테스트'),
+                ),
+              ),
+            ],
           );
         }),
       ),
@@ -179,7 +191,7 @@ class _MyAppState extends State<MyApp> {
 
 
   //버튼클릭시 부트페이 결제요청 실행
-  Future<void> goBootpayTest(BuildContext context) async {
+  Future<void> goBootpayTest(BuildContext context, String payType) async {
     String restApplicationId = "";
     String pk = "";
     if(BioConstants.DEBUG) {
@@ -204,10 +216,10 @@ class _MyAppState extends State<MyApp> {
 
     res = await _provider.getEasyPayUserToken(res.body['access_token'], user);
     BootpayPrint("getEasyPayUserToken: ${res.body}");
-    goBootpayRequest(context, res.body["user_token"], user);
+    goBootpayRequest(context, res.body["user_token"], user, payType);
   }
 
-  void goBootpayRequest(BuildContext context, String easyUserToken, User user) {
+  void goBootpayRequest(BuildContext context, String easyUserToken, User user, String payType) {
 
     BootItem item1 = BootItem();
     item1.name = "미키 마우스"; // 주문정보에 담길 상품명
@@ -265,9 +277,62 @@ class _MyAppState extends State<MyApp> {
     ];
 
 
-    BootpayBio().request(
+    // BootpayPrint(bioPayload.toString());
+
+    if(payType == PAY_TYPE_BIO) {
+      requestPaymentBio(context, bioPayload);
+    } else {
+      requestPaymentPassword(context, bioPayload);
+    }
+  }
+
+  requestPaymentBio(BuildContext context, BioPayload payload) {
+    // BootpayPrint(bioPayload.toString());
+
+    BootpayBio().requestPaymentBio(
       context: context,
-      payload: bioPayload,
+      payload: payload,
+      showCloseButton: false,
+      // closeButton: Icon(Icons.close, size: 35.0, color: Colors.black54),
+      onCancel: (String data) {
+        print('------- onCancel: $data');
+      },
+      onError: (String data) {
+        print('------- onError: $data');
+      },
+      onClose: () {
+        print('------- onClose');
+        // BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+        //TODO - 원하시는 라우터로 페이지 이동
+      },
+      onCloseHardware: () {
+        print('------- onCloseHardware');
+      },
+      onReady: (String data) {
+        print('------- onReady: $data');
+      },
+      onConfirm: (String data) {
+        print('------- onConfirm: $data');
+        return true; //결제를 최종 승인하고자 할때 return true
+
+        //서버승인을 위한 로직 시작
+        // _data = data;
+        // Future.delayed(const Duration(milliseconds: 100), () {
+        //   Bootpay().transactionConfirm(_data); // 서버승인 이용시 해당 함수 호출
+        // });
+        // return false;
+        //서버 승인을 위한 로직 끝
+      },
+      onDone: (String data) {
+        print('------- onDone: $data');
+      },
+    );
+  }
+
+  requestPaymentPassword(BuildContext context, BioPayload payload) {
+    BootpayBio().requestPaymentPassword(
+      context: context,
+      payload: payload,
       showCloseButton: false,
       // closeButton: Icon(Icons.close, size: 35.0, color: Colors.black54),
       onCancel: (String data) {

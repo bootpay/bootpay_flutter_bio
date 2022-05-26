@@ -72,7 +72,7 @@ class BootpayPlatform extends BootpayBioApi{
   }
 
   @override
-  void request(
+  void requestPaymentBio(
       {
         Key? key,
         BuildContext? context,
@@ -88,6 +88,25 @@ class BootpayPlatform extends BootpayBioApi{
         BootpayDefaultCallback? onDone
       }) {
     throw UnimplementedError('bootpayBio web not support yet');
+  }
+
+  @override
+  void requestPaymentPassword(
+      {
+        Key? key,
+        BuildContext? context,
+        BioPayload? payload,
+        bool? showCloseButton,
+        Widget? closeButton,
+        BootpayDefaultCallback? onCancel,
+        BootpayDefaultCallback? onError,
+        BootpayCloseCallback? onClose,
+        BootpayCloseCallback? onCloseHardware,
+        BootpayDefaultCallback? onReady,
+        BootpayConfirmCallback? onConfirm,
+        BootpayDefaultCallback? onDone
+      }) {
+    throw UnimplementedError('requestPaymentPassword web not support yet');
   }
 
   @override
@@ -123,4 +142,9 @@ class BootpayPlatform extends BootpayBioApi{
   void onError(String data) {
     if(this._callbackError != null) this._callbackError!(data);
   }
+
+  // @override
+  // void requestPaymentPassword({Key? key, BuildContext? context, BioPayload? payload, bool? showCloseButton, Widget? closeButton, BootpayDefaultCallback? onCancel, BootpayDefaultCallback? onError, BootpayCloseCallback? onClose, BootpayCloseCallback? onCloseHardware, BootpayDefaultCallback? onReady, BootpayConfirmCallback? onConfirm, BootpayDefaultCallback? onDone}) {
+  //   // TODO: implement requestPaymentPassword
+  // }
 }

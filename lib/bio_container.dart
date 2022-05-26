@@ -75,7 +75,9 @@ class BioRouterState extends State<BioContainer> {
   DateTime? currentBackPressTime = DateTime.now();
 
 
-  final BioController c = Get.put(BioController());
+  // final BioController c = Get.put(BioController());
+  final BioController c = Get.find<BioController>();
+
   bool isShowWebView = false;
   String _selectedValue = "일시불";
 
@@ -153,6 +155,7 @@ class BioRouterState extends State<BioContainer> {
                           if (widget.onClose != null) {
                             widget.onClose!();
                           }
+                          BootpayBio().dismiss(context);
                           // Navigator.of(context).pop();
                         },
                       )
@@ -351,6 +354,11 @@ class BioRouterState extends State<BioContainer> {
     BootpayPrint("c.selectedCardIndex: ${c.selectedCardIndex}, wallets: ${c.resWallet.value.wallets.length}");
     widget.payload?.walletId = c.resWallet.value.wallets[c.selectedCardIndex].wallet_id;
 
+    if(c.isPasswordMode) {
+      requestPasswordForPay();
+      return;
+    }
+
     c.requestType.value = BioConstants.REQUEST_BIO_FOR_PAY;
 
     if(!await isAblePasswordToken()) {
@@ -546,6 +554,7 @@ class BioRouterState extends State<BioContainer> {
         getWalletList(false);
       }
     }
+    // else if()
   }
 
   getWalletList(bool requestBioPay) async {

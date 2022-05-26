@@ -27,7 +27,7 @@ class BootpayBio extends BootpayBioApi{
   }
 
   @override
-  void request(
+  void requestPaymentBio(
       {Key? key,
         BuildContext? context,
         BioPayload? payload,
@@ -41,7 +41,38 @@ class BootpayBio extends BootpayBioApi{
         BootpayConfirmCallback? onConfirm,
         BootpayDefaultCallback? onDone}) {
 
-    _platform.request(
+    _platform.requestPaymentBio(
+        context: context,
+        payload: payload,
+        showCloseButton: showCloseButton,
+        closeButton: closeButton,
+        onCancel: onCancel,
+        onError: onError,
+        onClose: onClose,
+        onReady: onReady,
+        onCloseHardware: onCloseHardware,
+        onConfirm: onConfirm,
+        onDone: onDone
+    );
+  }
+
+
+  @override
+  void requestPaymentPassword(
+      {Key? key,
+        BuildContext? context,
+        BioPayload? payload,
+        bool? showCloseButton,
+        Widget? closeButton,
+        BootpayDefaultCallback? onCancel,
+        BootpayDefaultCallback? onError,
+        BootpayCloseCallback? onClose,
+        BootpayCloseCallback? onCloseHardware,
+        BootpayDefaultCallback? onReady,
+        BootpayConfirmCallback? onConfirm,
+        BootpayDefaultCallback? onDone}) {
+
+    _platform.requestPaymentPassword(
         context: context,
         payload: payload,
         showCloseButton: showCloseButton,

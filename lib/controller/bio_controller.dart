@@ -20,6 +20,7 @@ class BioController extends GetxController {
   // var walletList = <Rx<WalletData>>[].obs;
   var resWallet = ResWalletList().obs;
   var requestType = BioConstants.REQUEST_TYPE_NONE.obs;
+  var isPasswordMode = false; //비밀번호 간편결제 호출인지
   var selectedCardIndex = 0;
 
   final ApiProvider _provider = ApiProvider();

@@ -8,7 +8,7 @@ import 'models/bio_payload.dart';
 abstract class BootpayBioApi {
 
 
-  void request(
+  void requestPaymentBio(
       {
         Key? key,
         BuildContext? context,
@@ -18,6 +18,24 @@ abstract class BootpayBioApi {
         BootpayDefaultCallback? onCancel,
         BootpayDefaultCallback? onError,
         BootpayCloseCallback? onClose,
+        BootpayCloseCallback? onCloseHardware,
+        BootpayDefaultCallback? onReady,
+        BootpayConfirmCallback? onConfirm,
+        BootpayDefaultCallback? onDone
+      });
+
+
+  void requestPaymentPassword(
+      {
+        Key? key,
+        BuildContext? context,
+        BioPayload? payload,
+        bool? showCloseButton,
+        Widget? closeButton,
+        BootpayDefaultCallback? onCancel,
+        BootpayDefaultCallback? onError,
+        BootpayCloseCallback? onClose,
+        BootpayCloseCallback? onCloseHardware,
         BootpayDefaultCallback? onReady,
         BootpayConfirmCallback? onConfirm,
         BootpayDefaultCallback? onDone
