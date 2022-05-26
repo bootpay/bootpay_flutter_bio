@@ -1,13 +1,13 @@
 # bootpay_bio 플러터 라이브러리
 
-부트페이에서 생체결제 공식 Flutter 라이브러리 입니다. (클라이언트 용)
+부트페이에서 생체결제, 비밀번호 간편결제 공식 Flutter 라이브러리 입니다. (클라이언트 용)
 * PG 결제창 연동은 클라이언트 라이브러리에서 수행됩니다. (Javascript, Android, iOS, React Native, Flutter 등)
 * 결제 검증 및 취소, 빌링키 발급, 본인인증 등의 수행은 서버사이드에서 진행됩니다. (Java, PHP, Python, Ruby, Node.js, Go, ASP.NET 등)
 
 ## 기능
 
 1. ios/android 지원
-2. 카드정기결제(REST) 를 지원하는 PG사에 한해서 지원 (페이앱, 나이스페이)
+2. 카드정기결제(REST) 를 지원하는 PG사에 한해서 지원 
 
 ## 설치하기
 ``pubspec.yaml`` 파일에 아래 모듈을 추가해주세요
