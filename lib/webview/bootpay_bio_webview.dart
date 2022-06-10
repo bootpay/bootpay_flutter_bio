@@ -497,7 +497,7 @@ extension BootpayCallback on _BootpayWebViewState {
               if (widget.onClose != null) widget.onClose!();
               BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
             }
- 
+
           }
 
 
@@ -616,16 +616,6 @@ extension BootpayCallback on _BootpayWebViewState {
             if (this.widget.onError != null)
               this.widget.onError!(message.message);
           }
-
-          // NextJob job = NextJob();
-          // // job.type = c.requestType.value;
-          // job.initToken = true;
-          // job.type = BioConstants.REQUEST_TYPE_NONE;
-          // if (widget.onNextJob != null) widget.onNextJob!(job);
-          //
-          // c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
-          //
-          // if (this.widget.onError != null) this.widget.onError!(message.message);
         });
   }
 

@@ -247,7 +247,7 @@ class _MyAppState extends State<MyApp> {
     }
 
 
-    bioPayload.pg = '나이스페이';
+    bioPayload.pg = '페이앱';
     // bioPayload.method = 'card';
     // payload.methods = ['card', 'phone', 'vbank', 'bank', 'kakao'];
     bioPayload.orderName = '플리츠레이어 카라숏원피스'; //결제할 상품명

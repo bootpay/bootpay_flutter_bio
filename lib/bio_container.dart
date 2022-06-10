@@ -129,6 +129,8 @@ class BioRouterState extends State<BioContainer> {
   Widget build(BuildContext context) {
     // TODO: implement build
 
+    double cardViewHeight = MediaQuery.of(context).size.width * 0.6;
+
     return WillPopScope(
 
       child: isShowWebView == false ? Wrap(
@@ -202,62 +204,70 @@ class BioRouterState extends State<BioContainer> {
           Obx(() =>
             Container(
               color: Colors.black12,
-              height: 220,
-              child: CarouselSlider(
-                options: CarouselOptions(
-                  aspectRatio: 2.0,
-                  enlargeCenterPage: true,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 0.0),
+                child: Container(
+                  width: double.infinity,
+                  height: cardViewHeight,
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      aspectRatio: 2.0,
+                      enlargeCenterPage: true,
+
+                    ),
+
+                    items: c.resWallet.value.wallets.map((e) => cardWidget(e)).toList() +  [
+                      Container(
+                        // height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4.0),
+                          color: const Color(0xFFf9faff),
+                        ),
+                        child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                                onTap: () => addNewCard(),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Image.asset('images/ico_plus.png', package: 'bootpay_bio', width: 34.0),
+                                      SizedBox(height: 12),
+                                      Text('새로운 카드 등록', style: TextStyle(color: CardCode.COLOR_BLUE, fontWeight: FontWeight.bold)),
+                                    ],
+                                  ),
+                                )
+                            )
+                        ),
+                      ),
+                      Container(
+                        // height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4.0),
+                          color: CardCode.COLOR_BLUE
+                        ),
+                        child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                                onTap: () => goTotalPay(),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Image.asset('images/ico_card.png', package: 'bootpay_bio', width: 34.0),
+                                      SizedBox(height: 12),
+                                      Text('다른 결제수단', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                    ],
+                                  ),
+                                )
+                            )
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                items: c.resWallet.value.wallets.map((e) => cardWidget(e)).toList() +  [
-                  Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4.0),
-                      color: const Color(0xFFf9faff),
-                    ),
-                    child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                            onTap: () => addNewCard(),
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset('images/ico_plus.png', package: 'bootpay_bio', width: 34.0),
-                                  SizedBox(height: 12),
-                                  Text('새로운 카드 등록', style: TextStyle(color: CardCode.COLOR_BLUE, fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                            )
-                        )
-                    ),
-                  ),
-                  Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4.0),
-                      color: CardCode.COLOR_BLUE
-                    ),
-                    child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                            onTap: () => goTotalPay(),
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset('images/ico_card.png', package: 'bootpay_bio', width: 34.0),
-                                  SizedBox(height: 12),
-                                  Text('다른 결제수단', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                            )
-                        )
-                    ),
-                  ),
-                ],
               ),
             ),
           ),
@@ -714,11 +724,20 @@ class BioRouterState extends State<BioContainer> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+
                       Row(
                         children: [
-                          Text(
-                              walletData.batch_data.card_company ?? '',
-                              style: TextStyle(color: CardCode.getColorText(walletData.batch_data.card_company_code ?? ''), fontWeight: FontWeight.bold)
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  walletData.batch_data.card_company ?? '',
+                                  style: TextStyle(color: CardCode.getColorText(walletData.batch_data.card_company_code ?? ''), fontWeight: FontWeight.bold)
+                              ),
+                              SizedBox(height: 8),
+                              Image.asset('images/card_chip.png', package: 'bootpay_bio', height: 30.0),
+                            ],
                           ),
                           Expanded(child: Container())
                         ],
