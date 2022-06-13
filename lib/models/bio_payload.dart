@@ -8,8 +8,6 @@ import 'package:bootpay/model/user.dart';
 import 'package:flutter/foundation.dart';
 
 import 'bio_price.dart';
-import 'boot_extra.dart';
-import 'boot_item.dart';
 import '../extension/json_query_string.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
@@ -50,7 +48,7 @@ class BioPayload  {
   Extra? extra = Extra();
   User? user = User();
   // List<Item>? items = [];
-  List<BootItem>? items = [];
+  List<Item>? items = [];
 
 
 
@@ -185,7 +183,7 @@ class BioPayload  {
     List<String> result = [];
 
     if(this.items != null) {
-      for(BootItem item in this.items!) {
+      for(Item item in this.items!) {
         result.add(item.toString());
       }
     }

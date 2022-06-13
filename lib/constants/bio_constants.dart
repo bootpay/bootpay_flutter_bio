@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:bootpay/model/extra.dart';
 import 'package:bootpay/user_info.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
-import 'package:bootpay_bio/models/boot_extra.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 

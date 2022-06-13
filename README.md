@@ -122,8 +122,6 @@ import 'package:bootpay_bio/config/bio_config.dart';
 import 'package:bootpay_bio/constants/bio_constants.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/models/bio_price.dart';
-import 'package:bootpay_bio/models/boot_extra.dart';
-import 'package:bootpay_bio/models/boot_item.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 

@@ -3,12 +3,12 @@ import 'package:bootpay_bio/config/bio_config.dart';
 import 'package:bootpay_bio/constants/bio_constants.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/models/bio_price.dart';
-import 'package:bootpay_bio/models/boot_item.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:bootpay/model/stat_item.dart';
 import 'package:bootpay/model/user.dart';
+import 'package:bootpay/model/item.dart';
 import 'package:bootpay/model/extra.dart';
 
 import 'deprecated/api_provider.dart';
@@ -133,18 +133,18 @@ class _MyAppState extends State<MyApp> {
 
   //결제용 데이터 init
   bioDataInit() {
-    BootItem item1 = BootItem();
+    Item item1 = Item();
     item1.name = "미키 마우스"; // 주문정보에 담길 상품명
     item1.qty = 1; // 해당 상품의 주문 수량
     item1.id = "ITEM_CODE_MOUSE"; // 해당 상품의 고유 키
     item1.price = 500; // 상품의 가격
 
-    BootItem item2 = BootItem();
+    Item item2 = Item();
     item2.name = "키보드"; // 주문정보에 담길 상품명
     item2.qty = 1; // 해당 상품의 주문 수량
     item2.id = "ITEM_CODE_KEYBOARD"; // 해당 상품의 고유 키
     item2.price = 500; // 상품의 가격
-    List<BootItem> itemList = [item1, item2];
+    List<Item> itemList = [item1, item2];
 
     if(BioConstants.DEBUG) {
       bioPayload.webApplicationId = '5b9f51264457636ab9a07cdb'; // web application id
@@ -221,18 +221,18 @@ class _MyAppState extends State<MyApp> {
 
   void goBootpayRequest(BuildContext context, String easyUserToken, User user, String payType) {
 
-    BootItem item1 = BootItem();
+    Item item1 = Item();
     item1.name = "미키 마우스"; // 주문정보에 담길 상품명
     item1.qty = 1; // 해당 상품의 주문 수량
     item1.id = "ITEM_CODE_MOUSE"; // 해당 상품의 고유 키
     item1.price = 500; // 상품의 가격
 
-    BootItem item2 = BootItem();
+    Item item2 = Item();
     item2.name = "키보드"; // 주문정보에 담길 상품명
     item2.qty = 1; // 해당 상품의 주문 수량
     item2.id = "ITEM_CODE_KEYBOARD"; // 해당 상품의 고유 키
     item2.price = 500; // 상품의 가격
-    List<BootItem> itemList = [item1, item2];
+    List<Item> itemList = [item1, item2];
 
     var bioPayload = BioPayload();
     bioPayload.userToken = easyUserToken;

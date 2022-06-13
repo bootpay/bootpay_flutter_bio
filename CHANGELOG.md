@@ -1,3 +1,7 @@
+## 4.1.2
+* boot_extra, boot_item 삭제 
+* 예제 update 
+
 ## 4.1.1
 * bootpay 4.1.1 반영
 
