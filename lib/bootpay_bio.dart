@@ -37,7 +37,7 @@ class BootpayBio extends BootpayBioApi{
         BootpayDefaultCallback? onError,
         BootpayCloseCallback? onClose,
         BootpayCloseCallback? onCloseHardware,
-        BootpayDefaultCallback? onReady,
+        BootpayDefaultCallback? onIssued,
         BootpayConfirmCallback? onConfirm,
         BootpayDefaultCallback? onDone}) {
 
@@ -49,7 +49,7 @@ class BootpayBio extends BootpayBioApi{
         onCancel: onCancel,
         onError: onError,
         onClose: onClose,
-        onReady: onReady,
+        onIssued: onIssued,
         onCloseHardware: onCloseHardware,
         onConfirm: onConfirm,
         onDone: onDone
@@ -68,7 +68,7 @@ class BootpayBio extends BootpayBioApi{
         BootpayDefaultCallback? onError,
         BootpayCloseCallback? onClose,
         BootpayCloseCallback? onCloseHardware,
-        BootpayDefaultCallback? onReady,
+        BootpayDefaultCallback? onIssued,
         BootpayConfirmCallback? onConfirm,
         BootpayDefaultCallback? onDone}) {
 
@@ -80,7 +80,7 @@ class BootpayBio extends BootpayBioApi{
         onCancel: onCancel,
         onError: onError,
         onClose: onClose,
-        onReady: onReady,
+        onIssued: onIssued,
         onCloseHardware: onCloseHardware,
         onConfirm: onConfirm,
         onDone: onDone

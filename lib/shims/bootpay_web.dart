@@ -58,7 +58,7 @@ class BootpayPlatform extends BootpayBioApi{
   BootpayDefaultCallback? _callbackError;
   BootpayCloseCallback? _callbackClose;
   BootpayCloseCallback? _callbackCloseHardware;
-  BootpayDefaultCallback? _callbackReady;
+  BootpayDefaultCallback? _callbackIssued;
   BootpayConfirmCallback? _callbackConfirm;
   BootpayDefaultCallback? _callbackDone;
 
@@ -83,7 +83,7 @@ class BootpayPlatform extends BootpayBioApi{
         BootpayDefaultCallback? onError,
         BootpayCloseCallback? onClose,
         BootpayCloseCallback? onCloseHardware,
-        BootpayDefaultCallback? onReady,
+        BootpayDefaultCallback? onIssued,
         BootpayConfirmCallback? onConfirm,
         BootpayDefaultCallback? onDone
       }) {
@@ -102,7 +102,7 @@ class BootpayPlatform extends BootpayBioApi{
         BootpayDefaultCallback? onError,
         BootpayCloseCallback? onClose,
         BootpayCloseCallback? onCloseHardware,
-        BootpayDefaultCallback? onReady,
+        BootpayDefaultCallback? onIssued,
         BootpayConfirmCallback? onConfirm,
         BootpayDefaultCallback? onDone
       }) {
@@ -129,8 +129,8 @@ class BootpayPlatform extends BootpayBioApi{
   void onCancel(String data) {
     if(this._callbackCancel != null) this._callbackCancel!(data);
   }
-  void onReady(String data) {
-    if(this._callbackReady != null) this._callbackReady!(data);
+  void onIssued(String data) {
+    if(this._callbackIssued != null) this._callbackIssued!(data);
   }
   bool onConfirm(String data) {
     if(this._callbackConfirm != null) return this._callbackConfirm!(data);

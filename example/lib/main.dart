@@ -308,8 +308,8 @@ class _MyAppState extends State<MyApp> {
       onCloseHardware: () {
         print('------- onCloseHardware');
       },
-      onReady: (String data) {
-        print('------- onReady: $data');
+      onIssued: (String data) {
+        print('------- onIssued: $data');
       },
       onConfirm: (String data) {
         print('------- onConfirm: $data');
@@ -349,8 +349,8 @@ class _MyAppState extends State<MyApp> {
       onCloseHardware: () {
         print('------- onCloseHardware');
       },
-      onReady: (String data) {
-        print('------- onReady: $data');
+      onIssued: (String data) {
+        print('------- onIssued: $data');
       },
       onConfirm: (String data) {
         print('------- onConfirm: $data');

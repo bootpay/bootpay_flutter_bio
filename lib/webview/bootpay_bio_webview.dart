@@ -230,7 +230,7 @@ class _BootpayWebViewState extends State<BootpayBioWebView> {
           onCancel(context),
           onError(context),
           onClose(context),
-          onReady(context),
+          onIssued(context),
           onConfirm(context),
           onDone(context),
           onRedirect(context),
@@ -505,7 +505,7 @@ extension BootpayCallback on _BootpayWebViewState {
         });
   }
 
-  JavascriptChannel onReady(BuildContext context) {
+  JavascriptChannel onIssued(BuildContext context) {
     return JavascriptChannel(
         name: 'BootpayReady',
         onMessageReceived: (JavascriptMessage message) {

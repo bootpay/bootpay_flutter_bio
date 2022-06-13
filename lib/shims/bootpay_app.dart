@@ -27,7 +27,7 @@ class BootpayPlatform extends BootpayBioApi {
       BootpayDefaultCallback? onError,
       BootpayCloseCallback? onClose,
       BootpayCloseCallback? onCloseHardware,
-      BootpayDefaultCallback? onReady,
+      BootpayDefaultCallback? onIssued,
       BootpayConfirmCallback? onConfirm,
       BootpayDefaultCallback? onDone}) {
 
@@ -36,7 +36,7 @@ class BootpayPlatform extends BootpayBioApi {
     c.isPasswordMode = false;
 
     showModalBioContainer(key, payload, showCloseButton, closeButton, onCancel,
-        onError, onClose, onCloseHardware, onReady, onConfirm, onDone, context);
+        onError, onClose, onCloseHardware, onIssued, onConfirm, onDone, context);
   }
 
   void showModalBioContainer(
@@ -48,7 +48,7 @@ class BootpayPlatform extends BootpayBioApi {
       BootpayDefaultCallback? onError,
       BootpayCloseCallback? onClose,
       BootpayCloseCallback? onCloseHardware,
-      BootpayDefaultCallback? onReady,
+      BootpayDefaultCallback? onIssued,
       BootpayConfirmCallback? onConfirm,
       BootpayDefaultCallback? onDone,
       BuildContext context) {
@@ -61,7 +61,7 @@ class BootpayPlatform extends BootpayBioApi {
       onError: onError,
       onClose: onClose,
       onCloseHardware: onCloseHardware,
-      onReady: onReady,
+      onIssued: onIssued,
       onConfirm: onConfirm,
       onDone: onDone,
     );
@@ -88,7 +88,7 @@ class BootpayPlatform extends BootpayBioApi {
       BootpayDefaultCallback? onError,
       BootpayCloseCallback? onClose,
       BootpayCloseCallback? onCloseHardware,
-      BootpayDefaultCallback? onReady,
+      BootpayDefaultCallback? onIssued,
       BootpayConfirmCallback? onConfirm,
       BootpayDefaultCallback? onDone}) {
     // TODO: implement requestPaymentPassword
@@ -100,7 +100,7 @@ class BootpayPlatform extends BootpayBioApi {
 
 
     showModalBioContainer(key, payload, showCloseButton, closeButton, onCancel,
-        onError, onClose, onCloseHardware, onReady, onConfirm, onDone, context);
+        onError, onClose, onCloseHardware, onIssued, onConfirm, onDone, context);
 
     // passwordContainer = PasswordContainer(
     //   key: key,

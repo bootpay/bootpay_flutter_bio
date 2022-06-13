@@ -19,7 +19,7 @@ abstract class BootpayBioApi {
         BootpayDefaultCallback? onError,
         BootpayCloseCallback? onClose,
         BootpayCloseCallback? onCloseHardware,
-        BootpayDefaultCallback? onReady,
+        BootpayDefaultCallback? onIssued,
         BootpayConfirmCallback? onConfirm,
         BootpayDefaultCallback? onDone
       });
@@ -36,7 +36,7 @@ abstract class BootpayBioApi {
         BootpayDefaultCallback? onError,
         BootpayCloseCallback? onClose,
         BootpayCloseCallback? onCloseHardware,
-        BootpayDefaultCallback? onReady,
+        BootpayDefaultCallback? onIssued,
         BootpayConfirmCallback? onConfirm,
         BootpayDefaultCallback? onDone
       });

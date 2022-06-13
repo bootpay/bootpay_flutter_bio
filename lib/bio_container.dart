@@ -45,7 +45,7 @@ class BioContainer extends StatefulWidget {
   BootpayDefaultCallback? onError;
   BootpayCloseCallback? onClose;
   BootpayCloseCallback? onCloseHardware;
-  BootpayDefaultCallback? onReady;
+  BootpayDefaultCallback? onIssued;
   BootpayConfirmCallback? onConfirm;
   BootpayDefaultCallback? onDone;
 
@@ -59,7 +59,7 @@ class BioContainer extends StatefulWidget {
       this.onError,
       this.onClose,
       this.onCloseHardware,
-      this.onReady,
+      this.onIssued,
       this.onConfirm,
       this.onDone}); // BioContainer(this.webView, this.payload);
 
@@ -118,7 +118,7 @@ class BioRouterState extends State<BioContainer> {
       onError: widget.onError,
       onClose: widget.onClose,
       onCloseHardware: widget.onCloseHardware,
-      onIssued: widget.onReady,
+      onIssued: widget.onIssued,
       onConfirm: widget.onConfirm,
       onDone: widget.onDone,
       onNextJob: onNextJob,
