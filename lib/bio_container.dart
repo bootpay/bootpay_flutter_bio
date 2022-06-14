@@ -78,8 +78,8 @@ class BioRouterState extends State<BioContainer> {
   DateTime? currentBackPressTime = DateTime.now();
 
 
-  // final BioController c = Get.put(BioController());
-  final BioController c = Get.find<BioController>();
+  final BioController c = Get.put(BioController());
+  // final BioController c = Get.find<BioController>();
 
 
 
@@ -420,11 +420,7 @@ class BioRouterState extends State<BioContainer> {
     if(!await isAblePasswordToken()) {
       BootpayPrint(2);
       c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY;
-      if(isShowWebView == true) {
-        widget.webView?.requestPasswordForPay();
-      } else {
-        showWebView();
-      }
+      showWebView();
       return;
     }
 
