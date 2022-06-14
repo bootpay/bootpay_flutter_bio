@@ -48,6 +48,7 @@ class BioContainer extends StatefulWidget {
   BootpayDefaultCallback? onIssued;
   BootpayConfirmCallback? onConfirm;
   BootpayDefaultCallback? onDone;
+  bool? passwordMode;
 
 
   BioContainer({
@@ -61,7 +62,9 @@ class BioContainer extends StatefulWidget {
       this.onCloseHardware,
       this.onIssued,
       this.onConfirm,
-      this.onDone}); // BioContainer(this.webView, this.payload);
+      this.onDone,
+      this.passwordMode
+  }); // BioContainer(this.webView, this.payload);
 
   @override
   BioRouterState createState() => BioRouterState();
@@ -77,6 +80,8 @@ class BioRouterState extends State<BioContainer> {
 
   // final BioController c = Get.put(BioController());
   final BioController c = Get.find<BioController>();
+
+
 
   bool isShowWebView = false;
   String _selectedValue = "일시불";
@@ -97,6 +102,7 @@ class BioRouterState extends State<BioContainer> {
   void initState() {
     super.initState();
     // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+    c.isPasswordMode = widget.passwordMode ?? false;
     c.initValues();
     c.getWalletList(widget.payload?.userToken ?? "");
     createWebView();
@@ -414,7 +420,11 @@ class BioRouterState extends State<BioContainer> {
     if(!await isAblePasswordToken()) {
       BootpayPrint(2);
       c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY;
-      showWebView();
+      if(isShowWebView == true) {
+        widget.webView?.requestPasswordForPay();
+      } else {
+        showWebView();
+      }
       return;
     }
 

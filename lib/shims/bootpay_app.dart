@@ -14,7 +14,7 @@ import '../password_container.dart';
 
 class BootpayPlatform extends BootpayBioApi {
   BioContainer? bioContainer;
-  final BioController c = Get.put(BioController());
+  // final BioController c = Get.put(BioController());
 
   @override
   void requestPaymentBio(
@@ -33,10 +33,10 @@ class BootpayPlatform extends BootpayBioApi {
 
     if (context == null) return;
 
-    c.isPasswordMode = false;
+    // c.isPasswordMode = false;
 
     showModalBioContainer(key, payload, showCloseButton, closeButton, onCancel,
-        onError, onClose, onCloseHardware, onIssued, onConfirm, onDone, context);
+        onError, onClose, onCloseHardware, onIssued, onConfirm, onDone, context, false);
   }
 
   void showModalBioContainer(
@@ -51,7 +51,9 @@ class BootpayPlatform extends BootpayBioApi {
       BootpayDefaultCallback? onIssued,
       BootpayConfirmCallback? onConfirm,
       BootpayDefaultCallback? onDone,
-      BuildContext context) {
+      BuildContext context,
+      bool passwordMode
+      ) {
     bioContainer = BioContainer(
       key: key,
       payload: payload,
@@ -64,6 +66,7 @@ class BootpayPlatform extends BootpayBioApi {
       onIssued: onIssued,
       onConfirm: onConfirm,
       onDone: onDone,
+      passwordMode: passwordMode
     );
 
     showModalBottomSheet<void>(
@@ -96,11 +99,11 @@ class BootpayPlatform extends BootpayBioApi {
 
     if (context == null) return;
 
-    c.isPasswordMode = true;
+    // c.isPasswordMode = true;
 
 
     showModalBioContainer(key, payload, showCloseButton, closeButton, onCancel,
-        onError, onClose, onCloseHardware, onIssued, onConfirm, onDone, context);
+        onError, onClose, onCloseHardware, onIssued, onConfirm, onDone, context, true);
 
     // passwordContainer = PasswordContainer(
     //   key: key,
