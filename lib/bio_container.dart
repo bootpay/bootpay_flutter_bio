@@ -516,10 +516,15 @@ class BioRouterState extends State<BioContainer> {
 
       if(authenticated) {
         onAuthenticationSucceeded();
+      } else {
+        if(widget.onCancel != null) { widget.onCancel!('{"action":"BootpayCancel","status":-100,"message":"인증이 취소되었거나 실패하였습니다."}'); }
+        if(widget.onClose != null) { widget.onClose!(); }
+        BootpayBio().dismiss(context);
       }
     } on PlatformException catch (e) {
       if(widget.onError != null) { widget.onError!(e.toString()); }
       if(widget.onClose != null) { widget.onClose!(); }
+      BootpayBio().dismiss(context);
       print(e);
       BootpayPrint(e);
       // Widget.on

@@ -42,14 +42,14 @@ packages:
       name: bootpay
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.1.1"
+    version: "4.2.0"
   bootpay_bio:
     dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
-    version: "4.1.1"
+    version: "4.2.0"
   bootpay_webview_flutter:
     dependency: transitive
     description:
