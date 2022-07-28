@@ -19,6 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../bootpay_bio.dart';
 import '../config/bio_config.dart';
+import '../controller/bio_debounce_close_controller.dart';
 
 
 typedef void BootpayNextJobCallback(NextJob data);
@@ -36,16 +37,18 @@ class BootpayBioWebView extends WebView {
   final BootpayDefaultCallback? onCancel;
   final BootpayDefaultCallback? onError;
   final BootpayCloseCallback? onClose;
-  final BootpayCloseCallback? onCloseHardware;
+  // final BootpayCloseCallback? onCloseHardware;
   final BootpayDefaultCallback? onIssued;
   final BootpayConfirmCallback? onConfirm;
   final BootpayDefaultCallback? onDone;
+  BootpayProgressBarCallback? onProgressShow;
   final BootpayNextJobCallback? onNextJob;
   bool? showCloseButton = false;
   Widget? closeButton;
 
   WebView? webView;
   Completer<WebViewController>? _controller;
+
 
   BootpayBioWebView(
       {this.key,
@@ -54,7 +57,7 @@ class BootpayBioWebView extends WebView {
       this.onCancel,
       this.onError,
       this.onClose,
-      this.onCloseHardware,
+      // this.onCloseHardware,
       this.onIssued,
       this.onConfirm,
       this.onDone,
@@ -131,9 +134,17 @@ class BootpayBioWebView extends WebView {
     });
   }
 
+  void updateProgressShow(bool isShow) {
+    BootpayPrint("onProgressShow22 : $isShow");
+    if(onProgressShow != null) {
+      onProgressShow!(isShow);
+    }
+  }
+
   Future<void> addNewCard() async {
     String script = await BioConstants.getJSAddCard(payload!);
     BootpayPrint('addNewCard : $script');
+    updateProgressShow(true);
     _controller?.future.then((controller) {
       controller.evaluateJavascript(
           callJavascriptAsync(script)
@@ -145,6 +156,7 @@ class BootpayBioWebView extends WebView {
   Future<void> requestAddBioData() async {
     String script = await BioConstants.getJSBiometricAuthenticate(payload!);
     BootpayPrint('requestAddBioData : $script');
+    updateProgressShow(true);
     _controller?.future.then((controller) {
       controller.evaluateJavascript(
           callJavascriptAsync(script)
@@ -158,6 +170,7 @@ class BootpayBioWebView extends WebView {
 
     String script = await BioConstants.getJSBioOTPPay(payload!, otp, cardQuota ?? "0");
     BootpayPrint('requestBioForPay : $script');
+    updateProgressShow(true);
     _controller?.future.then((controller) {
       controller.evaluateJavascript(
           callJavascriptAsync(script)
@@ -169,6 +182,7 @@ class BootpayBioWebView extends WebView {
   Future<void> requestPasswordToken() async {
     String script = BioConstants.getJSPasswordToken(payload!);
     BootpayPrint('requestPasswordToken : $script');
+    updateProgressShow(true);
     _controller?.future.then((controller) {
       controller.evaluateJavascript(
           callJavascriptAsync(script)
@@ -181,6 +195,7 @@ class BootpayBioWebView extends WebView {
   Future<void> requestPasswordForPay() async {
     String script = await BioConstants.getJSPasswordPay(payload!);
     BootpayPrint('requestPasswordForPay : $script');
+    updateProgressShow(true);
     _controller?.future.then((controller) {
       controller.evaluateJavascript(
           callJavascriptAsync(script)
@@ -195,13 +210,21 @@ class BootpayBioWebView extends WebView {
 class _BootpayWebViewState extends State<BootpayBioWebView> {
 
   // final String INAPP_URL = 'https://inapp.bootpay.co.kr/3.3.3/production.html';
-  final String INAPP_URL = 'https://webview.bootpay.co.kr/4.1.0/';
+  final String INAPP_URL = 'https://webview.bootpay.co.kr/4.2.0/';
   bool isClosed = false;
   final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers = {
     Factory(() => EagerGestureRecognizer())
   };
 
   final BioController c = Get.find<BioController>();
+  // final BioDebounceCloseController closeController = Get.put(BioDebounceCloseController());
+
+
+
+  void bootpayClose() {
+    // closeController.bootpayClose(widget.onClose);
+  }
+
 
   @override
   void initState() {
@@ -268,76 +291,6 @@ class _BootpayWebViewState extends State<BootpayBioWebView> {
 
     return widget.webView!;
 
-    // return Stack(
-    //   children: [
-    //     isClosed == false ? WebView(
-    //       key: widget.key,
-    //       initialUrl: INAPP_URL,
-    //       javascriptMode: JavascriptMode.unrestricted,
-    //       onWebViewCreated: (WebViewController webViewController) {
-    //         widget._controller.complete(webViewController);
-    //       },
-    //       javascriptChannels: <JavascriptChannel>[
-    //         onCancel(context),
-    //         onError(context),
-    //         onClose(context),
-    //         onReady(context),
-    //         onConfirm(context),
-    //         onDone(context)
-    //       ].toSet(),
-    //       navigationDelegate: (NavigationRequest request) {
-    //         if(Platform.isAndroid)  return NavigationDecision.prevent;
-    //         else return NavigationDecision.navigate;
-    //       },
-    //
-    //       onPageFinished: (String url) {
-    //
-    //
-    //         if (url.startsWith(INAPP_URL)) {
-    //           widget._controller.future.then((controller) async {
-    //             for (String script in await BioConstants.getBootpayJSBeforeContentLoaded()) {
-    //               // controller.evaluateJavascript(script);
-    //               controller.runJavascript(script);
-    //             }
-    //             // controller.evaluateJavascript(getBootpayJS());
-    //             controller.runJavascript(getBootpayJS());
-    //           });
-    //         }
-    //
-    //         //네이버페이 일 경우 뒤로가기 버튼 제거 - 그러나 작동하지 않는다 (아마 팝업이라)
-    //         // if(url.startsWith("https://nid.naver.com/nidlogin.login")) {
-    //         //   widget._controller.future.then((controller) async {
-    //         //     controller.evaluateJavascript('window.document.getElementById("back").remove();');
-    //         //   });
-    //         // }
-    //       },
-    //       gestureNavigationEnabled: true,
-    //     ) : Container(),
-    //     // widget.showCloseButton == false ?
-    //     // Container() :
-    //     // widget.closeButton != null ?
-    //     // GestureDetector(
-    //     //   child: widget.closeButton!,
-    //     //   onTap: () => clickCloseButton(),
-    //     // ) :
-    //     // Padding(
-    //     //   padding: const EdgeInsets.all(5.0),
-    //     //   child: Container(
-    //     //     height: 40,
-    //     //     child: Row(
-    //     //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //     //       children: [
-    //     //         Expanded(child: Container()),
-    //     //         IconButton(
-    //     //             onPressed: () => clickCloseButton(),
-    //     //             icon: Icon(Icons.close, size: 35.0, color: Colors.black54),
-    //     //         ),
-    //     //       ],
-    //     //     ),
-    //     //   ),
-    //     // )
-    //   ],
-    // );
   }
 }
 
@@ -399,9 +352,10 @@ extension BootpayMethod on _BootpayWebViewState {
     if (widget.onCancel != null) {
       widget.onCancel!('{"action":"BootpayCancel","status":-100,"message":"사용자에 의한 취소"}');
     }
-    if (widget.onClose != null) {
-      widget.onClose!();
-    }
+    bootpayClose();
+    // if (widget.onClose != null) {
+    //   widget.onClose!();
+    // }
   }
 
   void removePaymentWindow() {
@@ -420,6 +374,7 @@ extension BootpayCallback on _BootpayWebViewState {
         name: 'BootpayCancel',
         onMessageReceived: (JavascriptMessage message) {
           BootpayPrint('BootpayCancel');
+          widget.updateProgressShow(false);
           c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
           if (this.widget.onCancel != null)
             this.widget.onCancel!(message.message);
@@ -431,7 +386,7 @@ extension BootpayCallback on _BootpayWebViewState {
         name: 'BootpayError',
         onMessageReceived: (JavascriptMessage message) {
           BootpayPrint('BootpayError: ${c.requestType}, ${message.message}');
-
+          widget.updateProgressShow(false);
           c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
 
           if (this.widget.onError != null)
@@ -459,7 +414,7 @@ extension BootpayCallback on _BootpayWebViewState {
     return JavascriptChannel(
         name: 'BootpayClose',
         onMessageReceived: (JavascriptMessage message) {
-
+          widget.updateProgressShow(false);
           BootpayPrint("BootpayClose: ${c.requestType.value}: ${message.message}");
 
 
@@ -494,8 +449,9 @@ extension BootpayCallback on _BootpayWebViewState {
             if (widget.onNextJob != null) widget.onNextJob!(job);
           } else  {
             if(BioConstants.REQUEST_BIO_FOR_PAY != c.requestType.value) {
-              if (widget.onClose != null) widget.onClose!();
-              BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+              bootpayClose();
+              // if (widget.onClose != null) widget.onClose!();
+              // BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
             }
 
           }
@@ -509,6 +465,7 @@ extension BootpayCallback on _BootpayWebViewState {
     return JavascriptChannel(
         name: 'BootpayReady',
         onMessageReceived: (JavascriptMessage message) {
+          widget.updateProgressShow(false);
           BootpayPrint('BootpayReady: ${c.requestType}, ${message.message}');
           if (this.widget.onIssued != null)
             this.widget.onIssued!(message.message);
@@ -521,6 +478,7 @@ extension BootpayCallback on _BootpayWebViewState {
         onMessageReceived: (JavascriptMessage message) {
           BootpayPrint('BootpayConfirm: ${c.requestType}, ${message.message}');
           if (this.widget.onConfirm != null) {
+            widget.updateProgressShow(true);
             bool goTransactionConfirm = this.widget.onConfirm!(message.message);
             if (goTransactionConfirm) {
               transactionConfirm();
@@ -533,6 +491,7 @@ extension BootpayCallback on _BootpayWebViewState {
     return JavascriptChannel(
         name: 'BootpayDone',
         onMessageReceived: (JavascriptMessage message) {
+          widget.updateProgressShow(false);
           BootpayPrint('onDone: ${c.requestType}, ${message.message}');
           if (this.widget.onDone != null) this.widget.onDone!(message.message);
         });
@@ -547,30 +506,39 @@ extension BootpayCallback on _BootpayWebViewState {
           final data = json.decode(message.message);
           switch(data["event"]) {
             case "cancel":
+              widget.updateProgressShow(false);
               if (this.widget.onCancel != null) this.widget.onCancel!(message.message);
-              if (this.widget.onClose != null) this.widget.onClose!();
-              BootpayBio().dismiss(context);
+              // if (this.widget.onClose != null) this.widget.onClose!();
+              bootpayClose();
+              // BootpayBio().dismiss(context);
               break;
             case "error":
+              widget.updateProgressShow(false);
               if (this.widget.onError != null) this.widget.onError!(message.message);
               if(this.widget.payload?.extra?.displayErrorResult != true) {
-                if (this.widget.onClose != null) this.widget.onClose!();
-                BootpayBio().dismiss(context);
+                // if (this.widget.onClose != null) this.widget.onClose!();
+                bootpayClose();
+                // BootpayBio().dismiss(context);
               }
               break;
             case "close":
-              if(this.widget.onClose != null) this.widget.onClose!();
-              BootpayBio().dismiss(context);
+              widget.updateProgressShow(false);
+              bootpayClose();
+              // if(this.widget.onClose != null) this.widget.onClose!();
+              // BootpayBio().dismiss(context);
               break;
             case "issued":
+              widget.updateProgressShow(false);
               if (this.widget.onIssued != null) this.widget.onIssued!(message.message);
               if(this.widget.payload?.extra?.displaySuccessResult != true) {
-                if (this.widget.onClose != null) this.widget.onClose!();
-                BootpayBio().dismiss(context);
+                bootpayClose();
+                // if (this.widget.onClose != null) this.widget.onClose!();
+                // BootpayBio().dismiss(context);
               }
               break;
             case "confirm":
               if (this.widget.onConfirm != null) {
+                widget.updateProgressShow(true);
                 bool goTransactionConfirm = this.widget.onConfirm!(message.message);
                 if (goTransactionConfirm) {
                   transactionConfirm();
@@ -578,10 +546,12 @@ extension BootpayCallback on _BootpayWebViewState {
               }
               break;
             case "done":
+              widget.updateProgressShow(false);
               if (this.widget.onDone != null) this.widget.onDone!(message.message);
               if(this.widget.payload?.extra?.displaySuccessResult != true) {
-                if (this.widget.onClose != null) this.widget.onClose!();
-                BootpayBio().dismiss(context);
+                bootpayClose();
+                // if (this.widget.onClose != null) this.widget.onClose!();
+                // BootpayBio().dismiss(context);
               }
               break;
           }

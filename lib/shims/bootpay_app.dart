@@ -13,6 +13,7 @@ import '../controller/bio_controller.dart';
 import '../password_container.dart';
 
 class BootpayPlatform extends BootpayBioApi {
+  bool isShowModal = false;
   BioContainer? bioContainer;
   // final BioController c = Get.put(BioController());
 
@@ -26,7 +27,7 @@ class BootpayPlatform extends BootpayBioApi {
       BootpayDefaultCallback? onCancel,
       BootpayDefaultCallback? onError,
       BootpayCloseCallback? onClose,
-      BootpayCloseCallback? onCloseHardware,
+      // BootpayCloseCallback? onCloseHardware,
       BootpayDefaultCallback? onIssued,
       BootpayConfirmCallback? onConfirm,
       BootpayDefaultCallback? onDone}) {
@@ -36,7 +37,7 @@ class BootpayPlatform extends BootpayBioApi {
     // c.isPasswordMode = false;
 
     showModalBioContainer(key, payload, showCloseButton, closeButton, onCancel,
-        onError, onClose, onCloseHardware, onIssued, onConfirm, onDone, context, false);
+        onError, onClose, onIssued, onConfirm, onDone, context, false);
   }
 
   void showModalBioContainer(
@@ -47,7 +48,7 @@ class BootpayPlatform extends BootpayBioApi {
       BootpayDefaultCallback? onCancel,
       BootpayDefaultCallback? onError,
       BootpayCloseCallback? onClose,
-      BootpayCloseCallback? onCloseHardware,
+      // BootpayCloseCallback? onCloseHardware,
       BootpayDefaultCallback? onIssued,
       BootpayConfirmCallback? onConfirm,
       BootpayDefaultCallback? onDone,
@@ -62,20 +63,24 @@ class BootpayPlatform extends BootpayBioApi {
       onCancel: onCancel,
       onError: onError,
       onClose: onClose,
-      onCloseHardware: onCloseHardware,
+      // onCloseHardware: onCloseHardware,
       onIssued: onIssued,
       onConfirm: onConfirm,
       onDone: onDone,
       passwordMode: passwordMode
     );
 
+    isShowModal = true;
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return SafeArea(child: bioContainer!);
+        // return SafeArea(child: bioContainer!);
+        return bioContainer!;
       },
     ).whenComplete(() {
+      isShowModal = false;
+      print("whenComplete : $isShowModal");
       // print('Hey there, I\'m calling after hide bottomSheet');
     });
   }
@@ -90,7 +95,7 @@ class BootpayPlatform extends BootpayBioApi {
       BootpayDefaultCallback? onCancel,
       BootpayDefaultCallback? onError,
       BootpayCloseCallback? onClose,
-      BootpayCloseCallback? onCloseHardware,
+      // BootpayCloseCallback? onCloseHardware,
       BootpayDefaultCallback? onIssued,
       BootpayConfirmCallback? onConfirm,
       BootpayDefaultCallback? onDone}) {
@@ -103,7 +108,7 @@ class BootpayPlatform extends BootpayBioApi {
 
 
     showModalBioContainer(key, payload, showCloseButton, closeButton, onCancel,
-        onError, onClose, onCloseHardware, onIssued, onConfirm, onDone, context, true);
+        onError, onClose, onIssued, onConfirm, onDone, context, true);
 
     // passwordContainer = PasswordContainer(
     //   key: key,
@@ -146,14 +151,10 @@ class BootpayPlatform extends BootpayBioApi {
 
   @override
   void dismiss(BuildContext context) {
-    if (bioContainer != null) {
+    if(isShowModal == true) {
       Navigator.of(context).pop();
-      bioContainer = null;
+      isShowModal = false; //webview에서 실행되는 쓰레드의 경우 중단되는 버그가 있어서 수행 후 상태변경
     }
-    // else if (passwordContainer != null) {
-    //   Navigator.of(context).pop();
-    //   passwordContainer = null;
-    // }
   }
 
   @override

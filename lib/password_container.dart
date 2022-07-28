@@ -44,7 +44,7 @@ class PasswordContainer extends StatefulWidget {
   BootpayDefaultCallback? onCancel;
   BootpayDefaultCallback? onError;
   BootpayCloseCallback? onClose;
-  BootpayCloseCallback? onCloseHardware;
+  // BootpayCloseCallback? onCloseHardware;
   BootpayDefaultCallback? onIssued;
   BootpayConfirmCallback? onConfirm;
   BootpayDefaultCallback? onDone;
@@ -58,7 +58,7 @@ class PasswordContainer extends StatefulWidget {
       this.onCancel,
       this.onError,
       this.onClose,
-      this.onCloseHardware,
+      // this.onCloseHardware,
       this.onIssued,
       this.onConfirm,
       this.onDone}); // BioContainer(this.webView, this.payload);
@@ -97,7 +97,7 @@ class PasswordContainerState extends State<PasswordContainer> {
       onCancel: widget.onCancel,
       onError: widget.onError,
       onClose: widget.onClose,
-      onCloseHardware: widget.onCloseHardware,
+      // onCloseHardware: widget.onCloseHardware,
       onIssued: widget.onIssued,
       onConfirm: widget.onConfirm,
       onDone: widget.onDone,
@@ -176,7 +176,7 @@ class PasswordContainerState extends State<PasswordContainer> {
         //   return Future.value(false);
         // }
         // return Future.value(true);
-        if(widget.webView?.onCloseHardware != null) widget.webView?.onCloseHardware!();
+        // if(widget.webView?.onCloseHardware != null) widget.webView?.onCloseHardware!();
         return Future.value(true);
       },
     );

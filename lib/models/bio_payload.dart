@@ -36,6 +36,7 @@ class BioPayload  {
   String? token = '';
   String? authenticateType = '';
   String? userToken = '';
+  String? easyType = 'easy_subscribe';
   Map<String, dynamic>? metadata = {};
 
   get priceComma => NumberFormat('###,###,###,###').format(price) + '원';
@@ -108,6 +109,7 @@ class BioPayload  {
       'wallet_id': walletId,
       'token': token,
       'authenticate_type': authenticateType,
+      'easy_type': easyType,
       'user_token': userToken
     };
     if(this.methods != null && this.methods!.length > 0) {
@@ -153,6 +155,7 @@ class BioPayload  {
      token: '$token', 
      authenticate_type: '$authenticateType', 
      user_token: '$userToken',       
+     easy_type: '$easyType',
      metadata: ${getMetadataStringAndroid()},
      extra: ${json.encode(extra?.toJson()).replaceAll("\"", "'")},
      user: ${user.toString()},

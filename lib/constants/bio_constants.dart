@@ -144,6 +144,7 @@ class BioConstants {
     if(payload.price! < 50000) {
       payload.extra?.cardQuota = "0";
     }
+    payload.easyType = "easy_subscribe";
 
     return "BootpaySDK.requestWalletPayment(" +
         payload.toString() +
@@ -193,6 +194,7 @@ class BioConstants {
     // }
     payload.extra ??= Extra();
     payload.extra?.cardQuota = cardQuota;
+    payload.easyType = "easy_subscribe";
 
     return "BootpaySDK.requestWalletPayment(" +
         payload.toString() +

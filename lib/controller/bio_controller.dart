@@ -21,7 +21,7 @@ class BioController extends GetxController {
   var resWallet = ResWalletList().obs;
   var requestType = BioConstants.REQUEST_TYPE_NONE.obs;
   var isPasswordMode = false; //비밀번호 간편결제 호출인지
-  var selectedCardIndex = 0;
+  var selectedCardIndex = -1;
 
   final ApiProvider _provider = ApiProvider();
   final List<String> cardQuotaList = ['일시불', "2개월", "3개월", "4개월", "5개월", "6개월",

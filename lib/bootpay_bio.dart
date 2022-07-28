@@ -1,4 +1,5 @@
 import 'package:bootpay/bootpay.dart';
+import 'package:bootpay_bio/config/bio_config.dart';
 import 'package:flutter/material.dart';
 
 import 'bootpay_bio_api.dart';
@@ -36,7 +37,7 @@ class BootpayBio extends BootpayBioApi{
         BootpayDefaultCallback? onCancel,
         BootpayDefaultCallback? onError,
         BootpayCloseCallback? onClose,
-        BootpayCloseCallback? onCloseHardware,
+        // BootpayCloseCallback? onCloseHardware,
         BootpayDefaultCallback? onIssued,
         BootpayConfirmCallback? onConfirm,
         BootpayDefaultCallback? onDone}) {
@@ -50,7 +51,7 @@ class BootpayBio extends BootpayBioApi{
         onError: onError,
         onClose: onClose,
         onIssued: onIssued,
-        onCloseHardware: onCloseHardware,
+        // onCloseHardware: onCloseHardware,
         onConfirm: onConfirm,
         onDone: onDone
     );
@@ -67,7 +68,7 @@ class BootpayBio extends BootpayBioApi{
         BootpayDefaultCallback? onCancel,
         BootpayDefaultCallback? onError,
         BootpayCloseCallback? onClose,
-        BootpayCloseCallback? onCloseHardware,
+        // BootpayCloseCallback? onCloseHardware,
         BootpayDefaultCallback? onIssued,
         BootpayConfirmCallback? onConfirm,
         BootpayDefaultCallback? onDone}) {
@@ -81,7 +82,7 @@ class BootpayBio extends BootpayBioApi{
         onError: onError,
         onClose: onClose,
         onIssued: onIssued,
-        onCloseHardware: onCloseHardware,
+        // onCloseHardware: onCloseHardware,
         onConfirm: onConfirm,
         onDone: onDone
     );
@@ -99,6 +100,7 @@ class BootpayBio extends BootpayBioApi{
 
   @override
   void dismiss(BuildContext context) {
+    BootpayPrint("dismiss ${_platform}");
     _platform.dismiss(context);
   }
 }

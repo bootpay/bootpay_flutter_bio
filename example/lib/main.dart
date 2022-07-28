@@ -27,7 +27,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   ApiProvider _provider = ApiProvider();
   BioPayload bioPayload = BioPayload();
-  String _data = ""; // 서버승인을 위해 사용되기 위한 변수
 
   final String PAY_TYPE_BIO = "bio";
   final String PAY_TYPE_PASSWORD = "password";
@@ -206,7 +205,7 @@ class _MyAppState extends State<MyApp> {
     BootpayPrint("getRestToken: ${res.body}");
 
     var user = User();
-    user.id = '123411aaaaaaaaaaaabd4ss11';
+    user.id = '123411aaaaaaaaaa1aabd4ss1215678211252212531456';
     user.gender = 1;
     user.email = 'test1234@gmail.com';
     user.phone = '01012345678';
@@ -304,10 +303,14 @@ class _MyAppState extends State<MyApp> {
         print('------- onClose');
         // BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
         //TODO - 원하시는 라우터로 페이지 이동
+        BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+
+        // print('------- onClose22');
+        // Navigator.of(context).pop();
       },
-      onCloseHardware: () {
-        print('------- onCloseHardware');
-      },
+      // onCloseHardware: () {
+      //   print('------- onCloseHardware');
+      // },
       onIssued: (String data) {
         print('------- onIssued: $data');
       },
@@ -343,12 +346,13 @@ class _MyAppState extends State<MyApp> {
       },
       onClose: () {
         print('------- onClose');
-        // BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+        BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+
         //TODO - 원하시는 라우터로 페이지 이동
       },
-      onCloseHardware: () {
-        print('------- onCloseHardware');
-      },
+      // onCloseHardware: () {
+      //   print('------- onCloseHardware');
+      // },
       onIssued: (String data) {
         print('------- onIssued: $data');
       },

@@ -26,6 +26,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:otp/otp.dart';
 
 import 'config/bio_config.dart';
+import 'controller/bio_debounce_close_controller.dart';
 
 
 enum _SupportState {
@@ -35,6 +36,8 @@ enum _SupportState {
 }
 
 class BioContainer extends StatefulWidget {
+
+
   Key? key;
   BootpayBioWebView? webView;
   BioPayload? payload;
@@ -44,7 +47,7 @@ class BioContainer extends StatefulWidget {
   BootpayDefaultCallback? onCancel;
   BootpayDefaultCallback? onError;
   BootpayCloseCallback? onClose;
-  BootpayCloseCallback? onCloseHardware;
+  // BootpayCloseCallback? onCloseHardware;
   BootpayDefaultCallback? onIssued;
   BootpayConfirmCallback? onConfirm;
   BootpayDefaultCallback? onDone;
@@ -59,7 +62,7 @@ class BioContainer extends StatefulWidget {
       this.onCancel,
       this.onError,
       this.onClose,
-      this.onCloseHardware,
+      // this.onCloseHardware,
       this.onIssued,
       this.onConfirm,
       this.onDone,
@@ -75,6 +78,8 @@ class BioContainer extends StatefulWidget {
 }
 
 class BioRouterState extends State<BioContainer> {
+  // final BioDebounceCloseController closeController = Get.put(BioDebounceCloseController());
+
   DateTime? currentBackPressTime = DateTime.now();
 
 
@@ -82,8 +87,11 @@ class BioRouterState extends State<BioContainer> {
   // final BioController c = Get.find<BioController>();
 
 
+  int currentCardIndex = 0;
 
   bool isShowWebView = false;
+  bool isShowWebViewHalfSize = false;
+
   String _selectedValue = "일시불";
 
   // BootpayBioWebView? webView;
@@ -104,7 +112,9 @@ class BioRouterState extends State<BioContainer> {
     // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
     c.isPasswordMode = widget.passwordMode ?? false;
     c.initValues();
-    c.getWalletList(widget.payload?.userToken ?? "");
+    c.getWalletList(widget.payload?.userToken ?? "").then((value) {
+      if(value) updateSelectedCardIndexForButton();
+    });
     createWebView();
 
     auth.isDeviceSupported().then(
@@ -113,6 +123,14 @@ class BioRouterState extends State<BioContainer> {
           : _SupportState.unsupported),
     );
   }
+
+
+  @override
+  void dispose() {
+    bootpayClose();
+    super.dispose();
+  }
+
 
   createWebView() {
     widget.webView = BootpayBioWebView(
@@ -123,91 +141,115 @@ class BioRouterState extends State<BioContainer> {
       onCancel: widget.onCancel,
       onError: widget.onError,
       onClose: widget.onClose,
-      onCloseHardware: widget.onCloseHardware,
+      // onCloseHardware: widget.onCloseHardware,
       onIssued: widget.onIssued,
       onConfirm: widget.onConfirm,
       onDone: widget.onDone,
       onNextJob: onNextJob,
     );
+    widget.webView?.onProgressShow = (isShow) {
+      updateProgressShow(isShow);
+    };
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
 
-    double cardViewHeight = MediaQuery.of(context).size.width * 0.6;
+  void bootpayClose() {
+    // closeController.bootpayClose(widget.onClose);
+  }
 
-    return WillPopScope(
+  void updateProgressShow(bool isShow) {
+    // BootpayPrint("onProgressShow11 : $isShow");
+    // setState(() {
+    //   isProgressShow = isShow;
+    // });
+  }
 
-      child: isShowWebView == false ? Wrap(
-        children: [
-          Container(
-            height: 60,
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Row(
-                children: [
-                  SizedBox(width: 50),
-                  Expanded(child: Text(widget.payload?.pg ?? '', textAlign: TextAlign.center, style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w700))),
-                  Container(
-                      width: 50,
-                      child: IconButton(
-                        icon: Image.asset('images/close.png', package: 'bootpay_bio'),
-                        // icon: Image.asset('assets/close.png'),
-                        iconSize: 30,
-                        onPressed: () {
-                          if (widget.onCancel != null) {
-                            widget.onCancel!('{"action":"BootpayCancel","status":-100,"message":"사용자에 의한 취소"}');
-                          }
-                          if (widget.onClose != null) {
-                            widget.onClose!();
-                          }
-                          BootpayBio().dismiss(context);
-                          // Navigator.of(context).pop();
-                        },
-                      )
-                  ),
-                ],
-              ),
+  Widget cardContainer(double cardViewHeight) {
+    BootpayPrint("isShowWebViewHalfSize : $isShowWebViewHalfSize");
+    // if(isShowWebViewHalfSize) {
+    //   return  SizedBox(
+    //     height: cardViewHeight,
+    //     // child: widget.webView!,
+    //     child: widget.webView!,
+    //   );
+    // }
+
+    return Column(
+      children: [
+
+        Container(
+          height: 60,
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Row(
+              children: [
+                SizedBox(width: 50),
+                Expanded(child: Text(widget.payload?.pg ?? '', textAlign: TextAlign.center, style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w700))),
+                Container(
+                    width: 50,
+                    child: IconButton(
+                      icon: Image.asset('images/close.png', package: 'bootpay_bio'),
+                      // icon: Image.asset('assets/close.png'),
+                      iconSize: 30,
+                      onPressed: () {
+                        if (widget.onCancel != null) {
+                          widget.onCancel!('{"action":"BootpayCancel","status":-100,"message":"사용자에 의한 취소"}');
+                        }
+                        bootpayClose();
+                        // if (widget.onClose != null) {
+                        //   widget.onClose!();
+                        // }
+                        BootpayBio().dismiss(context);
+                        // Navigator.of(context).pop();
+                      },
+                    )
+                ),
+              ],
             ),
           ),
-          Container(
+        ),
+        Container(
             height: 1,
             color: Colors.black12
+        ),
+        Container(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: ListView.builder(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+
+                itemCount: (widget.payload?.prices?.length ?? 0) + 2,
+                // separatorBuilder: (BuildContext context, int index) => Divider(),
+
+                itemBuilder: (BuildContext context, int index) {
+
+                  double topPadding = 20.0;
+                  if(index != 0) { topPadding = 6.0; }
+                  double bottomPadding = 6.0;
+                  if(index == (widget.payload?.prices?.length ?? 0) + 1) { bottomPadding = 20.0; }
+
+                  return Container(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 0.0, right: 0.0, top: topPadding, bottom: bottomPadding),
+                      child: Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            leftWidget(index, (widget.payload?.prices?.length ?? 0) + 2),
+                            rightWidget(index, (widget.payload?.prices?.length ?? 0) + 2)
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+
           ),
-          Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: ListView.builder(
-              shrinkWrap: true,
-
-              itemCount: (widget.payload?.prices?.length ?? 0) + 2,
-              // separatorBuilder: (BuildContext context, int index) => Divider(),
-              itemBuilder: (BuildContext context, int index) {
-
-                double topPadding = 20.0;
-                if(index != 0) { topPadding = 6.0; }
-                double bottomPadding = 6.0;
-                if(index == (widget.payload?.prices?.length ?? 0) + 1) { bottomPadding = 20.0; }
-
-                return Padding(
-                  padding: EdgeInsets.only(left: 0.0, right: 0.0, top: topPadding, bottom: bottomPadding),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      leftWidget(index, (widget.payload?.prices?.length ?? 0) + 2),
-                      rightWidget(index, (widget.payload?.prices?.length ?? 0) + 2)
-                    ],
-                  ),
-                );
-              }),
-
-            ),
-          ),
-          Obx(() =>
+        ),
+        Obx(() =>
             Container(
               color: Colors.black12,
               child: Padding(
@@ -219,7 +261,16 @@ class BioRouterState extends State<BioContainer> {
                     options: CarouselOptions(
                       aspectRatio: 2.0,
                       enlargeCenterPage: true,
+                      onPageChanged: (index, reason) {
+                        BootpayPrint("onPageChanged : $index, $reason");
+                        // if(c.resWallet.value.wallets.length)
+                        setState(() {
+                          // c.selectedCardIndex = c.resWallet.value.wallets.length - (index + 1);
+                          currentCardIndex = index;
 
+                        });
+
+                      }
                     ),
 
                     items: c.resWallet.value.wallets.map((e) => cardWidget(e)).toList() +  [
@@ -250,8 +301,8 @@ class BioRouterState extends State<BioContainer> {
                       Container(
                         // height: 50,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4.0),
-                          color: CardCode.COLOR_BLUE
+                            borderRadius: BorderRadius.circular(4.0),
+                            color: CardCode.COLOR_BLUE
                         ),
                         child: Material(
                             color: Colors.transparent,
@@ -276,10 +327,10 @@ class BioRouterState extends State<BioContainer> {
                 ),
               ),
             ),
-          ),
-          isShowQuotaSelectBox ? Column(
-            children: [
-              Padding(
+        ),
+        isShowQuotaSelectBox ? Column(
+          children: [
+            Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 15.0),
                 child: DropdownButtonFormField(
                   decoration: const InputDecoration(
@@ -298,52 +349,118 @@ class BioRouterState extends State<BioContainer> {
                     c.setCardQuota(_selectedValue);
                   },
                 )
-              ),
-              SizedBox(height: 60)
-            ],
+            ),
+            SizedBox(height: 60)
+          ],
 
-          ) : Container(),
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Container(
+        ) : Container(),
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Stack(
+            children: [
+              Container(
                 height: 50,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4.0),
-                  color: CardCode.COLOR_BLUE
+                    borderRadius: BorderRadius.circular(4.0),
+                    color: CardCode.COLOR_BLUE,
                 ),
                 child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () => startPayWithSelectedCard(),
-                      child: const Center(child: Text('결제하기', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16.0)))
-                  )
+                    color: Colors.transparent,
+                    child: InkWell(
+                        onTap: () {
+                          clickCardButton();
+                        },
+                        child: Center(child: Text(cardButtonTitle(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16.0)))
+                    )
                 ),
               ),
-            ),
+              isShowWebViewHalfSize == true ? SizedBox(
+                height: 50,
+                child: Opacity(
+                    opacity: 0.2,
+                    child: widget.webView
+                ),
+              ) : Container(),
+              isShowWebViewHalfSize == true ? const Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 7.0),
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  )
+              ) : Container()
+            ],
           ),
-        ],
-      ) : Container(
-        child: Column(
-          children: [
-            Container(height: 30.0, color: Colors.white),
-            Expanded(
-              child: widget.webView!,
-            ),
-            Container(height: 10.0, color: Colors.white),
-          ],
         ),
+        SizedBox(height: 20)
+      ],
+    );
+
+  }
+
+  String cardButtonTitle() {
+    int index = c.resWallet.value.wallets.length - currentCardIndex;
+    if(index == 0 ) {
+      return "새로운 카드 등록하기";
+    } else if(index == -1) {
+      return "다른 결제수단으로 결제하기";
+    } else {
+      return "이 카드로 결제하기";
+    }
+  }
+
+  void clickCardButton() {
+    int index = c.resWallet.value.wallets.length - currentCardIndex;
+    if(index == 0 ) {
+      addNewCard();
+    } else if(index == -1) {
+      goTotalPay();
+    } else {
+      c.selectedCardIndex = currentCardIndex;
+      startPayWithSelectedCard();
+      // if(c.selectedCardIndex >= 0) {
+      //   startPayWithSelectedCard();
+      // }
+
+      // return "이 카드로 결제하기";
+    }
+  }
+
+
+  Widget webviewContainer(BuildContext context) {
+    double height = MediaQuery.of(context).size.height - 50;
+
+    return Container(
+      height: height,
+      // child: widget.webView!,
+      child: Column(
+        children: [
+          // Container(height: 10.0, color: Colors.white),
+          Expanded(
+            child: widget.webView!,
+          ),
+          Container(height: 20.0, color: Colors.white),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+
+    BootpayPrint("build call, $isShowWebView, $isShowWebViewHalfSize");
+
+    double cardViewHeight = MediaQuery.of(context).size.width * 0.6;
+
+    return WillPopScope(
+      child: Wrap(
+        children: [
+          isShowWebView == false || isShowWebViewHalfSize == true ? cardContainer(cardViewHeight) : webviewContainer(context)
+        ],
       ),
       onWillPop: () async {
-        // DateTime now = DateTime.now();
-        // if (now.difference(currentBackPressTime!) > Duration(seconds: 2)) {
-        //   currentBackPressTime = now;
-        //   if(widget.webView?.onCloseHardware != null) widget.webView?.onCloseHardware!();
-        //   Fluttertoast.showToast(msg: "\'뒤로\' 버튼을 한번 더 눌러주세요.");
-        //   return Future.value(false);
-        // }
-        // return Future.value(true);
-        if(widget.webView?.onCloseHardware != null) widget.webView?.onCloseHardware!();
+        // if(widget.webView?.onCloseHardware != null) widget.webView?.onCloseHardware!();
         return Future.value(true);
       },
     );
@@ -352,11 +469,12 @@ class BioRouterState extends State<BioContainer> {
   addNewCard() async {
     BootpayPrint('addNewCard');
 
-    if(!await isAblePasswordToken()) {
-      c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_FOR_ADD_CARD;
-      showWebView();
-      return;
-    }
+
+    // if(!await isAblePasswordToken()) {
+    //   c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_FOR_ADD_CARD;
+    //   showWebView();
+    //   return;
+    // }
     c.requestType.value = BioConstants.REQUEST_ADD_CARD;
     if(!isShowWebView) {
       showWebView();
@@ -415,6 +533,7 @@ class BioRouterState extends State<BioContainer> {
 
   requestPasswordForPay() async {
     BootpayPrint("requestPasswordForPay call");
+    updateProgressShow(true);
 
     // showWebView();
     if(!await isAblePasswordToken()) {
@@ -441,6 +560,8 @@ class BioRouterState extends State<BioContainer> {
   }
 
   requestAddBioData(int type) {
+    updateProgressShow(true);
+
     c.requestType.value = type;
     if(isShowWebView == true) {
       widget.webView?.requestAddBioData();
@@ -518,14 +639,15 @@ class BioRouterState extends State<BioContainer> {
         onAuthenticationSucceeded();
       } else {
         if(widget.onCancel != null) { widget.onCancel!('{"action":"BootpayCancel","status":-100,"message":"인증이 취소되었거나 실패하였습니다."}'); }
-        if(widget.onClose != null) { widget.onClose!(); }
+        bootpayClose();
+        // if(widget.onClose != null) { widget.onClose!(); }
         BootpayBio().dismiss(context);
       }
     } on PlatformException catch (e) {
       if(widget.onError != null) { widget.onError!(e.toString()); }
-      if(widget.onClose != null) { widget.onClose!(); }
+      bootpayClose();
+      // if(widget.onClose != null) { widget.onClose!(); }
       BootpayBio().dismiss(context);
-      print(e);
       BootpayPrint(e);
       // Widget.on
     }
@@ -584,10 +706,21 @@ class BioRouterState extends State<BioContainer> {
     // else if()
   }
 
+  updateSelectedCardIndexForButton() {
+    // if(c.resWallet.value.wallets.isNotEmpty) {
+    //   if(c.selectedCardIndex < 0) {
+    //     setState(() {
+    //       c.selectedCardIndex = 0;
+    //     });
+    //   }
+    // }
+  }
+
   getWalletList(bool requestBioPay) async {
     String userToken = widget.payload?.userToken ?? '';
 
     await c.getWalletList(userToken);
+    updateSelectedCardIndexForButton();
 
     if(requestBioPay == true) {
       requestBioForPay();
@@ -611,6 +744,9 @@ class BioRouterState extends State<BioContainer> {
   }
 
   requestBioForPay() async {
+    // isProgressShow
+    updateProgressShow(true);
+
     final prefs = await SharedPreferences.getInstance();
     String secretKey = prefs.getString("biometric_secret_key") ?? '';
     // int serverUnixTime = prefs.getInt("server_unixtime") ?? 0;
@@ -619,14 +755,15 @@ class BioRouterState extends State<BioContainer> {
 
     c.otp = getOTPValue(secretKey, serverUnixTime);
 
-    BootpayPrint("key: $secretKey, time: $serverUnixTime, otp: ${c.otp}");
+    BootpayPrint("key: $secretKey, time: $serverUnixTime, otp: ${c.otp}, $isShowWebView");
 
     c.requestType.value = BioConstants.REQUEST_BIO_FOR_PAY;
     // widget.webView?.requestBioForPay(c.otp, null);
     if(isShowWebView == true) {
       widget.webView?.requestBioForPay(c.otp, null);
     } else {
-      showWebView();
+      // isShowWebViewHalfSize = true;
+      showWebView(isShowWebViewHalf: true);
     }
     // showWebView();
   }
@@ -677,18 +814,23 @@ class BioRouterState extends State<BioContainer> {
     showWebView();
   }
 
-  showWebView() {
+  showWebView({bool? isShowWebViewHalf}) {
     if(isShowWebView == false) {
       setState(() {
         isShowWebView = true;
+        if(isShowWebViewHalf != null) {
+          isShowWebViewHalfSize = isShowWebViewHalf;
+        }
       });
     }
+    BootpayPrint("isShowWebview : $isShowWebView, $isShowWebViewHalfSize");
   }
 
   showCardView() {
     if(isShowWebView == true) {
       setState(() {
         isShowWebView = false;
+        isShowWebViewHalfSize = false;
       });
     }
   }
