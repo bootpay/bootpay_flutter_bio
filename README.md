@@ -4,6 +4,14 @@
 * PG 결제창 연동은 클라이언트 라이브러리에서 수행됩니다. (Javascript, Android, iOS, React Native, Flutter 등)
 * 결제 검증 및 취소, 빌링키 발급, 본인인증 등의 수행은 서버사이드에서 진행됩니다. (Java, PHP, Python, Ruby, Node.js, Go, ASP.NET 등)
 
+
+## Bootpay 버전안내
+이 모듈은 android, ios를 지원합니다.
+android os 23, ios os 14 부터 사용 가능합니다.
+
+이 모듈은 [Bootpay V2](https://docs.bootpay.co.kr/?front=android&backend=nodejs#migration-feature) 입니다.
+
+
 ## 기능
 
 1. ios/android 지원
@@ -116,7 +124,6 @@ class MainActivity: FlutterFragmentActivity() {
 ![bootpay_flutter_password](https://raw.githubusercontent.com/bootpay/git-open-resources/main/flutter_password.gif)
 
 ```dart 
-
 import 'package:bootpay_bio/bootpay_bio.dart';
 import 'package:bootpay_bio/config/bio_config.dart';
 import 'package:bootpay_bio/constants/bio_constants.dart';
@@ -127,6 +134,8 @@ import 'dart:async';
 
 import 'package:bootpay/model/stat_item.dart';
 import 'package:bootpay/model/user.dart';
+import 'package:bootpay/model/item.dart';
+import 'package:bootpay/model/extra.dart';
 
 import 'deprecated/api_provider.dart';
 import 'package:bootpay/bootpay.dart';
@@ -144,7 +153,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   ApiProvider _provider = ApiProvider();
   BioPayload bioPayload = BioPayload();
-  String _data = ""; // 서버승인을 위해 사용되기 위한 변수
+
+  final String PAY_TYPE_BIO = "bio";
+  final String PAY_TYPE_PASSWORD = "password";
 
   String get applicationId {
     if(BioConstants.DEBUG) {
@@ -175,14 +186,23 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         body: Builder(builder: (BuildContext context) {
-          return Container(
-            color: Colors.green,
-            child: Center(
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Center(
                 child: TextButton(
-                  onPressed: () => goBootpayTest(context),
-                  child: Text('부트페이 결제테스트'),
-                )
-            ),
+                  onPressed: () => goBootpayTest(context, PAY_TYPE_BIO),
+                  child: Text('생체인식 결제 테스트'),
+                ),
+              ),
+              Center(
+                child: TextButton(
+                  onPressed: () => goBootpayTest(context, PAY_TYPE_PASSWORD),
+                  child: Text('비밀번호 간편결제 테스트'),
+                ),
+              ),
+            ],
           );
         }),
       ),
@@ -192,8 +212,8 @@ class _MyAppState extends State<MyApp> {
 
   //통계용 함수
   bootpayAnalyticsUserTrace() async {
-    String? ver;
-    if(kIsWeb) ver = '1.0'; //web 일 경우 버전 지정, 웹이 아닌 android, ios일 경우 package_info 통해 자동으로 생성
+    // String? ver;
+    // if(kIsWeb) ver = '1.0'; //web 일 경우 버전 지정, 웹이 아닌 android, ios일 경우 package_info 통해 자동으로 생성
 
 
     await Bootpay().userTrace(
@@ -203,14 +223,13 @@ class _MyAppState extends State<MyApp> {
         birth: '19941014',
         area: '서울',
         applicationId: applicationId,
-        ver: ver
     );
   }
 
   //통계용 함수
   bootpayAnalyticsPageTrace() async {
-    String? ver;
-    if(kIsWeb) ver = '1.0'; //web 일 경우 버전 지정, 웹이 아닌 android, ios일 경우 package_info 통해 자동으로 생성
+    // String? ver;
+    // if(kIsWeb) ver = '1.0'; //web 일 경우 버전 지정, 웹이 아닌 android, ios일 경우 package_info 통해 자동으로 생성
 
     StatItem item1 = StatItem();
     item1.itemName = "미키 마우스"; // 주문정보에 담길 상품명
@@ -233,25 +252,24 @@ class _MyAppState extends State<MyApp> {
         pageType: 'sub_page_1234',
         applicationId: applicationId,
         userId: 'user_1234',
-        items: items,
-        ver: ver
+        items: items
     );
   }
 
   //결제용 데이터 init
   bioDataInit() {
-    BootItem item1 = BootItem();
+    Item item1 = Item();
     item1.name = "미키 마우스"; // 주문정보에 담길 상품명
     item1.qty = 1; // 해당 상품의 주문 수량
     item1.id = "ITEM_CODE_MOUSE"; // 해당 상품의 고유 키
     item1.price = 500; // 상품의 가격
 
-    BootItem item2 = BootItem();
+    Item item2 = Item();
     item2.name = "키보드"; // 주문정보에 담길 상품명
     item2.qty = 1; // 해당 상품의 주문 수량
     item2.id = "ITEM_CODE_KEYBOARD"; // 해당 상품의 고유 키
     item2.price = 500; // 상품의 가격
-    List<BootItem> itemList = [item1, item2];
+    List<Item> itemList = [item1, item2];
 
     if(BioConstants.DEBUG) {
       bioPayload.webApplicationId = '5b9f51264457636ab9a07cdb'; // web application id
@@ -263,8 +281,8 @@ class _MyAppState extends State<MyApp> {
       bioPayload.iosApplicationId = '5b8f6a4d396fa665fdc2b5e9'; // ios application id
     }
 
-    bioPayload.pg = 'nicepay';
-    bioPayload.method = 'card';
+    bioPayload.pg = '나이스페이';
+    bioPayload.method = '카드';
     // payload.methods = ['card', 'phone', 'vbank', 'bank', 'kakao'];
     bioPayload.orderName = '테스트 상품'; //결제할 상품명
     bioPayload.price = 1000.0; //정기결제시 0 혹은 주석
@@ -285,7 +303,7 @@ class _MyAppState extends State<MyApp> {
     user.phone = "010-1234-5678";
     user.addr = '서울시 동작구 상도로 222';
 
-    BootExtra extra = BootExtra(); // 결제 옵션
+    Extra extra = Extra(); // 결제 옵션
     extra.appScheme = 'bootpayFlutterExample';
     extra.cardQuota = "3";
     // extra.clo
@@ -298,7 +316,7 @@ class _MyAppState extends State<MyApp> {
 
 
   //버튼클릭시 부트페이 결제요청 실행
-  Future<void> goBootpayTest(BuildContext context) async {
+  Future<void> goBootpayTest(BuildContext context, String payType) async {
     String restApplicationId = "";
     String pk = "";
     if(BioConstants.DEBUG) {
@@ -313,7 +331,7 @@ class _MyAppState extends State<MyApp> {
     BootpayPrint("getRestToken: ${res.body}");
 
     var user = User();
-    user.id = '123411ad122dd1123';
+    user.id = '123411aaaaaaaaaa1aabd4ss12156782112522125314567';
     user.gender = 1;
     user.email = 'test1234@gmail.com';
     user.phone = '01012345678';
@@ -323,23 +341,23 @@ class _MyAppState extends State<MyApp> {
 
     res = await _provider.getEasyPayUserToken(res.body['access_token'], user);
     BootpayPrint("getEasyPayUserToken: ${res.body}");
-    goBootpayRequest(context, res.body["user_token"], user);
+    goBootpayRequest(context, res.body["user_token"], user, payType);
   }
 
-  void goBootpayRequest(BuildContext context, String easyUserToken, User user) {
+  void goBootpayRequest(BuildContext context, String easyUserToken, User user, String payType) {
 
-    BootItem item1 = BootItem();
+    Item item1 = Item();
     item1.name = "미키 마우스"; // 주문정보에 담길 상품명
     item1.qty = 1; // 해당 상품의 주문 수량
     item1.id = "ITEM_CODE_MOUSE"; // 해당 상품의 고유 키
     item1.price = 500; // 상품의 가격
 
-    BootItem item2 = BootItem();
+    Item item2 = Item();
     item2.name = "키보드"; // 주문정보에 담길 상품명
     item2.qty = 1; // 해당 상품의 주문 수량
     item2.id = "ITEM_CODE_KEYBOARD"; // 해당 상품의 고유 키
     item2.price = 500; // 상품의 가격
-    List<BootItem> itemList = [item1, item2];
+    List<Item> itemList = [item1, item2];
 
     var bioPayload = BioPayload();
     bioPayload.userToken = easyUserToken;
@@ -354,7 +372,7 @@ class _MyAppState extends State<MyApp> {
     }
 
 
-    bioPayload.pg = 'payapp';
+    bioPayload.pg = '페이앱';
     // bioPayload.method = 'card';
     // payload.methods = ['card', 'phone', 'vbank', 'bank', 'kakao'];
     bioPayload.orderName = '플리츠레이어 카라숏원피스'; //결제할 상품명
@@ -370,7 +388,7 @@ class _MyAppState extends State<MyApp> {
     bioPayload.items = itemList; // 상품정보 배열
 
 
-    BootExtra extra = BootExtra(); // 결제 옵션
+    Extra extra = Extra(); // 결제 옵션
     extra.appScheme = 'bootpayFlutterExample';
     extra.cardQuota = "3";
 
@@ -384,9 +402,66 @@ class _MyAppState extends State<MyApp> {
     ];
 
 
-    BootpayBio().request(
+    // BootpayPrint(bioPayload.toString());
+
+    if(payType == PAY_TYPE_BIO) {
+      requestPaymentBio(context, bioPayload);
+    } else {
+      requestPaymentPassword(context, bioPayload);
+    }
+  }
+
+  requestPaymentBio(BuildContext context, BioPayload payload) {
+    // BootpayPrint(bioPayload.toString());
+
+    BootpayBio().requestPaymentBio(
       context: context,
-      payload: bioPayload,
+      payload: payload,
+      showCloseButton: false,
+      // closeButton: Icon(Icons.close, size: 35.0, color: Colors.black54),
+      onCancel: (String data) {
+        print('------- onCancel: $data');
+      },
+      onError: (String data) {
+        print('------- onError: $data');
+      },
+      onClose: () {
+        print('------- onClose');
+        // BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+        //TODO - 원하시는 라우터로 페이지 이동
+        BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+
+        // print('------- onClose22');
+        // Navigator.of(context).pop();
+      },
+      // onCloseHardware: () {
+      //   print('------- onCloseHardware');
+      // },
+      onIssued: (String data) {
+        print('------- onIssued: $data');
+      },
+      onConfirm: (String data) {
+        print('------- onConfirm: $data');
+        return true; //결제를 최종 승인하고자 할때 return true
+
+        //서버승인을 위한 로직 시작
+        // _data = data;
+        // Future.delayed(const Duration(milliseconds: 100), () {
+        //   Bootpay().transactionConfirm(_data); // 서버승인 이용시 해당 함수 호출
+        // });
+        // return false;
+        //서버 승인을 위한 로직 끝
+      },
+      onDone: (String data) {
+        print('------- onDone: $data');
+      },
+    );
+  }
+
+  requestPaymentPassword(BuildContext context, BioPayload payload) {
+    BootpayBio().requestPaymentPassword(
+      context: context,
+      payload: payload,
       showCloseButton: false,
       // closeButton: Icon(Icons.close, size: 35.0, color: Colors.black54),
       onCancel: (String data) {
@@ -398,13 +473,14 @@ class _MyAppState extends State<MyApp> {
       onClose: () {
         print('------- onClose');
         BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+
         //TODO - 원하시는 라우터로 페이지 이동
       },
-      onCloseHardware: () {
-        print('------- onCloseHardware');
-      },
-      onReady: (String data) {
-        print('------- onReady: $data');
+      // onCloseHardware: () {
+      //   print('------- onCloseHardware');
+      // },
+      onIssued: (String data) {
+        print('------- onIssued: $data');
       },
       onConfirm: (String data) {
         print('------- onConfirm: $data');
@@ -428,9 +504,10 @@ class _MyAppState extends State<MyApp> {
 
 ```
 
+
 ## Documentation
 
-[부트페이 개발매뉴얼](https://bootpay.gitbook.io/docs/)을 참조해주세요
+[부트페이 개발매뉴얼](https://docs.bootpay.co.kr/)을 참조해주세요
 
 ## 기술문의
 
