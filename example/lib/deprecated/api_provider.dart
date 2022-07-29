@@ -22,7 +22,6 @@ class ApiProvider extends GetConnect {
     };
 
     String url = "$defaultUrl/v2/request/token";
-    print(url);
 
     return post(
         url,
@@ -45,7 +44,6 @@ class ApiProvider extends GetConnect {
     };
 
     String url = "$defaultUrl/v2/request/user/token";
-    print(url);
 
     return post(
         url,

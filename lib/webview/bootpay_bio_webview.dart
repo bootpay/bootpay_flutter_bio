@@ -217,12 +217,12 @@ class _BootpayWebViewState extends State<BootpayBioWebView> {
   };
 
   final BioController c = Get.find<BioController>();
-  // final BioDebounceCloseController closeController = Get.put(BioDebounceCloseController());
+  final BioDebounceCloseController closeController = Get.put(BioDebounceCloseController());
 
 
 
   void bootpayClose() {
-    // closeController.bootpayClose(widget.onClose);
+    closeController.bootpayClose(widget.onClose);
   }
 
 
@@ -501,7 +501,6 @@ extension BootpayCallback on _BootpayWebViewState {
     return JavascriptChannel(
         name: 'BootpayFlutterWebView', //이벤트 이름은 Android로 하자
         onMessageReceived: (JavascriptMessage message) {
-          print("redirect: ${message.message}");
 
           final data = json.decode(message.message);
           switch(data["event"]) {

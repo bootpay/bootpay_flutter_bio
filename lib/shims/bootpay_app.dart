@@ -10,11 +10,13 @@ import 'package:get/get.dart';
 import '../bootpay_bio.dart';
 import '../bootpay_bio_api.dart';
 import '../controller/bio_controller.dart';
+import '../controller/bio_debounce_close_controller.dart';
 import '../password_container.dart';
 
 class BootpayPlatform extends BootpayBioApi {
   bool isShowModal = false;
   BioContainer? bioContainer;
+  final BioDebounceCloseController closeController = Get.put(BioDebounceCloseController());
   // final BioController c = Get.put(BioController());
 
   @override
@@ -71,6 +73,8 @@ class BootpayPlatform extends BootpayBioApi {
     );
 
     isShowModal = true;
+    closeController.isBootpayShow = true;
+
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,

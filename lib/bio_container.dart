@@ -78,7 +78,7 @@ class BioContainer extends StatefulWidget {
 }
 
 class BioRouterState extends State<BioContainer> {
-  // final BioDebounceCloseController closeController = Get.put(BioDebounceCloseController());
+  final BioDebounceCloseController closeController = Get.put(BioDebounceCloseController());
 
   DateTime? currentBackPressTime = DateTime.now();
 
@@ -154,7 +154,7 @@ class BioRouterState extends State<BioContainer> {
 
 
   void bootpayClose() {
-    // closeController.bootpayClose(widget.onClose);
+    closeController.bootpayClose(widget.onClose);
   }
 
   void updateProgressShow(bool isShow) {
