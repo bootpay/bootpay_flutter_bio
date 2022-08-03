@@ -27,6 +27,7 @@ import 'package:otp/otp.dart';
 
 import 'config/bio_config.dart';
 import 'controller/bio_debounce_close_controller.dart';
+import 'models/bio_theme_data.dart';
 
 
 enum _SupportState {
@@ -41,6 +42,7 @@ class BioContainer extends StatefulWidget {
   Key? key;
   BootpayBioWebView? webView;
   BioPayload? payload;
+  BioThemeData? themeData;
   bool? showCloseButton;
 
   Widget? closeButton;
@@ -58,6 +60,7 @@ class BioContainer extends StatefulWidget {
       this.key,
       this.payload,
       this.showCloseButton,
+      this.themeData,
       this.closeButton,
       this.onCancel,
       this.onError,
@@ -164,6 +167,21 @@ class BioRouterState extends State<BioContainer> {
     // });
   }
 
+  Color get bgColor => widget.themeData?.bgColor ?? Colors.white;
+  Color get textColor => widget.themeData?.textColor ?? const Color(0xFF3B3B46);
+  Color get priceColor => widget.themeData?.priceColor ?? CardCode.COLOR_BLUE;
+
+  Color get card1Color => widget.themeData?.card1Color ?? const Color(0xFFf9faff);
+  Color get cardText1Color => widget.themeData?.cardText1Color ?? CardCode.COLOR_BLUE;
+  Color get card2Color => widget.themeData?.card2Color ??  CardCode.COLOR_BLUE;
+  Color get cardText2Color => widget.themeData?.cardText2Color ?? const Color(0xFFf9faff);
+  Color get cardBgColor => widget.themeData?.cardBgColor ?? const Color(0x12000000);
+  Color get cardIconColor => widget.themeData?.cardIconColor ?? CardCode.COLOR_BLUE;
+
+  Color get buttonBgColor => widget.themeData?.buttonBgColor ?? CardCode.COLOR_BLUE;
+  Color get buttonTextColor => widget.themeData?.buttonTextColor ?? Colors.white;
+
+
   Widget cardContainer(double cardViewHeight) {
     BootpayPrint("isShowWebViewHalfSize : $isShowWebViewHalfSize");
     // if(isShowWebViewHalfSize) {
@@ -174,228 +192,246 @@ class BioRouterState extends State<BioContainer> {
     //   );
     // }
 
-    return Column(
-      children: [
+    return Container(
+      color: bgColor,
+      child: Column(
+        children: [
 
-        Container(
-          height: 60,
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Row(
-              children: [
-                SizedBox(width: 50),
-                Expanded(child: Text(widget.payload?.pg ?? '', textAlign: TextAlign.center, style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w700))),
-                Container(
-                    width: 50,
-                    child: IconButton(
-                      icon: Image.asset('images/close.png', package: 'bootpay_bio'),
-                      // icon: Image.asset('assets/close.png'),
-                      iconSize: 30,
-                      onPressed: () {
-                        if (widget.onCancel != null) {
-                          widget.onCancel!('{"action":"BootpayCancel","status":-100,"message":"사용자에 의한 취소"}');
-                        }
-                        bootpayClose();
-                        // if (widget.onClose != null) {
-                        //   widget.onClose!();
-                        // }
-                        BootpayBio().dismiss(context);
-                        // Navigator.of(context).pop();
-                      },
+          Container(
+            height: 50,
+            // color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Row(
+                children: [
+                  SizedBox(width: 40),
+                  Expanded(child:
+                    widget.themeData?.titleWidget ?? Text(
+                        widget.payload?.pg ?? '',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600, color: textColor)
                     )
+                  ),
+                  SizedBox(
+                      width: 40,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: IconButton(
+                          icon: Image.asset('images/close.png', package: 'bootpay_bio', color: textColor),
+                          // icon: Image.asset('assets/close.png'),
+                          iconSize: 20,
+                          onPressed: () {
+                            if (widget.onCancel != null) {
+                              widget.onCancel!('{"action":"BootpayCancel","status":-100,"message":"사용자에 의한 취소"}');
+                            }
+                            bootpayClose();
+                            // if (widget.onClose != null) {
+                            //   widget.onClose!();
+                            // }
+                            BootpayBio().dismiss(context);
+                            // Navigator.of(context).pop();
+                          },
+                        ),
+                      )
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+              height: 1,
+              color: Colors.black12
+          ),
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+
+                  itemCount: (widget.payload?.prices?.length ?? 0) + 2,
+                  // separatorBuilder: (BuildContext context, int index) => Divider(),
+
+                  itemBuilder: (BuildContext context, int index) {
+
+                    double topPadding = 20.0;
+                    if(index != 0) { topPadding = 6.0; }
+                    double bottomPadding = 6.0;
+                    if(index == (widget.payload?.prices?.length ?? 0) + 1) { bottomPadding = 20.0; }
+
+                    return Container(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 0.0, right: 0.0, top: topPadding, bottom: bottomPadding),
+                        child: Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              leftWidget(index, (widget.payload?.prices?.length ?? 0) + 2),
+                              rightWidget(index, (widget.payload?.prices?.length ?? 0) + 2)
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+
+            ),
+          ),
+          Obx(() =>
+              Container(
+                // color: Color(0xFFEDEDED),
+                color: cardBgColor,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 0.0),
+                  child: Container(
+                    width: double.infinity,
+                    height: cardViewHeight,
+                    child: CarouselSlider(
+                      options: CarouselOptions(
+                        aspectRatio: 2.0,
+                        enlargeCenterPage: true,
+                        onPageChanged: (index, reason) {
+                          BootpayPrint("onPageChanged : $index, $reason");
+                          // if(c.resWallet.value.wallets.length)
+                          setState(() {
+                            // c.selectedCardIndex = c.resWallet.value.wallets.length - (index + 1);
+                            currentCardIndex = index;
+
+                          });
+
+                        }
+                      ),
+
+                      items: c.resWallet.value.wallets.map((e) => cardWidget(e)).toList() +  [
+                        Container(
+                          // height: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4.0),
+                            color: card1Color,
+                          ),
+                          child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                  onTap: () => addNewCard(),
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundColor: cardIconColor,
+                                          child: Image.asset('images/ico_plus_outline.png', package: 'bootpay_bio', width: 34.0)
+                                        ),
+                                        SizedBox(height: 12),
+                                        Text('새로운 카드 등록', style: TextStyle(color: cardText1Color, fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+                                  )
+                              )
+                          ),
+                        ),
+                        Container(
+                          // height: 50,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4.0),
+                              color: card2Color
+                          ),
+                          child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                  onTap: () => goTotalPay(),
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundColor: card1Color,
+                                          child: Image.asset('images/ico_card_outline.png', package: 'bootpay_bio', width: 34.0, color: cardIconColor)
+                                        ),
+                                        SizedBox(height: 12),
+                                        Text('다른 결제수단', style: TextStyle(color: cardText2Color, fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+                                  )
+                              )
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
+              ),
+          ),
+          isShowQuotaSelectBox ? Column(
+            children: [
+              Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 15.0),
+                  child: DropdownButtonFormField(
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                    ),
+                    isExpanded: true,
+
+                    value: _selectedValue,
+                    items: c.cardQuotaList.map((e) => DropdownMenuItem(
+                      value: e,
+                      child: Text(e),
+
+                    )).toList(),
+                    onChanged: (e) {
+                      _selectedValue = e.toString();
+                      c.setCardQuota(_selectedValue);
+                    },
+                  )
+              ),
+              SizedBox(height: 60)
+            ],
+
+          ) : Container(),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Stack(
+              children: [
+                Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4.0),
+                      color: buttonBgColor,
+                  ),
+                  child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                          onTap: () {
+                            clickCardButton();
+                          },
+                          child: Center(child: Text(cardButtonTitle(), style: TextStyle(color: buttonTextColor, fontWeight: FontWeight.w600, fontSize: 16.0)))
+                      )
+                  ),
+                ),
+                isShowWebViewHalfSize == true ? SizedBox(
+                  height: 50,
+                  child: Opacity(
+                      opacity: 0.2,
+                      child: widget.webView
+                  ),
+                ) : Container(),
+                isShowWebViewHalfSize == true ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 7.0),
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    )
+                ) : Container()
               ],
             ),
           ),
-        ),
-        Container(
-            height: 1,
-            color: Colors.black12
-        ),
-        Container(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: ListView.builder(
-                shrinkWrap: true,
-                padding: EdgeInsets.zero,
-
-                itemCount: (widget.payload?.prices?.length ?? 0) + 2,
-                // separatorBuilder: (BuildContext context, int index) => Divider(),
-
-                itemBuilder: (BuildContext context, int index) {
-
-                  double topPadding = 20.0;
-                  if(index != 0) { topPadding = 6.0; }
-                  double bottomPadding = 6.0;
-                  if(index == (widget.payload?.prices?.length ?? 0) + 1) { bottomPadding = 20.0; }
-
-                  return Container(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 0.0, right: 0.0, top: topPadding, bottom: bottomPadding),
-                      child: Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            leftWidget(index, (widget.payload?.prices?.length ?? 0) + 2),
-                            rightWidget(index, (widget.payload?.prices?.length ?? 0) + 2)
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-
-          ),
-        ),
-        Obx(() =>
-            Container(
-              color: Colors.black12,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 0.0),
-                child: Container(
-                  width: double.infinity,
-                  height: cardViewHeight,
-                  child: CarouselSlider(
-                    options: CarouselOptions(
-                      aspectRatio: 2.0,
-                      enlargeCenterPage: true,
-                      onPageChanged: (index, reason) {
-                        BootpayPrint("onPageChanged : $index, $reason");
-                        // if(c.resWallet.value.wallets.length)
-                        setState(() {
-                          // c.selectedCardIndex = c.resWallet.value.wallets.length - (index + 1);
-                          currentCardIndex = index;
-
-                        });
-
-                      }
-                    ),
-
-                    items: c.resWallet.value.wallets.map((e) => cardWidget(e)).toList() +  [
-                      Container(
-                        // height: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4.0),
-                          color: const Color(0xFFf9faff),
-                        ),
-                        child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                                onTap: () => addNewCard(),
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Image.asset('images/ico_plus.png', package: 'bootpay_bio', width: 34.0),
-                                      SizedBox(height: 12),
-                                      Text('새로운 카드 등록', style: TextStyle(color: CardCode.COLOR_BLUE, fontWeight: FontWeight.bold)),
-                                    ],
-                                  ),
-                                )
-                            )
-                        ),
-                      ),
-                      Container(
-                        // height: 50,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4.0),
-                            color: CardCode.COLOR_BLUE
-                        ),
-                        child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                                onTap: () => goTotalPay(),
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Image.asset('images/ico_card.png', package: 'bootpay_bio', width: 34.0),
-                                      SizedBox(height: 12),
-                                      Text('다른 결제수단', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                    ],
-                                  ),
-                                )
-                            )
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-        ),
-        isShowQuotaSelectBox ? Column(
-          children: [
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 15.0),
-                child: DropdownButtonFormField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                  isExpanded: true,
-
-                  value: _selectedValue,
-                  items: c.cardQuotaList.map((e) => DropdownMenuItem(
-                    value: e,
-                    child: Text(e),
-
-                  )).toList(),
-                  onChanged: (e) {
-                    _selectedValue = e.toString();
-                    c.setCardQuota(_selectedValue);
-                  },
-                )
-            ),
-            SizedBox(height: 60)
-          ],
-
-        ) : Container(),
-        Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Stack(
-            children: [
-              Container(
-                height: 50,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4.0),
-                    color: CardCode.COLOR_BLUE,
-                ),
-                child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                        onTap: () {
-                          clickCardButton();
-                        },
-                        child: Center(child: Text(cardButtonTitle(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16.0)))
-                    )
-                ),
-              ),
-              isShowWebViewHalfSize == true ? SizedBox(
-                height: 50,
-                child: Opacity(
-                    opacity: 0.2,
-                    child: widget.webView
-                ),
-              ) : Container(),
-              isShowWebViewHalfSize == true ? const Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 7.0),
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
-                  )
-              ) : Container()
-            ],
-          ),
-        ),
-        SizedBox(height: 20)
-      ],
+          SizedBox(height: 20)
+        ],
+      ),
     );
-
   }
 
   String cardButtonTitle() {
@@ -455,6 +491,7 @@ class BioRouterState extends State<BioContainer> {
 
     return WillPopScope(
       child: Wrap(
+
         children: [
           isShowWebView == false || isShowWebViewHalfSize == true ? cardContainer(cardViewHeight) : webviewContainer(context)
         ],
@@ -840,7 +877,7 @@ class BioRouterState extends State<BioContainer> {
     String label = '결제정보';
     if(index > 0 && index < max - 1) label = widget.payload!.prices![index-1].name ?? '';
     else if(index == max - 1) { label = '총 결제금액'; }
-    return Text(label);
+    return Text(label, style: TextStyle(color: textColor));
   }
 
   Widget rightWidget(int index, int max) {
@@ -850,15 +887,18 @@ class BioRouterState extends State<BioContainer> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(widget.payload!.orderName ?? ''),
-            Text(widget.payload!.names!.join(', '), maxLines: 2, textAlign: TextAlign.justify, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.black38, fontSize: 12.0))
+            Text(widget.payload!.orderName ?? '', style: TextStyle(color: textColor)),
+            Opacity(
+              opacity: 0.5,
+              child: Text(widget.payload!.names!.join(', '), maxLines: 2, textAlign: TextAlign.justify, overflow: TextOverflow.ellipsis, style: TextStyle(color: textColor))
+            )
           ],
         ),
       );
     } else if(index > 0 && index < max - 1) {
-      return Text(widget.payload!.prices![index-1].priceComma);
+      return Text(widget.payload!.prices![index-1].priceComma, style: TextStyle(color: textColor));
     } else {
-      return Text(widget.payload!.priceComma, style: TextStyle(color: CardCode.COLOR_BLUE, fontSize: 18.0, fontWeight: FontWeight.bold));
+      return Text(widget.payload!.priceComma, style: TextStyle(color: priceColor, fontSize: 18.0, fontWeight: FontWeight.w600));
     }
   }
 

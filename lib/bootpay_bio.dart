@@ -1,5 +1,6 @@
 import 'package:bootpay/bootpay.dart';
 import 'package:bootpay_bio/config/bio_config.dart';
+import 'package:bootpay_bio/models/bio_theme_data.dart';
 import 'package:flutter/material.dart';
 
 import 'bootpay_bio_api.dart';
@@ -34,6 +35,7 @@ class BootpayBio extends BootpayBioApi{
         BioPayload? payload,
         bool? showCloseButton,
         Widget? closeButton,
+        BioThemeData? themeData,
         BootpayDefaultCallback? onCancel,
         BootpayDefaultCallback? onError,
         BootpayCloseCallback? onClose,
@@ -45,6 +47,7 @@ class BootpayBio extends BootpayBioApi{
     _platform.requestPaymentBio(
         context: context,
         payload: payload,
+        themeData: themeData,
         showCloseButton: showCloseButton,
         closeButton: closeButton,
         onCancel: onCancel,
@@ -65,6 +68,7 @@ class BootpayBio extends BootpayBioApi{
         BioPayload? payload,
         bool? showCloseButton,
         Widget? closeButton,
+        BioThemeData? themeData,
         BootpayDefaultCallback? onCancel,
         BootpayDefaultCallback? onError,
         BootpayCloseCallback? onClose,
@@ -76,6 +80,7 @@ class BootpayBio extends BootpayBioApi{
     _platform.requestPaymentPassword(
         context: context,
         payload: payload,
+        themeData: themeData,
         showCloseButton: showCloseButton,
         closeButton: closeButton,
         onCancel: onCancel,

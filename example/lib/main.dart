@@ -3,6 +3,7 @@ import 'package:bootpay_bio/config/bio_config.dart';
 import 'package:bootpay_bio/constants/bio_constants.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/models/bio_price.dart';
+import 'package:bootpay_bio/models/bio_theme_data.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -205,7 +206,7 @@ class _MyAppState extends State<MyApp> {
     BootpayPrint("getRestToken: ${res.body}");
 
     var user = User();
-    user.id = '123411aaaaaaaaaa1aabd4ss12156782112522125314567';
+    user.id = '123411aaaaaaaaaa1aabd4ss121567821125221253145678';
     user.gender = 1;
     user.email = 'test1234@gmail.com';
     user.phone = '01012345678';
@@ -292,7 +293,9 @@ class _MyAppState extends State<MyApp> {
       context: context,
       payload: payload,
       showCloseButton: false,
-      // closeButton: Icon(Icons.close, size: 35.0, color: Colors.black54),
+      themeData: BioThemeData(
+        titleWidget: Image.asset("images/title_widget.png", height: 22),
+      ),
       onCancel: (String data) {
         print('------- onCancel: $data');
       },

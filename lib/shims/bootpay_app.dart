@@ -11,6 +11,7 @@ import '../bootpay_bio.dart';
 import '../bootpay_bio_api.dart';
 import '../controller/bio_controller.dart';
 import '../controller/bio_debounce_close_controller.dart';
+import '../models/bio_theme_data.dart';
 import '../password_container.dart';
 
 class BootpayPlatform extends BootpayBioApi {
@@ -24,6 +25,7 @@ class BootpayPlatform extends BootpayBioApi {
       {Key? key,
       BuildContext? context,
       BioPayload? payload,
+        BioThemeData? themeData,
       bool? showCloseButton,
       Widget? closeButton,
       BootpayDefaultCallback? onCancel,
@@ -38,13 +40,14 @@ class BootpayPlatform extends BootpayBioApi {
 
     // c.isPasswordMode = false;
 
-    showModalBioContainer(key, payload, showCloseButton, closeButton, onCancel,
+    showModalBioContainer(key, payload, themeData, showCloseButton, closeButton, onCancel,
         onError, onClose, onIssued, onConfirm, onDone, context, false);
   }
 
   void showModalBioContainer(
       Key? key,
       BioPayload? payload,
+      BioThemeData? themeData,
       bool? showCloseButton,
       Widget? closeButton,
       BootpayDefaultCallback? onCancel,
@@ -60,6 +63,7 @@ class BootpayPlatform extends BootpayBioApi {
     bioContainer = BioContainer(
       key: key,
       payload: payload,
+      themeData: themeData,
       showCloseButton: showCloseButton,
       closeButton: closeButton,
       onCancel: onCancel,
@@ -94,6 +98,7 @@ class BootpayPlatform extends BootpayBioApi {
       {Key? key,
       BuildContext? context,
       BioPayload? payload,
+      BioThemeData? themeData,
       bool? showCloseButton,
       Widget? closeButton,
       BootpayDefaultCallback? onCancel,
@@ -111,7 +116,7 @@ class BootpayPlatform extends BootpayBioApi {
     // c.isPasswordMode = true;
 
 
-    showModalBioContainer(key, payload, showCloseButton, closeButton, onCancel,
+    showModalBioContainer(key, payload, themeData, showCloseButton, closeButton, onCancel,
         onError, onClose, onIssued, onConfirm, onDone, context, true);
 
     // passwordContainer = PasswordContainer(
