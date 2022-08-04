@@ -563,9 +563,44 @@ class BioRouterState extends State<BioContainer> {
     goBiometricAuth();
   }
 
-  requestDeleteCard() {
+  requestDeleteCard({WalletData? walletData}) async {
     c.requestType.value = BioConstants.REQUEST_DELETE_CARD;
-    showWebView();
+
+    if(walletData != null) {
+      widget.payload?.walletId = walletData.wallet_id;
+      widget.webView?.payload = widget.payload;
+    }
+
+    // showWebView();
+    if(!await isAblePasswordToken()) {
+      BootpayPrint('requestDeleteCard');
+      c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD;
+      // payl
+      // showWebView();
+      // Current
+
+      BootpayPrint("isShowWebview : $isShowWebView");
+
+      if(isShowWebView == true) {
+        widget.webView?.requestPasswordToken();
+      } else {
+        showWebView();
+      }
+      return;
+    }
+
+    // widget.webView?.payload =
+
+    c.requestType.value = BioConstants.REQUEST_DELETE_CARD;
+    // widget.webView?.requestDeleteCard();
+
+    if(isShowWebView == true) {
+
+      widget.webView?.requestDeleteCard();
+    } else {
+      showWebView();
+    }
+    // showWebView();
   }
 
   requestPasswordForPay() async {
@@ -826,6 +861,7 @@ class BioRouterState extends State<BioContainer> {
   Future<bool> isAblePasswordToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String passwordToken =  prefs.getString('password_token') ?? '';
+    BootpayPrint('isAblePasswordToken : $passwordToken');
     return passwordToken.isNotEmpty;
   }
 
@@ -902,6 +938,41 @@ class BioRouterState extends State<BioContainer> {
     }
   }
 
+  Future<void> alertDialogDeleteConfirm(WalletData walletData) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('카드 삭제', style: TextStyle(fontSize: 16)),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('등록된 카드를 삭제합니다.', style: TextStyle(fontSize: 14)),
+                Text('정말 삭제하시겠습니까?', style: TextStyle(fontSize: 14)),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('닫기'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('삭제'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                requestDeleteCard(walletData: walletData);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget cardWidget(WalletData walletData) {
     return  Container(
       height: 50,
@@ -918,35 +989,59 @@ class BioRouterState extends State<BioContainer> {
               },
               child: Center(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+                  padding: const EdgeInsets.only(top: 5.0, bottom: 20.0, left: 20.0, right: 10.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
 
-                      Row(
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                  walletData.batch_data.card_company ?? '',
-                                  style: TextStyle(color: CardCode.getColorText(walletData.batch_data.card_company_code ?? ''), fontWeight: FontWeight.bold)
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 15.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                        walletData.batch_data.card_company ?? '',
+                                        style: TextStyle(color: CardCode.getColorText(walletData.batch_data.card_company_code ?? ''), fontWeight: FontWeight.bold)
+                                    ),
+                                    SizedBox(height: 8),
+                                    Image.asset('images/card_chip.png', package: 'bootpay_bio', height: 30.0),
+                                  ],
+                                ),
                               ),
-                              SizedBox(height: 8),
-                              Image.asset('images/card_chip.png', package: 'bootpay_bio', height: 30.0),
-                            ],
-                          ),
-                          Expanded(child: Container())
-                        ],
+                            ),
+                            SizedBox(
+                              width: 40,
+                              child: IconButton(
+                                padding: EdgeInsets.zero,
+                                icon: Icon(Icons.more_horiz, color: Colors.white),
+                                // icon: Image.asset('assets/close.png'),
+                                // iconSize: 20,
+                                onPressed: () {
+                                  alertDialogDeleteConfirm(walletData);
+
+                                },
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                       Row(
                         children: [
                           Expanded(child: Container()),
-                          Text(
-                              walletData.batch_data.card_no ?? '',
-                              style: TextStyle(color: CardCode.getColorText(walletData.batch_data.card_company_code ?? ''), fontWeight: FontWeight.bold)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10.0),
+                            child: Text(
+                                walletData.batch_data.card_no ?? '',
+                                style: TextStyle(color: CardCode.getColorText(walletData.batch_data.card_company_code ?? ''), fontWeight: FontWeight.bold)
+                            ),
                           ),
                         ],
                       ),

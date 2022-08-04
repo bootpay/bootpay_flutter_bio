@@ -33,7 +33,7 @@ class BootpayBioWebView extends WebView {
   // controller
 
   final Key? key;
-  final BioPayload? payload;
+  BioPayload? payload;
   final BootpayDefaultCallback? onCancel;
   final BootpayDefaultCallback? onError;
   final BootpayCloseCallback? onClose;
@@ -204,6 +204,22 @@ class BootpayBioWebView extends WebView {
     });
   }
 
+
+  Future<void> requestDeleteCard() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String passwordToken =  prefs.getString('password_token') ?? '';
+    payload?.token = passwordToken;
+
+    String script = await BioConstants.getJSDestroyWallet(payload!);
+    BootpayPrint('requestDeleteCard : $script');
+    updateProgressShow(true);
+    _controller?.future.then((controller) {
+      controller.evaluateJavascript(
+          callJavascriptAsync(script)
+      );
+      // controller.
+    });
+  }
 
 }
 

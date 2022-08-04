@@ -25,6 +25,7 @@ class BioConstants {
   static const int REQUEST_PASSWORD_TOKEN_FOR_ADD_CARD = 11; //카드 등록 전 토큰이 없을 때
   static const int REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY = 12; //생체인증 결제 전 토큰이 없을 때
 
+
   static const int REQUEST_BIOAUTH_FOR_BIO_FOR_PAY = 13; //생체인증 결제 전 기기등록이 안 됬을때
 
   static const int REQUEST_ADD_BIOMETRIC = 15; //생체인식 정보등록
