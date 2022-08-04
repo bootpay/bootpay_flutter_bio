@@ -256,6 +256,8 @@ class BioRouterState extends State<BioContainer> {
 
                     double topPadding = 20.0;
                     if(index != 0) { topPadding = 6.0; }
+                    if(index == (widget.payload?.prices?.length ?? 0) + 1) { topPadding = 4.75;}
+
                     double bottomPadding = 6.0;
                     if(index == (widget.payload?.prices?.length ?? 0) + 1) { bottomPadding = 20.0; }
 
@@ -913,7 +915,10 @@ class BioRouterState extends State<BioContainer> {
     String label = '결제정보';
     if(index > 0 && index < max - 1) label = widget.payload!.prices![index-1].name ?? '';
     else if(index == max - 1) { label = '총 결제금액'; }
-    return Text(label, style: TextStyle(color: textColor));
+    return Padding(
+      padding: EdgeInsets.only(top: index == max - 1 ? 2.5 : 0.0),
+      child: Text(label, style: TextStyle(color: textColor)),
+    );
   }
 
   Widget rightWidget(int index, int max) {
