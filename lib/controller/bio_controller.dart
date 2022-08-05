@@ -21,6 +21,7 @@ class BioController extends GetxController {
   var resWallet = ResWalletList().obs;
   var requestType = BioConstants.REQUEST_TYPE_NONE.obs;
   var isPasswordMode = false; //비밀번호 간편결제 호출인지
+  var isEditMode = false; //편집 모드인지
   var selectedCardIndex = -1;
 
   final ApiProvider _provider = ApiProvider();
@@ -44,11 +45,11 @@ class BioController extends GetxController {
 
     String deviceId = await UserInfo.getBootpayUUID();
 
-    BootpayPrint("요청: deviceId: $deviceId, userToken: $userToken");
+    // BootpayPrint("요청: deviceId: $deviceId, userToken: $userToken");
 
     var res = await _provider.getWalletList(deviceId, userToken);
 
-    BootpayPrint("응답:  ${res.body} ");
+    // BootpayPrint("응답:  ${res.body} ");
 
     if(res.statusCode == HttpStatus.ok) {
       resWallet.value = ResWalletList.fromJson(res.body);

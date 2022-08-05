@@ -25,7 +25,7 @@ class BootpayPlatform extends BootpayBioApi {
       {Key? key,
       BuildContext? context,
       BioPayload? payload,
-        BioThemeData? themeData,
+      BioThemeData? themeData,
       bool? showCloseButton,
       Widget? closeButton,
       BootpayDefaultCallback? onCancel,
@@ -40,26 +40,45 @@ class BootpayPlatform extends BootpayBioApi {
 
     // c.isPasswordMode = false;
 
-    showModalBioContainer(key, payload, themeData, showCloseButton, closeButton, onCancel,
-        onError, onClose, onIssued, onConfirm, onDone, context, false);
+    showModalBioContainer(
+        key: key,
+        payload: payload,
+        themeData: themeData,
+        showCloseButton: showCloseButton,
+        closeButton: closeButton,
+        onCancel: onCancel,
+        onError: onError,
+        onClose: onClose,
+        onIssued: onIssued,
+        onConfirm: onConfirm,
+        onDone: onDone,
+        context: context,
+        isPasswordMode: false
+    );
   }
 
-  void showModalBioContainer(
-      Key? key,
-      BioPayload? payload,
-      BioThemeData? themeData,
-      bool? showCloseButton,
-      Widget? closeButton,
-      BootpayDefaultCallback? onCancel,
-      BootpayDefaultCallback? onError,
-      BootpayCloseCallback? onClose,
-      // BootpayCloseCallback? onCloseHardware,
-      BootpayDefaultCallback? onIssued,
-      BootpayConfirmCallback? onConfirm,
-      BootpayDefaultCallback? onDone,
-      BuildContext context,
-      bool passwordMode
-      ) {
+  void showModalBioContainer({
+
+        Key? key,
+        BioPayload? payload,
+        BioThemeData? themeData,
+        bool? showCloseButton,
+        Widget? closeButton,
+        BootpayDefaultCallback? onCancel,
+        BootpayDefaultCallback? onError,
+        BootpayCloseCallback? onClose,
+        // BootpayCloseCallback? onCloseHardware,
+        BootpayDefaultCallback? onIssued,
+        BootpayConfirmCallback? onConfirm,
+        BootpayDefaultCallback? onDone,
+        BuildContext? context,
+        bool? isPasswordMode,
+        bool? isEditMode,
+
+      }) {
+
+    if(context == null) return;
+
     bioContainer = BioContainer(
       key: key,
       payload: payload,
@@ -73,7 +92,8 @@ class BootpayPlatform extends BootpayBioApi {
       onIssued: onIssued,
       onConfirm: onConfirm,
       onDone: onDone,
-      passwordMode: passwordMode
+      isPasswordMode: isPasswordMode,
+      isEditMode: isEditMode,
     );
 
     isShowModal = true;
@@ -88,7 +108,7 @@ class BootpayPlatform extends BootpayBioApi {
       },
     ).whenComplete(() {
       isShowModal = false;
-      print("whenComplete : $isShowModal");
+      // print("whenComplete : $isShowModal");
       // print('Hey there, I\'m calling after hide bottomSheet');
     });
   }
@@ -110,38 +130,51 @@ class BootpayPlatform extends BootpayBioApi {
       BootpayDefaultCallback? onDone}) {
     // TODO: implement requestPaymentPassword
 
-
     if (context == null) return;
 
-    // c.isPasswordMode = true;
+    showModalBioContainer(
+        key: key,
+        payload: payload,
+        themeData: themeData,
+        showCloseButton: showCloseButton,
+        closeButton: closeButton,
+        onCancel: onCancel,
+        onError: onError,
+        onClose: onClose,
+        onIssued: onIssued,
+        onConfirm: onConfirm,
+        onDone: onDone,
+        context: context,
+        isPasswordMode: false
+    );
+  }
 
 
-    showModalBioContainer(key, payload, themeData, showCloseButton, closeButton, onCancel,
-        onError, onClose, onIssued, onConfirm, onDone, context, true);
+  @override
+  void requestEditPayment({
+    Key? key,
+    BuildContext? context,
+    String? userToken,
+    BioThemeData? themeData,
+    BootpayDefaultCallback? onCancel,
+    BootpayDefaultCallback? onError,
+    BootpayCloseCallback? onClose,
+    BootpayDefaultCallback? onDone}) {
 
-    // passwordContainer = PasswordContainer(
-    //   key: key,
-    //   payload: payload,
-    //   showCloseButton: showCloseButton,
-    //   closeButton: closeButton,
-    //   onCancel: onCancel,
-    //   onError: onError,
-    //   onClose: onClose,
-    //   onCloseHardware: onCloseHardware,
-    //   onReady: onReady,
-    //   onConfirm: onConfirm,
-    //   onDone: onDone,
-    // );
-    //
-    // showModalBottomSheet<void>(
-    //   context: context,
-    //   isScrollControlled: true,
-    //   builder: (BuildContext context) {
-    //     return SafeArea(child: passwordContainer!);
-    //   },
-    // ).whenComplete(() {
-    //   // print('Hey there, I\'m calling after hide bottomSheet');
-    // });
+    BioPayload payload = BioPayload();
+    payload.userToken = userToken;
+
+    showModalBioContainer(
+        key: key,
+        payload: payload,
+        context: context,
+        themeData: themeData,
+        onCancel: onCancel,
+        onError: onError,
+        onClose: onClose,
+        onDone: onDone,
+        isEditMode: true,
+    );
   }
 
   @override

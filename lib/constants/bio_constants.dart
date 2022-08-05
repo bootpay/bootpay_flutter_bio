@@ -120,8 +120,7 @@ class BioConstants {
   }
 
 
-  static String getJSPasswordToken(BioPayload payload) {
-    var token = payload.userToken ?? "";
+  static String getJSPasswordToken(String token) {
     return "BootpaySDK.requestPasswordToken('" +
         token +
         "')" +

@@ -53,7 +53,8 @@ class BioContainer extends StatefulWidget {
   BootpayDefaultCallback? onIssued;
   BootpayConfirmCallback? onConfirm;
   BootpayDefaultCallback? onDone;
-  bool? passwordMode;
+  bool? isPasswordMode;
+  bool? isEditMode;
 
 
   BioContainer({
@@ -69,7 +70,8 @@ class BioContainer extends StatefulWidget {
       this.onIssued,
       this.onConfirm,
       this.onDone,
-      this.passwordMode
+      this.isPasswordMode,
+      this.isEditMode,
   }); // BioContainer(this.webView, this.payload);
 
   @override
@@ -113,7 +115,7 @@ class BioRouterState extends State<BioContainer> {
   void initState() {
     super.initState();
     // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
-    c.isPasswordMode = widget.passwordMode ?? false;
+    c.isPasswordMode = widget.isPasswordMode ?? false;
     c.initValues();
     c.getWalletList(widget.payload?.userToken ?? "").then((value) {
       if(value) updateSelectedCardIndexForButton();
@@ -149,6 +151,7 @@ class BioRouterState extends State<BioContainer> {
       onConfirm: widget.onConfirm,
       onDone: widget.onDone,
       onNextJob: onNextJob,
+      isEditMode: widget.isEditMode,
     );
     widget.webView?.onProgressShow = (isShow) {
       updateProgressShow(isShow);
@@ -181,9 +184,140 @@ class BioRouterState extends State<BioContainer> {
   Color get buttonBgColor => widget.themeData?.buttonBgColor ?? CardCode.COLOR_BLUE;
   Color get buttonTextColor => widget.themeData?.buttonTextColor ?? Colors.white;
 
+  Widget payInfoContainer() {
+    return widget.isEditMode == true ? Container() : Container(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        child: ListView.builder(
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+
+            itemCount: (widget.payload?.prices?.length ?? 0) + 2,
+            // separatorBuilder: (BuildContext context, int index) => Divider(),
+
+            itemBuilder: (BuildContext context, int index) {
+
+              double topPadding = 20.0;
+              if(index != 0) { topPadding = 6.0; }
+              if(index == (widget.payload?.prices?.length ?? 0) + 1) { topPadding = 4.75;}
+
+              double bottomPadding = 6.0;
+              if(index == (widget.payload?.prices?.length ?? 0) + 1) { bottomPadding = 20.0; }
+
+              return Container(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 0.0, right: 0.0, top: topPadding, bottom: bottomPadding),
+                  child: Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        leftWidget(index, (widget.payload?.prices?.length ?? 0) + 2),
+                        rightWidget(index, (widget.payload?.prices?.length ?? 0) + 2)
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
+
+      ),
+    );
+  }
+
+  List<Widget> cardScrollChildrenWidget() {
+    if(widget.isEditMode == true) {
+      return c.resWallet.value.wallets.map((e) => cardWidget(e)).toList() +  [
+        Container(
+          // height: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4.0),
+            color: card1Color,
+          ),
+          child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                  onTap: () => addNewCard(),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                            backgroundColor: cardIconColor,
+                            child: Image.asset('images/ico_plus_outline.png', package: 'bootpay_bio', width: 34.0)
+                        ),
+                        SizedBox(height: 12),
+                        Text('새로운 카드 등록', style: TextStyle(color: cardText1Color, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  )
+              )
+          ),
+        ),
+      ];
+    }
+
+    return c.resWallet.value.wallets.map((e) => cardWidget(e)).toList() +  [
+      Container(
+        // height: 50,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4.0),
+          color: card1Color,
+        ),
+        child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+                onTap: () => addNewCard(),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                          backgroundColor: cardIconColor,
+                          child: Image.asset('images/ico_plus_outline.png', package: 'bootpay_bio', width: 34.0)
+                      ),
+                      SizedBox(height: 12),
+                      Text('새로운 카드 등록', style: TextStyle(color: cardText1Color, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                )
+            )
+        ),
+      ),
+      Container(
+        // height: 50,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4.0),
+            color: card2Color
+        ),
+        child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+                onTap: () => goTotalPay(),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                          backgroundColor: card1Color,
+                          child: Image.asset('images/ico_card_outline.png', package: 'bootpay_bio', width: 34.0, color: cardIconColor)
+                      ),
+                      SizedBox(height: 12),
+                      Text('다른 결제수단', style: TextStyle(color: cardText2Color, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                )
+            )
+        ),
+      ),
+    ];
+  }
+
 
   Widget cardContainer(double cardViewHeight) {
-    BootpayPrint("isShowWebViewHalfSize : $isShowWebViewHalfSize");
     // if(isShowWebViewHalfSize) {
     //   return  SizedBox(
     //     height: cardViewHeight,
@@ -207,9 +341,9 @@ class BioRouterState extends State<BioContainer> {
                   SizedBox(width: 40),
                   Expanded(child:
                     widget.themeData?.titleWidget ?? Text(
-                        widget.payload?.pg ?? '',
+                        '등록된 결제수단',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600, color: textColor)
+                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, color: textColor)
                     )
                   ),
                   SizedBox(
@@ -242,44 +376,7 @@ class BioRouterState extends State<BioContainer> {
               height: 1,
               color: Colors.black12
           ),
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.zero,
-
-                  itemCount: (widget.payload?.prices?.length ?? 0) + 2,
-                  // separatorBuilder: (BuildContext context, int index) => Divider(),
-
-                  itemBuilder: (BuildContext context, int index) {
-
-                    double topPadding = 20.0;
-                    if(index != 0) { topPadding = 6.0; }
-                    if(index == (widget.payload?.prices?.length ?? 0) + 1) { topPadding = 4.75;}
-
-                    double bottomPadding = 6.0;
-                    if(index == (widget.payload?.prices?.length ?? 0) + 1) { bottomPadding = 20.0; }
-
-                    return Container(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 0.0, right: 0.0, top: topPadding, bottom: bottomPadding),
-                        child: Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              leftWidget(index, (widget.payload?.prices?.length ?? 0) + 2),
-                              rightWidget(index, (widget.payload?.prices?.length ?? 0) + 2)
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-
-            ),
-          ),
+          payInfoContainer(),
           Obx(() =>
               Container(
                 // color: Color(0xFFEDEDED),
@@ -294,7 +391,6 @@ class BioRouterState extends State<BioContainer> {
                         aspectRatio: 2.0,
                         enlargeCenterPage: true,
                         onPageChanged: (index, reason) {
-                          BootpayPrint("onPageChanged : $index, $reason");
                           // if(c.resWallet.value.wallets.length)
                           setState(() {
                             // c.selectedCardIndex = c.resWallet.value.wallets.length - (index + 1);
@@ -304,63 +400,7 @@ class BioRouterState extends State<BioContainer> {
 
                         }
                       ),
-
-                      items: c.resWallet.value.wallets.map((e) => cardWidget(e)).toList() +  [
-                        Container(
-                          // height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4.0),
-                            color: card1Color,
-                          ),
-                          child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                  onTap: () => addNewCard(),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        CircleAvatar(
-                                          backgroundColor: cardIconColor,
-                                          child: Image.asset('images/ico_plus_outline.png', package: 'bootpay_bio', width: 34.0)
-                                        ),
-                                        SizedBox(height: 12),
-                                        Text('새로운 카드 등록', style: TextStyle(color: cardText1Color, fontWeight: FontWeight.bold)),
-                                      ],
-                                    ),
-                                  )
-                              )
-                          ),
-                        ),
-                        Container(
-                          // height: 50,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4.0),
-                              color: card2Color
-                          ),
-                          child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                  onTap: () => goTotalPay(),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        CircleAvatar(
-                                          backgroundColor: card1Color,
-                                          child: Image.asset('images/ico_card_outline.png', package: 'bootpay_bio', width: 34.0, color: cardIconColor)
-                                        ),
-                                        SizedBox(height: 12),
-                                        Text('다른 결제수단', style: TextStyle(color: cardText2Color, fontWeight: FontWeight.bold)),
-                                      ],
-                                    ),
-                                  )
-                              )
-                          ),
-                        ),
-                      ],
+                      items: cardScrollChildrenWidget(),
                     ),
                   ),
                 ),
@@ -443,7 +483,7 @@ class BioRouterState extends State<BioContainer> {
     } else if(index == -1) {
       return "다른 결제수단으로 결제하기";
     } else {
-      return "이 카드로 결제하기";
+      return widget.isEditMode == true ? "이 카드를 편집하기" :  "이 카드로 결제하기";
     }
   }
 
@@ -487,8 +527,6 @@ class BioRouterState extends State<BioContainer> {
   Widget build(BuildContext context) {
     // TODO: implement build
 
-    BootpayPrint("build call, $isShowWebView, $isShowWebViewHalfSize");
-
     double cardViewHeight = MediaQuery.of(context).size.width * 0.6;
 
     return WillPopScope(
@@ -523,9 +561,16 @@ class BioRouterState extends State<BioContainer> {
     // showWebView();
   }
 
+
+
   startPayWithSelectedCard() async {
     BootpayPrint("c.selectedCardIndex: ${c.selectedCardIndex}, wallets: ${c.resWallet.value.wallets.length}");
     widget.payload?.walletId = c.resWallet.value.wallets[c.selectedCardIndex].wallet_id;
+    //
+    if(widget.isEditMode == true) {
+      alertDialogDeleteConfirm(c.resWallet.value.wallets[c.selectedCardIndex]);
+      return;
+    }
 
     if(c.isPasswordMode) {
       requestPasswordForPay();
@@ -575,13 +620,11 @@ class BioRouterState extends State<BioContainer> {
 
     // showWebView();
     if(!await isAblePasswordToken()) {
-      BootpayPrint('requestDeleteCard');
+      BootpayPrint('requestDeleteCard 11');
       c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD;
       // payl
       // showWebView();
       // Current
-
-      BootpayPrint("isShowWebview : $isShowWebView");
 
       if(isShowWebView == true) {
         widget.webView?.requestPasswordToken();
@@ -591,6 +634,7 @@ class BioRouterState extends State<BioContainer> {
       return;
     }
 
+    BootpayPrint("requestDeleteCard 22 ");
     // widget.webView?.payload =
 
     c.requestType.value = BioConstants.REQUEST_DELETE_CARD;
@@ -898,7 +942,6 @@ class BioRouterState extends State<BioContainer> {
         }
       });
     }
-    BootpayPrint("isShowWebview : $isShowWebView, $isShowWebViewHalfSize");
   }
 
   showCardView() {

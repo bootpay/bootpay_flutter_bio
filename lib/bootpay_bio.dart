@@ -93,6 +93,33 @@ class BootpayBio extends BootpayBioApi{
     );
   }
 
+
+  @override
+  void requestEditPayment({
+    Key? key,
+    BuildContext? context,
+    BioThemeData? themeData,
+    String? userToken,
+    BootpayDefaultCallback? onCancel,
+    BootpayDefaultCallback? onError,
+    BootpayCloseCallback? onClose,
+    BootpayDefaultCallback? onDone}) {
+    // TODO: implement requestEditPayment
+
+    _platform.requestEditPayment(
+      key: key,
+      context: context,
+      themeData: themeData,
+      userToken: userToken,
+      onCancel: onCancel,
+      onError: onError,
+      onClose: onClose,
+      onDone: onDone
+    );
+  }
+
+
+
   @override
   void transactionConfirm() {
     _platform.transactionConfirm();
@@ -105,7 +132,7 @@ class BootpayBio extends BootpayBioApi{
 
   @override
   void dismiss(BuildContext context) {
-    BootpayPrint("dismiss ${_platform}");
     _platform.dismiss(context);
   }
+
 }

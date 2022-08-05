@@ -77,6 +77,12 @@ class _MyAppState extends State<MyApp> {
                   child: Text('비밀번호 간편결제 테스트'),
                 ),
               ),
+              Center(
+                child: TextButton(
+                  onPressed: () => goBootpayEdit(context),
+                  child: Text('등록된 결제수단 편집'),
+                ),
+              ),
             ],
           );
         }),
@@ -189,6 +195,65 @@ class _MyAppState extends State<MyApp> {
     bioPayload.extra = extra;
   }
 
+  Future<void> goBootpayEdit(BuildContext context) async {
+
+    String restApplicationId = "";
+    String pk = "";
+    if(BioConstants.DEBUG) {
+      restApplicationId = "5b9f51264457636ab9a07cde";
+      pk = "sfilSOSVakw+PZA+PRux4Iuwm7a//9CXXudCq9TMDHk=";
+    } else {
+      restApplicationId = "5b8f6a4d396fa665fdc2b5ea";
+      pk = "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=";
+    }
+
+    var res = await _provider.getRestToken(restApplicationId, pk);
+    res = await _provider.getEasyPayUserToken(res.body['access_token'], getUser());
+    String token = res.body["user_token"];
+
+    // BioPayload payload = BioPayload();
+    // payload.userToken = token;
+
+    BootpayBio().requestEditPayment(
+      context: context,
+      userToken: token,
+      themeData: BioThemeData(
+        titleWidget: Image.asset("images/title_widget.png", height: 22),
+      ),
+      onCancel: (String data) {
+        print('------- onCancel: $data');
+      },
+      onError: (String data) {
+        print('------- onError: $data');
+      },
+      onClose: () {
+        print('------- onClose');
+        // BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+        //TODO - 원하시는 라우터로 페이지 이동
+        BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+
+        // print('------- onClose22');
+        // Navigator.of(context).pop();
+      },
+      onDone: (String data) {
+        print('------- onDone: $data');
+      },
+    );
+
+  }
+
+  User getUser() {
+    User user = User();
+    user.id = '123411aaaaaaaaaa1aabd4ss121567821125221253145678';
+    user.gender = 1;
+    user.email = 'test1234@gmail.com';
+    user.phone = '01012345678';
+    user.birth = '19880610';
+    user.username = '홍길동';
+    user.area = '서울';
+    return user;
+  }
+
 
   //버튼클릭시 부트페이 결제요청 실행
   Future<void> goBootpayTest(BuildContext context, String payType) async {
@@ -203,19 +268,12 @@ class _MyAppState extends State<MyApp> {
     }
     var res = await _provider.getRestToken(restApplicationId, pk);
 
-    BootpayPrint("getRestToken: ${res.body}");
+    // BootpayPrint("getRestToken: ${res.body}");
 
-    var user = User();
-    user.id = '123411aaaaaaaaaa1aabd4ss121567821125221253145678';
-    user.gender = 1;
-    user.email = 'test1234@gmail.com';
-    user.phone = '01012345678';
-    user.birth = '19880610';
-    user.username = '홍길동';
-    user.area = '서울';
+    var user = getUser();
 
     res = await _provider.getEasyPayUserToken(res.body['access_token'], user);
-    BootpayPrint("getEasyPayUserToken: ${res.body}");
+    // BootpayPrint("getEasyPayUserToken: ${res.body}");
     goBootpayRequest(context, res.body["user_token"], user, payType);
   }
 
@@ -289,6 +347,7 @@ class _MyAppState extends State<MyApp> {
   requestPaymentBio(BuildContext context, BioPayload payload) {
     // BootpayPrint(bioPayload.toString());
 
+
     BootpayBio().requestPaymentBio(
       context: context,
       payload: payload,
@@ -336,6 +395,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   requestPaymentPassword(BuildContext context, BioPayload payload) {
+
     BootpayBio().requestPaymentPassword(
       context: context,
       payload: payload,

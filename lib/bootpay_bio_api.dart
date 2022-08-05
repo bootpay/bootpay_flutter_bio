@@ -41,6 +41,16 @@ abstract class BootpayBioApi {
         BootpayDefaultCallback? onDone
       });
 
+  void requestEditPayment({
+        Key? key,
+        BuildContext? context,
+        String? userToken,
+        BootpayDefaultCallback? onCancel,
+        BootpayDefaultCallback? onError,
+        BootpayCloseCallback? onClose,
+        BootpayDefaultCallback? onDone
+      });
+
   String applicationId(String webApplicationId, String androidApplicationId, String iosApplicationId);
   void transactionConfirm();
   void removePaymentWindow(BuildContext context);

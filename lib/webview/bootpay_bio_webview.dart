@@ -44,7 +44,9 @@ class BootpayBioWebView extends WebView {
   BootpayProgressBarCallback? onProgressShow;
   final BootpayNextJobCallback? onNextJob;
   bool? showCloseButton = false;
+
   Widget? closeButton;
+  bool? isEditMode = false;
 
   WebView? webView;
   Completer<WebViewController>? _controller;
@@ -63,6 +65,7 @@ class BootpayBioWebView extends WebView {
       this.onDone,
       this.onNextJob,
       this.closeButton,
+      this.isEditMode,
       })
       : super(key: key);
 
@@ -180,7 +183,7 @@ class BootpayBioWebView extends WebView {
   }
 
   Future<void> requestPasswordToken() async {
-    String script = BioConstants.getJSPasswordToken(payload!);
+    String script = BioConstants.getJSPasswordToken(payload?.userToken ?? '');
     BootpayPrint('requestPasswordToken : $script');
     updateProgressShow(true);
     _controller?.future.then((controller) {
@@ -257,6 +260,7 @@ class _BootpayWebViewState extends State<BootpayBioWebView> {
   Widget build(BuildContext context) {
     // TODO: implement build
 
+
     widget.webView ??= WebView(
         key: widget.key,
         initialUrl: INAPP_URL,
@@ -320,9 +324,9 @@ extension BootpayMethod on _BootpayWebViewState {
   }
 
   Future<String> getBootpayJS() async {
-    if(widget.payload == null) return "";
+    // if(widget.payload == null) return "";
 
-    BootpayPrint("getBootpayJS call: ${c.requestType.value}");
+    // BootpayPrint("getBootpayJS call: ${c.requestType.value}");
 
     String script = "";
     if([BioConstants.REQUEST_PASSWORD_TOKEN,
@@ -331,7 +335,7 @@ extension BootpayMethod on _BootpayWebViewState {
         BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY,
         BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD].contains(c.requestType.value)) {
       // contro
-      script = BioConstants.getJSPasswordToken(widget.payload!);
+      script = BioConstants.getJSPasswordToken(widget.payload?.userToken ?? '');
 
     } else if(BioConstants.REQUEST_PASSWORD_FOR_PAY == c.requestType.value) {
       script = await BioConstants.getJSPasswordPay(widget.payload!);
@@ -345,6 +349,10 @@ extension BootpayMethod on _BootpayWebViewState {
     } else if(BioConstants.REQUEST_TOTAL_PAY == c.requestType.value) {
       script = BioConstants.getJSTotalPay(widget.payload!);
     } else if(BioConstants.REQUEST_DELETE_CARD == c.requestType.value) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String passwordToken =  prefs.getString('password_token') ?? '';
+      widget.payload?.token = passwordToken;
+
       script = BioConstants.getJSDestroyWallet(widget.payload!);
     }
     BootpayPrint("script: $script");
