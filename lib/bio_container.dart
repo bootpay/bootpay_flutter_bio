@@ -245,7 +245,7 @@ class BioRouterState extends State<BioContainer> {
                       children: [
                         CircleAvatar(
                             backgroundColor: cardIconColor,
-                            child: Image.asset('images/ico_plus_outline.png', package: 'bootpay_bio', width: 34.0)
+                            child: Image.asset('images/ico_plus_outline.png', package: 'bootpay_bio', width: 34.0, color: card1Color)
                         ),
                         SizedBox(height: 12),
                         Text('새로운 카드 등록', style: TextStyle(color: cardText1Color, fontWeight: FontWeight.bold)),
