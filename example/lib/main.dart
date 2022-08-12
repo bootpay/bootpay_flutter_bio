@@ -230,7 +230,10 @@ class _MyAppState extends State<MyApp> {
         print('------- onClose');
         // BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
         //TODO - 원하시는 라우터로 페이지 이동
-        BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+        if(mounted) {
+          BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+        }
+
 
         // print('------- onClose22');
         // Navigator.of(context).pop();
