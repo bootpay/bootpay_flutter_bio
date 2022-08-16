@@ -1,3 +1,6 @@
+## 4.2.7
+* android 기기에서 onClose가 호출이 간헐적으로 안되는 버그 수정 
+
 ## 4.2.6
 * bootpay 4.2.6 적용 
 * debounceClose 개선시도 (재현이 안되는 버그가 있음)

@@ -108,8 +108,7 @@ class BootpayPlatform extends BootpayBioApi {
       },
     ).whenComplete(() {
       isShowModal = false;
-      closeController.isBootpayShow = false;
-      // print("whenComplete : $isShowModal");
+      // closeController.isBootpayShow = false;
       // print('Hey there, I\'m calling after hide bottomSheet');
     });
   }

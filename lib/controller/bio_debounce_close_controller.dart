@@ -12,7 +12,7 @@ class BioDebounceCloseController extends GetxController {
   Timer? _debounce;
   bool isBootpayShow = false;
 
-  void bootpayClose(BootpayCloseCallback? onClose) {
+  void bootpayClose(BootpayCloseCallback? onClose) { 
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 100), () {
 
