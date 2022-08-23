@@ -573,8 +573,6 @@ extension BootpayCallback on _BootpayWebViewState {
               if (this.widget.onDone != null) this.widget.onDone!(message.message);
               if(this.widget.payload?.extra?.displaySuccessResult != true) {
                 bootpayClose();
-                // if (this.widget.onClose != null) this.widget.onClose!();
-                // BootpayBio().dismiss(context);
               }
               break;
           }
@@ -649,7 +647,12 @@ extension BootpayCallback on _BootpayWebViewState {
               c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
             }
 
-            if (widget.onDone != null) widget.onDone!(message.message);
+            if(widget.payload?.extra?.separatelyConfirmed == true) {
+              if (widget.onConfirm != null) widget.onConfirm!(message.message);
+            } else {
+              if (widget.onDone != null) widget.onDone!(message.message);
+            }
+            // if (widget.onDone != null) widget.onDone!(message.message);
           }
         });
   }

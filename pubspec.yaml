@@ -1,6 +1,6 @@
 name: bootpay_bio
 description:  A Bootpay bio plugin that provides payment api on Android, iOS.
-version: 4.2.7
+version: 4.2.8
 
 homepage: https://www.bootpay.co.kr
 repository: https://github.com/bootpay/bootpay_flutter_bio.git

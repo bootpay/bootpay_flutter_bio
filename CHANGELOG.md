@@ -1,3 +1,6 @@
+## 4.2.8
+* extra.separatelyConfirmed 옵션 일 경우 done -> confirm 으로 이벤트를 주는 것으로 수정 
+
 ## 4.2.7
 * android 기기에서 onClose가 호출이 간헐적으로 안되는 버그 수정 
 

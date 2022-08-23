@@ -381,8 +381,9 @@ class _MyAppState extends State<MyApp> {
       },
       onConfirm: (String data) {
         print('------- onConfirm: $data');
-        return true; //결제를 최종 승인하고자 할때 return true
+        // return true; //결제를 최종 승인하고자 할때 return true
 
+        return false;
         //서버승인을 위한 로직 시작
         // _data = data;
         // Future.delayed(const Duration(milliseconds: 100), () {
