@@ -825,13 +825,13 @@ class BioRouterState extends State<BioContainer> {
   }
 
   updateSelectedCardIndexForButton() {
-    // if(c.resWallet.value.wallets.isNotEmpty) {
-    //   if(c.selectedCardIndex < 0) {
-    //     setState(() {
-    //       c.selectedCardIndex = 0;
-    //     });
-    //   }
-    // }
+    if(c.resWallet.value.wallets.isNotEmpty) {
+      if(c.selectedCardIndex < 0) {
+        setState(() {
+          c.selectedCardIndex = 0;
+        });
+      }
+    }
   }
 
   getWalletList(bool requestBioPay) async {

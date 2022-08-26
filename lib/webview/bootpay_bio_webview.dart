@@ -229,7 +229,7 @@ class BootpayBioWebView extends WebView {
 class _BootpayWebViewState extends State<BootpayBioWebView> {
 
   // final String INAPP_URL = 'https://inapp.bootpay.co.kr/3.3.3/production.html';
-  final String INAPP_URL = 'https://webview.bootpay.co.kr/4.2.1/';
+  final String INAPP_URL = 'https://webview.bootpay.co.kr/4.2.2/';
   bool isClosed = false;
   final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers = {
     Factory(() => EagerGestureRecognizer())
