@@ -381,7 +381,7 @@ class _MyAppState extends State<MyApp> {
       onIssued: (String data) {
         print('------- onIssued: $data');
       },
-      onConfirm: (String data) {
+      onConfirm: (String data)  {
         print('------- onConfirm: $data');
         // return true; //결제를 최종 승인하고자 할때 return true
 
@@ -394,6 +394,18 @@ class _MyAppState extends State<MyApp> {
         return true;
         //서버 승인을 위한 로직 끝
       },
+      // onConfirmAsync: (String data)  async {
+      //   print('------- onConfirmAsync: $data');
+      //   // return true; //결제를 최종 승인하고자 할때 return true
+      //
+      //   // return false;
+      //   //서버승인을 위한 로직 시작
+      //   // _data = data;
+      //   // Future.delayed(const Duration(milliseconds: 100), () {
+      //   //   Bootpay().transactionConfirm(_data); // 서버승인 이용시 해당 함수 호출
+      //   // });
+      //   return true;
+      // },
       onDone: (String data) {
         print('------- onDone: $data');
       },
@@ -427,6 +439,9 @@ class _MyAppState extends State<MyApp> {
       },
       onConfirm: (String data) {
         print('------- onConfirm: $data');
+
+        // BootpayBio().dismiss(context);
+
         return true; //결제를 최종 승인하고자 할때 return true
 
         //서버승인을 위한 로직 시작

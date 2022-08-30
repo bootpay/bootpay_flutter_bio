@@ -34,6 +34,7 @@ class BootpayPlatform extends BootpayBioApi {
       // BootpayCloseCallback? onCloseHardware,
       BootpayDefaultCallback? onIssued,
       BootpayConfirmCallback? onConfirm,
+      BootpayAsyncConfirmCallback? onConfirmAsync,
       BootpayDefaultCallback? onDone}) {
 
     if (context == null) return;
@@ -51,6 +52,7 @@ class BootpayPlatform extends BootpayBioApi {
         onClose: onClose,
         onIssued: onIssued,
         onConfirm: onConfirm,
+        onConfirmAsync: onConfirmAsync,
         onDone: onDone,
         context: context,
         isPasswordMode: false
@@ -70,6 +72,7 @@ class BootpayPlatform extends BootpayBioApi {
         // BootpayCloseCallback? onCloseHardware,
         BootpayDefaultCallback? onIssued,
         BootpayConfirmCallback? onConfirm,
+        BootpayAsyncConfirmCallback? onConfirmAsync,
         BootpayDefaultCallback? onDone,
         BuildContext? context,
         bool? isPasswordMode,
@@ -91,6 +94,7 @@ class BootpayPlatform extends BootpayBioApi {
       // onCloseHardware: onCloseHardware,
       onIssued: onIssued,
       onConfirm: onConfirm,
+      onConfirmAsync: onConfirmAsync,
       onDone: onDone,
       isPasswordMode: isPasswordMode,
       isEditMode: isEditMode,
@@ -127,6 +131,7 @@ class BootpayPlatform extends BootpayBioApi {
       // BootpayCloseCallback? onCloseHardware,
       BootpayDefaultCallback? onIssued,
       BootpayConfirmCallback? onConfirm,
+      BootpayAsyncConfirmCallback? onConfirmAsync,
       BootpayDefaultCallback? onDone}) {
     // TODO: implement requestPaymentPassword
 
@@ -143,6 +148,7 @@ class BootpayPlatform extends BootpayBioApi {
         onClose: onClose,
         onIssued: onIssued,
         onConfirm: onConfirm,
+        onConfirmAsync: onConfirmAsync,
         onDone: onDone,
         context: context,
         isPasswordMode: false

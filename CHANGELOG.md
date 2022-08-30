@@ -1,3 +1,12 @@
+## 4.3.2
+* bootpay 4.3.2 적용
+* confirm async 지원
+
+## 4.3.1
+* bootpay_webview_flutter 3.2.21 적용 
+* bootpay 4.3.1 적용 
+* event async 지원 
+
 ## 4.3.0
 * 중요 
 * 간편결제는 생체인증, 통합결제 2가지를 사용중 

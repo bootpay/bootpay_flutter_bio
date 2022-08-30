@@ -40,6 +40,7 @@ class BootpayBioWebView extends WebView {
   // final BootpayCloseCallback? onCloseHardware;
   final BootpayDefaultCallback? onIssued;
   final BootpayConfirmCallback? onConfirm;
+  final BootpayAsyncConfirmCallback? onConfirmAsync;
   final BootpayDefaultCallback? onDone;
   BootpayProgressBarCallback? onProgressShow;
   final BootpayNextJobCallback? onNextJob;
@@ -63,6 +64,7 @@ class BootpayBioWebView extends WebView {
       // this.onCloseHardware,
       this.onIssued,
       this.onConfirm,
+      this.onConfirmAsync,
       this.onDone,
       this.onNextJob,
       this.closeButton,
@@ -398,6 +400,21 @@ extension BootpayMethod on _BootpayWebViewState {
 
 
 extension BootpayCallback on _BootpayWebViewState {
+
+  Future<void> goConfirmEvent(JavascriptMessage message) async {
+    if (this.widget.onConfirm != null) {
+      bool goTransactionConfirm = this.widget.onConfirm!(message.message);
+      if (goTransactionConfirm) {
+        transactionConfirm();
+      }
+    } else if(this.widget.onConfirmAsync != null) {
+      bool goTransactionConfirm = await this.widget.onConfirmAsync!(message.message);
+      if (goTransactionConfirm) {
+        transactionConfirm();
+      }
+    }
+  }
+
   JavascriptChannel onCancel(BuildContext context) {
     return JavascriptChannel(
         name: 'BootpayCancel',
@@ -499,15 +516,17 @@ extension BootpayCallback on _BootpayWebViewState {
   JavascriptChannel onConfirm(BuildContext context) {
     return JavascriptChannel(
         name: 'BootpayConfirm',
-        onMessageReceived: (JavascriptMessage message) {
+        onMessageReceived: (JavascriptMessage message) async {
           BootpayPrint('BootpayConfirm: ${widget.c.requestType}, ${message.message}');
-          if (this.widget.onConfirm != null) {
-            widget.updateProgressShow(true);
-            bool goTransactionConfirm = this.widget.onConfirm!(message.message);
-            if (goTransactionConfirm) {
-              transactionConfirm();
-            }
-          }
+
+          await goConfirmEvent(message);
+          // if (this.widget.onConfirm != null) {
+          //   widget.updateProgressShow(true);
+          //   bool goTransactionConfirm = this.widget.onConfirm!(message.message);
+          //   if (goTransactionConfirm) {
+          //     transactionConfirm();
+          //   }
+          // }
         });
   }
 
@@ -524,7 +543,7 @@ extension BootpayCallback on _BootpayWebViewState {
   JavascriptChannel onRedirect(BuildContext context) {
     return JavascriptChannel(
         name: 'BootpayFlutterWebView', //이벤트 이름은 Android로 하자
-        onMessageReceived: (JavascriptMessage message) {
+        onMessageReceived: (JavascriptMessage message) async {
           BootpayPrint('onRedirect: ${widget.c.requestType}, ${message.message}');
 
           final data = json.decode(message.message);
@@ -561,16 +580,17 @@ extension BootpayCallback on _BootpayWebViewState {
               }
               break;
             case "confirm":
-              if (this.widget.onConfirm != null) {
-                widget.updateProgressShow(true);
-                if (this.widget.onConfirm != null) {
-                  bool goTransactionConfirm = this.widget.onConfirm!(message.message);
-                  if (goTransactionConfirm) {
-                    transactionConfirm();
-                  }
-                }
-
-              }
+              await goConfirmEvent(message);
+              // if (this.widget.onConfirm != null) {
+              //   widget.updateProgressShow(true);
+              //   if (this.widget.onConfirm != null) {
+              //     bool goTransactionConfirm = this.widget.onConfirm!(message.message);
+              //     if (goTransactionConfirm) {
+              //       transactionConfirm();
+              //     }
+              //   }
+              //
+              // }
               break;
             case "done":
               widget.updateProgressShow(false);
@@ -617,7 +637,7 @@ extension BootpayCallback on _BootpayWebViewState {
   JavascriptChannel onEasySuccess(BuildContext context) {
     return JavascriptChannel(
         name: 'BootpayEasySuccess',
-        onMessageReceived: (JavascriptMessage message) {
+        onMessageReceived: (JavascriptMessage message) async {
           BootpayPrint('BootpayEasySuccess: ${widget.c.requestType}, ${message.message}');
           // return;
 
@@ -654,10 +674,8 @@ extension BootpayCallback on _BootpayWebViewState {
             if(widget.payload?.extra?.separatelyConfirmedBio == true) {
               if (widget.onConfirm != null) {
                 this.widget.onConfirm!(message.message); //무조건 서버승인 해야함
-                // bool goTransactionConfirm = this.widget.onConfirm!(message.message);
-                // if (goTransactionConfirm) {
-                //   transactionConfirm();
-                // }
+              } else if(widget.onConfirmAsync != null) {
+                await this.widget.onConfirmAsync!(message.message); //무조건 서버승인 해야함
               }
             } else {
               if (widget.onDone != null) widget.onDone!(message.message);

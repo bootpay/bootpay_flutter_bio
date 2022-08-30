@@ -42,6 +42,7 @@ class BootpayBio extends BootpayBioApi{
         // BootpayCloseCallback? onCloseHardware,
         BootpayDefaultCallback? onIssued,
         BootpayConfirmCallback? onConfirm,
+        BootpayAsyncConfirmCallback? onConfirmAsync,
         BootpayDefaultCallback? onDone}) {
 
     _platform.requestPaymentBio(
@@ -56,6 +57,7 @@ class BootpayBio extends BootpayBioApi{
         onIssued: onIssued,
         // onCloseHardware: onCloseHardware,
         onConfirm: onConfirm,
+        onConfirmAsync: onConfirmAsync,
         onDone: onDone
     );
   }
@@ -75,6 +77,7 @@ class BootpayBio extends BootpayBioApi{
         // BootpayCloseCallback? onCloseHardware,
         BootpayDefaultCallback? onIssued,
         BootpayConfirmCallback? onConfirm,
+        BootpayAsyncConfirmCallback? onConfirmAsync,
         BootpayDefaultCallback? onDone}) {
 
     _platform.requestPaymentPassword(
@@ -89,6 +92,7 @@ class BootpayBio extends BootpayBioApi{
         onIssued: onIssued,
         // onCloseHardware: onCloseHardware,
         onConfirm: onConfirm,
+        onConfirmAsync: onConfirmAsync,
         onDone: onDone
     );
   }
