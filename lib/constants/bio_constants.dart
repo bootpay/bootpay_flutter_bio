@@ -6,6 +6,8 @@ import 'package:bootpay/user_info.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/bio_extra.dart';
+
 
 class BioConstants {
   // static const int REQUEST_TYPE_NONE = -1;
@@ -147,7 +149,7 @@ class BioConstants {
     payload.easyType = "easy_subscribe";
 
     return "BootpaySDK.requestWalletPayment(" +
-        payload.toString() +
+        payload.toStringEasyPay() +
         ")" +
         ".then( function (data) {" +
         easySuccess() +
@@ -192,12 +194,12 @@ class BioConstants {
     //   payload.extra ??= BootExtra();
     //   payload.extra?.cardQuota = cardQuota;
     // }
-    payload.extra ??= Extra();
+    payload.extra ??= BioExtra();
     payload.extra?.cardQuota = cardQuota;
     payload.easyType = "easy_subscribe";
 
     return "BootpaySDK.requestWalletPayment(" +
-        payload.toString() +
+        payload.toStringEasyPay() +
         ")" +
         ".then( function (data) {" +
         easySuccess() +

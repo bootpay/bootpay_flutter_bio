@@ -7,6 +7,7 @@ import 'package:bootpay/model/payload.dart';
 import 'package:bootpay/model/user.dart';
 import 'package:flutter/foundation.dart';
 
+import 'bio_extra.dart';
 import 'bio_price.dart';
 import '../extension/json_query_string.dart';
 import 'package:intl/intl.dart';
@@ -36,7 +37,8 @@ class BioPayload  {
   String? token = '';
   String? authenticateType = '';
   String? userToken = '';
-  String? easyType = 'easy_subscribe';
+  // String? easyType = 'easy_subscribe';
+  String? easyType = '';
   Map<String, dynamic>? metadata = {};
 
   get priceComma => NumberFormat('###,###,###,###').format(price) + '원';
@@ -46,7 +48,7 @@ class BioPayload  {
   // String? userToken = '';
 
   // Extra? extra = Extra();
-  Extra? extra = Extra();
+  BioExtra? extra = BioExtra();
   User? user = User();
   // List<Item>? items = [];
   List<Item>? items = [];
@@ -86,7 +88,7 @@ class BioPayload  {
     metadata = json["metadata"];
 
     if(json["user"] != null) user = User.fromJson(json["user"]);
-    if(json["extra"] != null) extra = Extra.fromJson(json["extra"]);
+    if(json["extra"] != null) extra = BioExtra.fromJson(json["extra"]);
     if(json["items"] != null) items = json["items"].map((e) => Item.fromJson(e)).toList();
 
     names = json["names"];
@@ -158,6 +160,38 @@ class BioPayload  {
      easy_type: '$easyType',
      metadata: ${getMetadataStringAndroid()},
      extra: ${json.encode(extra?.toJson()).replaceAll("\"", "'")},
+     user: ${user.toString()},
+     items: ${getItems()}
+   }
+    """;
+
+    // extra: ${json.encode(extra?.toJson())},
+    // user_info: ${user.toString()},
+    // items: ${getItems()}}
+    // return "{application_id: '${getApplicationId()}', pg: '$pg', method: '$method', methods: ${methodListString()}, name: '${name.queryReplace()}', price: $price, tax_free: $taxFree, order_id: '${orderId.queryReplace()}', use_order_id: $useOrderId, params: ${getMetadataStringAndroid()}, account_expire_at: '$accountExpireAt', show_agree_window: $showAgreeWindow, user_token: '$userToken', extra: ${extra.toString()}, user_info: ${user.toString()}, items: ${getItems()}}";
+  }
+
+
+  //toJson 대신에 이 함수가 사용됨
+  String toStringEasyPay() {
+    return """
+    {application_id: '${getApplicationId()}', 
+     pg: '$pg', 
+     method: '$method', 
+     methods: ${methodListString()}, 
+     order_name: '${orderName?.queryReplace()}', 
+     price: $price, 
+     tax_free: $taxFree, 
+     order_id: '${orderId.queryReplace()}', 
+     subscription_id: '$subscriptionId',
+     authentication_id: '$authenticationId',      
+     wallet_id: '$walletId', 
+     token: '$token', 
+     authenticate_type: '$authenticateType', 
+     user_token: '$userToken',       
+     easy_type: '$easyType',
+     metadata: ${getMetadataStringAndroid()},
+     extra: ${json.encode(extra?.toJsonEasyPay()).replaceAll("\"", "'")},
      user: ${user.toString()},
      items: ${getItems()}
    }

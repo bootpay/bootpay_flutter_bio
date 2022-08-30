@@ -112,7 +112,6 @@ class PasswordContainerState extends State<PasswordContainer> {
   }
 
   onNextJob(NextJob data) async {
-    BootpayPrint("onNextJob: ${data.toJson()}");
 
     if(data.initToken) {
       setPasswordToken("");
@@ -139,11 +138,9 @@ class PasswordContainerState extends State<PasswordContainer> {
   }
 
   requestPasswordForPay() async {
-    BootpayPrint("requestPasswordForPay call");
 
     // showWebView();
     if(!await isAblePasswordToken()) {
-      BootpayPrint(2);
       c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY;
       widget.webView?.requestPasswordToken();
       // widget.webView?.get

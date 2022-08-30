@@ -544,7 +544,7 @@ class BioRouterState extends State<BioContainer> {
   }
 
   addNewCard() async {
-    BootpayPrint('addNewCard');
+    // BootpayPrint('addNewCard');
 
 
     // if(!await isAblePasswordToken()) {
@@ -564,7 +564,7 @@ class BioRouterState extends State<BioContainer> {
 
 
   startPayWithSelectedCard() async {
-    BootpayPrint("c.selectedCardIndex: ${c.selectedCardIndex}, wallets: ${c.resWallet.value.wallets.length}");
+    // BootpayPrint("c.selectedCardIndex: ${c.selectedCardIndex}, wallets: ${c.resWallet.value.wallets.length}");
     widget.payload?.walletId = c.resWallet.value.wallets[c.selectedCardIndex].wallet_id;
     //
     if(widget.isEditMode == true) {
@@ -580,23 +580,19 @@ class BioRouterState extends State<BioContainer> {
     c.requestType.value = BioConstants.REQUEST_BIO_FOR_PAY;
 
     if(!await isAblePasswordToken()) {
-      BootpayPrint(2);
       c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY;
       showWebView();
       return;
     }
 
     if(await isAbleBioAuthDevice()) {
-      BootpayPrint(33);
       goBioForPay();
       return;
     } else if(nowAbleBioAuthDevice()) {
-      BootpayPrint(4);
       //기기활성화 먼저해야함
       goBioForEnableDevice();
       return;
     }
-    BootpayPrint(5);
     requestPasswordForPay();
   }
 
@@ -620,7 +616,6 @@ class BioRouterState extends State<BioContainer> {
 
     // showWebView();
     if(!await isAblePasswordToken()) {
-      BootpayPrint('requestDeleteCard 11');
       c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD;
       // payl
       // showWebView();
@@ -634,7 +629,6 @@ class BioRouterState extends State<BioContainer> {
       return;
     }
 
-    BootpayPrint("requestDeleteCard 22 ");
     // widget.webView?.payload =
 
     c.requestType.value = BioConstants.REQUEST_DELETE_CARD;
@@ -650,12 +644,10 @@ class BioRouterState extends State<BioContainer> {
   }
 
   requestPasswordForPay() async {
-    BootpayPrint("requestPasswordForPay call");
     updateProgressShow(true);
 
     // showWebView();
     if(!await isAblePasswordToken()) {
-      BootpayPrint(2);
       c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY;
       // showWebView();
 
@@ -689,7 +681,6 @@ class BioRouterState extends State<BioContainer> {
   }
 
   goBiometricAuth() async {
-    BootpayPrint("goBiometricAuth call: ${_supportState}");
     final LocalAuthentication localAuth = LocalAuthentication();
     // bool canCheckBiometrics = await localAuth.canCheckBiometrics;
     if(_supportState != _SupportState.supported) {
@@ -721,7 +712,6 @@ class BioRouterState extends State<BioContainer> {
     // }
 
     try {
-      BootpayPrint("goBiometricAuth authenticate call: ${_supportState}");
 
       bool authenticated = await localAuth.authenticate(
           localizedReason: '인증 후 결제가 진행됩니다',
@@ -766,7 +756,6 @@ class BioRouterState extends State<BioContainer> {
       bootpayClose();
       // if(widget.onClose != null) { widget.onClose!(); }
       BootpayBio().dismiss(context);
-      BootpayPrint(e);
       // Widget.on
     }
   }

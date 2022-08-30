@@ -1,6 +1,7 @@
 import 'package:bootpay_bio/bootpay_bio.dart';
 import 'package:bootpay_bio/config/bio_config.dart';
 import 'package:bootpay_bio/constants/bio_constants.dart';
+import 'package:bootpay_bio/models/bio_extra.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/models/bio_price.dart';
 import 'package:bootpay_bio/models/bio_theme_data.dart';
@@ -184,7 +185,7 @@ class _MyAppState extends State<MyApp> {
     user.phone = "010-1234-5678";
     user.addr = '서울시 동작구 상도로 222';
 
-    Extra extra = Extra(); // 결제 옵션
+    BioExtra extra = BioExtra(); // 결제 옵션
     extra.appScheme = 'bootpayFlutterExample';
     extra.cardQuota = "3";
     // extra.clo
@@ -308,7 +309,7 @@ class _MyAppState extends State<MyApp> {
     }
 
 
-    bioPayload.pg = '페이앱';
+    bioPayload.pg = '나이스페이';
     // bioPayload.method = 'card';
     // payload.methods = ['card', 'phone', 'vbank', 'bank', 'kakao'];
     bioPayload.orderName = '플리츠레이어 카라숏원피스'; //결제할 상품명
@@ -324,9 +325,10 @@ class _MyAppState extends State<MyApp> {
     bioPayload.items = itemList; // 상품정보 배열
 
 
-    Extra extra = Extra(); // 결제 옵션
+    BioExtra extra = BioExtra(); // 결제 옵션
     extra.appScheme = 'bootpayFlutterExample';
     extra.cardQuota = "3";
+    extra.separatelyConfirmedBio = true;
 
     bioPayload.user = user;
     bioPayload.extra = extra;
@@ -383,13 +385,13 @@ class _MyAppState extends State<MyApp> {
         print('------- onConfirm: $data');
         // return true; //결제를 최종 승인하고자 할때 return true
 
-        return false;
+        // return false;
         //서버승인을 위한 로직 시작
         // _data = data;
         // Future.delayed(const Duration(milliseconds: 100), () {
         //   Bootpay().transactionConfirm(_data); // 서버승인 이용시 해당 함수 호출
         // });
-        // return false;
+        return true;
         //서버 승인을 위한 로직 끝
       },
       onDone: (String data) {
