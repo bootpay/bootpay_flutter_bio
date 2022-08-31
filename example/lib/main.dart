@@ -1,5 +1,4 @@
 import 'package:bootpay_bio/bootpay_bio.dart';
-import 'package:bootpay_bio/config/bio_config.dart';
 import 'package:bootpay_bio/constants/bio_constants.dart';
 import 'package:bootpay_bio/models/bio_extra.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
@@ -11,11 +10,9 @@ import 'dart:async';
 import 'package:bootpay/model/stat_item.dart';
 import 'package:bootpay/model/user.dart';
 import 'package:bootpay/model/item.dart';
-import 'package:bootpay/model/extra.dart';
 
 import 'deprecated/api_provider.dart';
 import 'package:bootpay/bootpay.dart';
-import 'package:flutter/foundation.dart';
 
 void main() {
   runApp(MyApp());
@@ -328,7 +325,6 @@ class _MyAppState extends State<MyApp> {
     BioExtra extra = BioExtra(); // 결제 옵션
     extra.appScheme = 'bootpayFlutterExample';
     extra.cardQuota = "3";
-    extra.separatelyConfirmedBio = true;
 
     bioPayload.user = user;
     bioPayload.extra = extra;
@@ -391,19 +387,11 @@ class _MyAppState extends State<MyApp> {
         // Future.delayed(const Duration(milliseconds: 100), () {
         //   Bootpay().transactionConfirm(_data); // 서버승인 이용시 해당 함수 호출
         // });
-        return true;
         //서버 승인을 위한 로직 끝
+
+        return true;
       },
       // onConfirmAsync: (String data)  async {
-      //   print('------- onConfirmAsync: $data');
-      //   // return true; //결제를 최종 승인하고자 할때 return true
-      //
-      //   // return false;
-      //   //서버승인을 위한 로직 시작
-      //   // _data = data;
-      //   // Future.delayed(const Duration(milliseconds: 100), () {
-      //   //   Bootpay().transactionConfirm(_data); // 서버승인 이용시 해당 함수 호출
-      //   // });
       //   return true;
       // },
       onDone: (String data) {

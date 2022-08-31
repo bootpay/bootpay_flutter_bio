@@ -151,7 +151,7 @@ class BootpayPlatform extends BootpayBioApi {
         onConfirmAsync: onConfirmAsync,
         onDone: onDone,
         context: context,
-        isPasswordMode: false
+        isPasswordMode: true
     );
   }
 

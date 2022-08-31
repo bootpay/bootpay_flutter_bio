@@ -654,6 +654,8 @@ class BioRouterState extends State<BioContainer> {
       c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY;
       // showWebView();
 
+      BootpayPrint("requestPasswordForPay : $isShowWebView");
+
       if(isShowWebView == true) {
         widget.webView?.requestPasswordToken();
       } else {
