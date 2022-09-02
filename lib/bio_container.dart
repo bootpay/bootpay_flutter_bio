@@ -394,13 +394,11 @@ class BioRouterState extends State<BioContainer> {
                         aspectRatio: 2.0,
                         enlargeCenterPage: true,
                         onPageChanged: (index, reason) {
-                          // if(c.resWallet.value.wallets.length)
-                          setState(() {
-                            // c.selectedCardIndex = c.resWallet.value.wallets.length - (index + 1);
-                            currentCardIndex = index;
-
-                          });
-
+                          if(mounted) {
+                            setState(() {
+                              currentCardIndex = index;
+                            });
+                          }
                         }
                       ),
                       items: cardScrollChildrenWidget(),
@@ -819,11 +817,14 @@ class BioRouterState extends State<BioContainer> {
   }
 
   updateSelectedCardIndexForButton() {
+
     if(c.resWallet.value.wallets.isNotEmpty) {
       if(c.selectedCardIndex < 0) {
-        setState(() {
-          c.selectedCardIndex = 0;
-        });
+        if(mounted) {
+          setState(() {
+            c.selectedCardIndex = 0;
+          });
+        }
       }
     }
   }
@@ -929,21 +930,25 @@ class BioRouterState extends State<BioContainer> {
 
   showWebView({bool? isShowWebViewHalf}) {
     if(isShowWebView == false) {
-      setState(() {
-        isShowWebView = true;
-        if(isShowWebViewHalf != null) {
-          isShowWebViewHalfSize = isShowWebViewHalf;
-        }
-      });
+      if(mounted) {
+        setState(() {
+          isShowWebView = true;
+          if(isShowWebViewHalf != null) {
+            isShowWebViewHalfSize = isShowWebViewHalf;
+          }
+        });
+      }
     }
   }
 
   showCardView() {
     if(isShowWebView == true) {
-      setState(() {
-        isShowWebView = false;
-        isShowWebViewHalfSize = false;
-      });
+      if(mounted) {
+        setState(() {
+          isShowWebView = false;
+          isShowWebViewHalfSize = false;
+        });
+      }
     }
   }
 
