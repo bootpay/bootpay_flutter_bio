@@ -103,8 +103,8 @@ class BioRouterState extends State<BioContainer> {
 
   // BootpayBioWebView? webView;
 
-  final LocalAuthentication auth = LocalAuthentication();
-  _SupportState _supportState = _SupportState.unknown;
+  // final LocalAuthentication auth = LocalAuthentication();
+  // _SupportState _supportState = _SupportState.unknown;
   // bool? _canCheckBiometrics;
   // List<BiometricType>? _availableBiometrics;
   // String _authorized = 'Not Authorized';
@@ -124,11 +124,11 @@ class BioRouterState extends State<BioContainer> {
     });
     createWebView();
 
-    auth.isDeviceSupported().then(
-          (bool isSupported) => setState(() => _supportState = isSupported
-          ? _SupportState.supported
-          : _SupportState.unsupported),
-    );
+    // auth.isDeviceSupported().then(
+    //       (bool isSupported) => setState(() => _supportState = isSupported
+    //       ? _SupportState.supported
+    //       : _SupportState.unsupported),
+    // );
   }
 
 
@@ -683,36 +683,36 @@ class BioRouterState extends State<BioContainer> {
     }
   }
 
+  Future<bool> isAbleBioAuth(LocalAuthentication localAuth) async {
+    final bool canCheckBiometrics = await localAuth.canCheckBiometrics;
+    final bool isDeviceSupported = await localAuth.isDeviceSupported();
+
+    final List<BiometricType> availableBiometrics = await localAuth.getAvailableBiometrics();
+    BootpayPrint("goBiometricAuth : $canCheckBiometrics, :$isDeviceSupported, ${availableBiometrics.map((e) => e.name).join(', ')}");
+
+
+    return canCheckBiometrics && isDeviceSupported && availableBiometrics.isNotEmpty;
+  }
+
   goBiometricAuth() async {
     final LocalAuthentication localAuth = LocalAuthentication();
+
+
     // bool canCheckBiometrics = await localAuth.canCheckBiometrics;
-    if(_supportState != _SupportState.supported) {
-      Fluttertoast.showToast(
-          msg: "생체인식이 지원되지 않는 기기입니다. 비밀번호 결제로 진행합니다.",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black54,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
+
+    if(!(await isAbleBioAuth(localAuth))) {
+      // Fluttertoast.showToast(
+      //     msg: "생체인식이 지원되지 않는 기기입니다. 비밀번호 결제로 진행합니다.",
+      //     toastLength: Toast.LENGTH_SHORT,
+      //     gravity: ToastGravity.BOTTOM,
+      //     timeInSecForIosWeb: 1,
+      //     backgroundColor: Colors.black54,
+      //     textColor: Colors.white,
+      //     fontSize: 16.0
+      // );
+      requestPasswordForPay();
       return;
     }
-    // await  localAuth.
-
-    // if(!await localAuth.canCheckBiometrics) {
-    //   Fluttertoast.showToast(
-    //       msg: "생체인식이 여러번 실패하여 비밀번호 결제로 진행됩니다.",
-    //       toastLength: Toast.LENGTH_SHORT,
-    //       gravity: ToastGravity.BOTTOM,
-    //       timeInSecForIosWeb: 1,
-    //       backgroundColor: Colors.black54,
-    //       textColor: Colors.white,
-    //       fontSize: 16.0
-    //   );
-    //   requestPasswordForPay();
-    //   return;
-    // }
 
     try {
 
@@ -720,15 +720,16 @@ class BioRouterState extends State<BioContainer> {
           localizedReason: '인증 후 결제가 진행됩니다',
           authMessages:  const <AuthMessages>[
             AndroidAuthMessages(
-                signInTitle: '생체 인증',
+                signInTitle: '생체 인증 후 결제가 진행됩니다',
                 biometricHint: ''
             ),
             IOSAuthMessages(
-              localizedFallbackTitle: "비밀번호를 입력해주세요"
+              localizedFallbackTitle: "생체 인증 후 결제가 진행됩니다"
             ),
           ],
           options: const AuthenticationOptions(
-            useErrorDialogs: true
+            useErrorDialogs: true,
+            biometricOnly: true
           )
       );
 
