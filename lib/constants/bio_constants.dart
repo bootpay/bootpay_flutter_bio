@@ -122,6 +122,11 @@ class BioConstants {
   }
 
 
+  static String close() {
+    return "document.addEventListener('bootpayclose', function (e) { if (window.BootpayClose && window.BootpayClose.postMessage) { BootpayClose.postMessage('결제창이 닫혔습니다'); } });";
+  }
+
+
   static String getJSPasswordToken(String token) {
     return "BootpaySDK.requestPasswordToken('" +
         token +

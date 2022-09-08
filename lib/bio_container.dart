@@ -6,7 +6,7 @@ import 'package:bootpay_bio/controller/bio_controller.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/models/wallet/next_job.dart';
 import 'package:bootpay_bio/models/wallet/wallet_data.dart';
-import 'package:bootpay_bio/webview/bootpay_bio_webview.dart';
+import 'package:bootpay_bio/webview/bio_webview.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,6 @@ import 'bootpay_bio.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_ios/local_auth_ios.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 
 import 'package:otp/otp.dart';
@@ -28,19 +27,18 @@ import 'package:otp/otp.dart';
 import 'config/bio_config.dart';
 import 'controller/bio_debounce_close_controller.dart';
 import 'models/bio_theme_data.dart';
+import 'provider/api_webview_provider.dart';
 
 
-enum _SupportState {
-  unknown,
-  supported,
-  unsupported,
-}
+typedef void BootpayNextJobCallback(NextJob data);
 
 class BioContainer extends StatefulWidget {
 
 
+  final BioController c = Get.put(BioController());
+
   Key? key;
-  BootpayBioWebView? webView;
+  BioWebView? webView;
   BioPayload? payload;
   BioThemeData? themeData;
   bool? showCloseButton;
@@ -74,13 +72,15 @@ class BioContainer extends StatefulWidget {
       this.onDone,
       this.isPasswordMode,
       this.isEditMode,
-  }); // BioContainer(this.webView, this.payload);
+  }) {
+  } // BioContainer(this.webView, this.payload);
 
   @override
   BioRouterState createState() => BioRouterState();
 
   transactionConfirm() {
-    webView?.transactionConfirm();
+    // webView?.transactionConfirm();
+    c.webViewProvider?.transactionConfirm();
   }
 }
 
@@ -90,39 +90,40 @@ class BioRouterState extends State<BioContainer> {
   DateTime? currentBackPressTime = DateTime.now();
 
 
-  final BioController c = Get.put(BioController());
-  // final BioController c = Get.find<BioController>();
-
-
   int currentCardIndex = 0;
 
-  bool isShowWebView = false;
-  bool isShowWebViewHalfSize = false;
 
   String _selectedValue = "일시불";
 
-  // BootpayBioWebView? webView;
-
-  // final LocalAuthentication auth = LocalAuthentication();
-  // _SupportState _supportState = _SupportState.unknown;
-  // bool? _canCheckBiometrics;
-  // List<BiometricType>? _availableBiometrics;
-  // String _authorized = 'Not Authorized';
-  // bool _isAuthenticating = false;
-
-  get isShowQuotaSelectBox => (widget.payload?.price ?? 0 ) >= 50000 && c.resWallet.value.wallets.isNotEmpty;
+  get isShowQuotaSelectBox => (widget.payload?.price ?? 0 ) >= 50000 && widget.c.resWallet.value.wallets.isNotEmpty;
 
   // init
   @override
   void initState() {
     super.initState();
     // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
-    c.isPasswordMode = widget.isPasswordMode ?? false;
-    c.initValues();
-    c.getWalletList(widget.payload?.userToken ?? "").then((value) {
+    widget.c.isPasswordMode = widget.isPasswordMode ?? false;
+    if(widget.isPasswordMode == true) {
+      setPasswordToken('');
+    }
+    createWebView();
+    widget.c.initValues(createWebViewProvider(), widget.payload!);
+    widget.c.initCallbackEvent(
+      widget.onCancel,
+      widget.onError,
+      widget.onClose,
+      widget.onIssued,
+      widget.onConfirm,
+      widget.onConfirmAsync,
+      widget.onDone,
+      onNextJob,
+      bootpayClose
+    );
+    // widget.c
+
+    widget.c.getWalletList(widget.payload?.userToken ?? "").then((value) {
       if(value) updateSelectedCardIndexForButton();
     });
-    createWebView();
 
     // auth.isDeviceSupported().then(
     //       (bool isSupported) => setState(() => _supportState = isSupported
@@ -140,25 +141,31 @@ class BioRouterState extends State<BioContainer> {
 
 
   createWebView() {
-    widget.webView = BootpayBioWebView(
+    widget.webView = BioWebView(
       payload: widget.payload,
       showCloseButton: widget.showCloseButton,
       key: widget.key,
       closeButton: widget.closeButton,
-      onCancel: widget.onCancel,
-      onError: widget.onError,
-      onClose: widget.onClose,
-      // onCloseHardware: widget.onCloseHardware,
-      onIssued: widget.onIssued,
-      onConfirm: widget.onConfirm,
-      onConfirmAsync: widget.onConfirmAsync,
-      onDone: widget.onDone,
-      onNextJob: onNextJob,
       isEditMode: widget.isEditMode,
     );
     widget.webView?.onProgressShow = (isShow) {
       updateProgressShow(isShow);
     };
+  }
+
+  ApiWebviewProvider createWebViewProvider() {
+    return ApiWebviewProvider(
+        widget,
+        widget.webView!,
+        widget.onCancel,
+        widget.onError,
+        widget.onClose,
+        widget.onIssued,
+        widget.onConfirm,
+        widget.onConfirmAsync,
+        widget.onDone,
+        onNextJob
+    );
   }
 
 
@@ -230,7 +237,7 @@ class BioRouterState extends State<BioContainer> {
 
   List<Widget> cardScrollChildrenWidget() {
     if(widget.isEditMode == true) {
-      return c.resWallet.value.wallets.map((e) => cardWidget(e)).toList() +  [
+      return widget.c.resWallet.value.wallets.map((e) => cardWidget(e)).toList() +  [
         Container(
           // height: 50,
           decoration: BoxDecoration(
@@ -261,7 +268,7 @@ class BioRouterState extends State<BioContainer> {
       ];
     }
 
-    return c.resWallet.value.wallets.map((e) => cardWidget(e)).toList() +  [
+    return widget.c.resWallet.value.wallets.map((e) => cardWidget(e)).toList() +  [
       Container(
         // height: 50,
         decoration: BoxDecoration(
@@ -418,14 +425,14 @@ class BioRouterState extends State<BioContainer> {
                     isExpanded: true,
 
                     value: _selectedValue,
-                    items: c.cardQuotaList.map((e) => DropdownMenuItem(
+                    items: widget.c.cardQuotaList.map((e) => DropdownMenuItem(
                       value: e,
                       child: Text(e),
 
                     )).toList(),
                     onChanged: (e) {
                       _selectedValue = e.toString();
-                      c.setCardQuota(_selectedValue);
+                      widget.c.setCardQuota(_selectedValue);
                     },
                   )
               ),
@@ -453,14 +460,14 @@ class BioRouterState extends State<BioContainer> {
                       )
                   ),
                 ),
-                isShowWebViewHalfSize == true ? SizedBox(
+                widget.c.isShowWebViewHalfSize.value == true ? SizedBox(
                   height: 50,
                   child: Opacity(
                       opacity: 0.2,
                       child: widget.webView
                   ),
                 ) : Container(),
-                isShowWebViewHalfSize == true ? const Center(
+                widget.c.isShowWebViewHalfSize.value == true ? const Center(
                     child: Padding(
                       padding: EdgeInsets.only(top: 7.0),
                       child: CircularProgressIndicator(
@@ -478,7 +485,7 @@ class BioRouterState extends State<BioContainer> {
   }
 
   String cardButtonTitle() {
-    int index = c.resWallet.value.wallets.length - currentCardIndex;
+    int index = widget.c.resWallet.value.wallets.length - currentCardIndex;
     if(index == 0 ) {
       return "새로운 카드 등록하기";
     } else if(index == -1) {
@@ -489,15 +496,15 @@ class BioRouterState extends State<BioContainer> {
   }
 
   void clickCardButton() {
-    int index = c.resWallet.value.wallets.length - currentCardIndex;
+    int index = widget.c.resWallet.value.wallets.length - currentCardIndex;
     if(index == 0 ) {
       addNewCard();
     } else if(index == -1) {
       goTotalPay();
     } else {
-      c.selectedCardIndex = currentCardIndex;
+      widget.c.selectedCardIndex = currentCardIndex;
       startPayWithSelectedCard();
-      // if(c.selectedCardIndex >= 0) {
+      // if(widget.c.selectedCardIndex >= 0) {
       //   startPayWithSelectedCard();
       // }
 
@@ -534,7 +541,10 @@ class BioRouterState extends State<BioContainer> {
       child: Wrap(
 
         children: [
-          isShowWebView == false || isShowWebViewHalfSize == true ? cardContainer(cardViewHeight) : webviewContainer(context)
+          Obx(() =>
+            widget.c.isShowWebView.value == false || widget.c.isShowWebViewHalfSize.value == true ? cardContainer(cardViewHeight) : webviewContainer(context)
+          )
+
         ],
       ),
       onWillPop: () async {
@@ -545,43 +555,41 @@ class BioRouterState extends State<BioContainer> {
   }
 
   addNewCard() async {
-    // BootpayPrint('addNewCard');
-
-
-    // if(!await isAblePasswordToken()) {
-    //   c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_FOR_ADD_CARD;
-    //   showWebView();
-    //   return;
-    // }
-    c.requestType.value = BioConstants.REQUEST_ADD_CARD;
-    if(!isShowWebView) {
+    if(!await isAblePasswordToken()) {
+      widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_FOR_ADD_CARD, doWorkNow: false);
       showWebView();
-    } else {
-      widget.webView?.addNewCard();
+      return;
     }
-    // showWebView();
+
+    widget.c.addNewCard(doWorkNow: false);
+    showWebView();
   }
 
 
 
   startPayWithSelectedCard() async {
-    // BootpayPrint("c.selectedCardIndex: ${c.selectedCardIndex}, wallets: ${c.resWallet.value.wallets.length}");
-    widget.payload?.walletId = c.resWallet.value.wallets[c.selectedCardIndex].wallet_id;
-    //
+    BootpayPrint("startPayWithSelectedCard : ${widget.c.requestType.value}");
+
+    // BootpayPrint("widget.c.selectedCardIndex: ${widget.c.selectedCardIndex}, wallets: ${widget.c.resWallet.value.wallets.length}");
+    widget.payload?.walletId = widget.c.resWallet.value.wallets[widget.c.selectedCardIndex].wallet_id;
+    widget.c.payload?.walletId = widget.c.resWallet.value.wallets[widget.c.selectedCardIndex].wallet_id;
+
     if(widget.isEditMode == true) {
-      alertDialogDeleteConfirm(c.resWallet.value.wallets[c.selectedCardIndex]);
+      alertDialogDeleteConfirm(widget.c.resWallet.value.wallets[widget.c.selectedCardIndex]);
       return;
     }
 
-    if(c.isPasswordMode) {
+    if(widget.c.isPasswordMode) {
       requestPasswordForPay();
       return;
     }
 
-    c.requestType.value = BioConstants.REQUEST_BIO_FOR_PAY;
+    // widget.c.requestType.value = BioConstants.REQUEST_BIO_FOR_PAY;
 
     if(!await isAblePasswordToken()) {
-      c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY;
+      // widget.c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY;
+      // showWebView();
+      widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY, doWorkNow: false);
       showWebView();
       return;
     }
@@ -598,88 +606,83 @@ class BioRouterState extends State<BioContainer> {
   }
 
   goBioForPay() {
-    c.requestType.value = BioConstants.REQUEST_BIO_FOR_PAY;
-    goBiometricAuth();
+    // widget.c.requestType.value = BioConstants.REQUEST_BIO_FOR_PAY;
+    goBiometricAuth(BioConstants.REQUEST_BIO_FOR_PAY);
   }
 
   goBioForEnableDevice() {
-    c.requestType.value = BioConstants.REQUEST_BIOAUTH_FOR_BIO_FOR_PAY;
-    goBiometricAuth();
+    // widget.c.requestType.value = BioConstants.REQUEST_BIOAUTH_FOR_BIO_FOR_PAY;
+    goBiometricAuth(BioConstants.REQUEST_BIOAUTH_FOR_BIO_FOR_PAY);
   }
 
   requestDeleteCard({WalletData? walletData}) async {
-    c.requestType.value = BioConstants.REQUEST_DELETE_CARD;
-
     if(walletData != null) {
       widget.payload?.walletId = walletData.wallet_id;
-      widget.webView?.payload = widget.payload;
+      // widget.webView?.payload = widget.payload;
+      widget.c.payload?.walletId = walletData.wallet_id;
     }
 
     // showWebView();
     if(!await isAblePasswordToken()) {
-      c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD;
-      // payl
-      // showWebView();
-      // Current
-
-      if(isShowWebView == true) {
-        widget.webView?.requestPasswordToken();
+      if(widget.c.isShowWebView.value == true) {
+        widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD);
       } else {
+        widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD, doWorkNow: false);
         showWebView();
       }
       return;
     }
 
-    // widget.webView?.payload =
 
-    c.requestType.value = BioConstants.REQUEST_DELETE_CARD;
-    // widget.webView?.requestDeleteCard();
-
-    if(isShowWebView == true) {
-
-      widget.webView?.requestDeleteCard();
+    if(widget.c.isShowWebView.value == true) {
+      widget.c.requestDeleteCard();
     } else {
+      widget.c.requestDeleteCard(doWorkNow: false);
       showWebView();
     }
-    // showWebView();
   }
 
+  //무조건 비밀번호를 얻는 쪽으로 하자
   requestPasswordForPay() async {
     updateProgressShow(true);
 
-    // showWebView();
     if(!await isAblePasswordToken()) {
-      c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY;
-      // showWebView();
-
-      BootpayPrint("requestPasswordForPay : $isShowWebView");
-
-      if(isShowWebView == true) {
-        widget.webView?.requestPasswordToken();
+      if(widget.c.isShowWebView.value == true) {
+        // widget.webView?.requestPasswordToken();
+        widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY);
       } else {
+        widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY, doWorkNow: false);
         showWebView();
       }
       return;
     }
 
-    c.requestType.value = BioConstants.REQUEST_PASSWORD_FOR_PAY;
-    // showWebView();
-
-    if(isShowWebView == true) {
-      widget.webView?.requestPasswordForPay();
+    if(widget.c.isShowWebView.value == true) {
+      widget.c.requestPasswordForPay();
     } else {
+      widget.c.requestPasswordForPay(doWorkNow: false);
       showWebView();
     }
+
+    // if(widget.c.isShowWebView.value == true) {
+    //   // widget.webView?.requestPasswordToken();
+    //   widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY);
+    // } else {
+    //   widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY, doWorkNow: false);
+    //   showWebView();
+    // }
   }
 
   requestAddBioData(int type) {
+    BootpayPrint("requestAddBioData : $type");
     updateProgressShow(true);
 
-    c.requestType.value = type;
-    if(isShowWebView == true) {
-      widget.webView?.requestAddBioData();
+    // widget.c.requestType.value = type;
+    if(widget.c.isShowWebView.value == true) {
+      widget.c.requestAddBioData(type: type);
     } else {
-      showWebView();
+      widget.c.requestAddBioData(type: type, doWorkNow: false);
+      showWebView(isShowWebViewHalf: true);
     }
   }
 
@@ -694,11 +697,9 @@ class BioRouterState extends State<BioContainer> {
     return canCheckBiometrics && isDeviceSupported && availableBiometrics.isNotEmpty;
   }
 
-  goBiometricAuth() async {
+  goBiometricAuth(int type) async {
     final LocalAuthentication localAuth = LocalAuthentication();
 
-
-    // bool canCheckBiometrics = await localAuth.canCheckBiometrics;
 
     if(!(await isAbleBioAuth(localAuth))) {
       // Fluttertoast.showToast(
@@ -748,7 +749,7 @@ class BioRouterState extends State<BioContainer> {
       //     useErrorDialogs: true);
 
       if(authenticated) {
-        onAuthenticationSucceeded();
+        onAuthenticationSucceeded(type);
       } else {
         if(widget.onCancel != null) { widget.onCancel!('{"action":"BootpayCancel","status":-100,"message":"인증이 취소되었거나 실패하였습니다."}'); }
         bootpayClose();
@@ -764,13 +765,16 @@ class BioRouterState extends State<BioContainer> {
     }
   }
 
-  onAuthenticationSucceeded() {
+  onAuthenticationSucceeded(int type) {
     onVibration();
-    if(c.requestType.value == BioConstants.REQUEST_ADD_BIOMETRIC) {
+
+    BootpayPrint("onAuthenticationSucceeded : $type, ${widget.c.requestType.value}");
+
+    if(type == BioConstants.REQUEST_ADD_BIOMETRIC) {
       requestAddBioData(BioConstants.REQUEST_ADD_BIOMETRIC);
-    } else if(c.requestType.value == BioConstants.REQUEST_BIOAUTH_FOR_BIO_FOR_PAY) {
+    } else if(type == BioConstants.REQUEST_BIOAUTH_FOR_BIO_FOR_PAY) {
       requestAddBioData(BioConstants.REQUEST_ADD_BIOMETRIC_FOR_PAY);
-    } else if(c.requestType.value == BioConstants.REQUEST_BIO_FOR_PAY) {
+    } else if(type == BioConstants.REQUEST_BIO_FOR_PAY) {
       requestBioForPay();
     }
   }
@@ -807,6 +811,8 @@ class BioRouterState extends State<BioContainer> {
       requestDeleteCard();
     } else if(data.nextType == BioConstants.REQUEST_PASSWORD_FOR_PAY) {
       requestPasswordForPay();
+    } else if(data.nextType == BioConstants.REQUEST_DELETE_CARD) {
+      requestDeleteCard(); //토큰 받아왔으니 재시도
     } else if(data.nextType == BioConstants.NEXT_JOB_GET_WALLET_LIST) {
       if(data.type == BioConstants.REQUEST_ADD_BIOMETRIC_FOR_PAY) {
         getWalletList(true);
@@ -819,11 +825,11 @@ class BioRouterState extends State<BioContainer> {
 
   updateSelectedCardIndexForButton() {
 
-    if(c.resWallet.value.wallets.isNotEmpty) {
-      if(c.selectedCardIndex < 0) {
+    if(widget.c.resWallet.value.wallets.isNotEmpty) {
+      if(widget.c.selectedCardIndex < 0) {
         if(mounted) {
           setState(() {
-            c.selectedCardIndex = 0;
+            widget.c.selectedCardIndex = 0;
           });
         }
       }
@@ -833,7 +839,7 @@ class BioRouterState extends State<BioContainer> {
   getWalletList(bool requestBioPay) async {
     String userToken = widget.payload?.userToken ?? '';
 
-    await c.getWalletList(userToken);
+    await widget.c.getWalletList(userToken);
     updateSelectedCardIndexForButton();
 
     if(requestBioPay == true) {
@@ -842,15 +848,15 @@ class BioRouterState extends State<BioContainer> {
     }
 
 
-    if(c.resWallet.value.biometric?.biometric_confirmed == false) {
+    if(widget.c.resWallet.value.biometric?.biometric_confirmed == false) {
       final prefs = await SharedPreferences.getInstance();
-      if(c.resWallet.value.wallets.isEmpty) {
+      if(widget.c.resWallet.value.wallets.isEmpty) {
         prefs.setString("biometric_secret_key", "");
       }
       prefs.setString("password_token", "");
     }
 
-    if(c.resWallet.value.wallets.isEmpty) {
+    if(widget.c.resWallet.value.wallets.isEmpty) {
       addNewCard();
     } else {
       showCardView();
@@ -863,23 +869,16 @@ class BioRouterState extends State<BioContainer> {
 
     final prefs = await SharedPreferences.getInstance();
     String secretKey = prefs.getString("biometric_secret_key") ?? '';
-    // int serverUnixTime = prefs.getInt("server_unixtime") ?? 0;
-    int serverUnixTime = c.resWallet.value.biometric?.server_unixtime ?? 0;
+    int serverUnixTime = widget.c.resWallet.value.biometric?.server_unixtime ?? 0;
 
+    BootpayPrint("key: $secretKey, time: $serverUnixTime, otp: ${widget.c.otp}, ${widget.c.isShowWebView.value}");
 
-    c.otp = getOTPValue(secretKey, serverUnixTime);
-
-    BootpayPrint("key: $secretKey, time: $serverUnixTime, otp: ${c.otp}, $isShowWebView");
-
-    c.requestType.value = BioConstants.REQUEST_BIO_FOR_PAY;
-    // widget.webView?.requestBioForPay(c.otp, null);
-    if(isShowWebView == true) {
-      widget.webView?.requestBioForPay(c.otp, null);
+    if(widget.c.isShowWebView.value == true) {
+      widget.c.requestBioForPay(getOTPValue(secretKey, serverUnixTime));
     } else {
-      // isShowWebViewHalfSize = true;
+      widget.c.requestBioForPay(getOTPValue(secretKey, serverUnixTime), doWorkNow: false);
       showWebView(isShowWebViewHalf: true);
     }
-    // showWebView();
   }
 
   String getOTPValue(String secretKey, int serverTime) {
@@ -903,7 +902,7 @@ class BioRouterState extends State<BioContainer> {
   Future<bool> isAblePasswordToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String passwordToken =  prefs.getString('password_token') ?? '';
-    BootpayPrint('isAblePasswordToken : $passwordToken');
+    BootpayPrint('isAblePasswordToken : $passwordToken, ${widget.c.requestType.value}');
     return passwordToken.isNotEmpty;
   }
 
@@ -915,8 +914,8 @@ class BioRouterState extends State<BioContainer> {
   Future<bool> didAbleBioAuthDevice() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String biometric_secret_key =  prefs.getString('biometric_secret_key') ?? '';
-    BootpayPrint("didAbleBioAuthDevice: ${biometric_secret_key}, ${c.resWallet.value.biometric?.biometric_confirmed}, ${(c.resWallet.value.biometric?.biometric_confirmed ?? false) && biometric_secret_key.isNotEmpty}");
-    return (c.resWallet.value.biometric?.biometric_confirmed ?? false) && biometric_secret_key.isNotEmpty;
+    BootpayPrint("didAbleBioAuthDevice: ${biometric_secret_key}, ${widget.c.resWallet.value.biometric?.biometric_confirmed}, ${(widget.c.resWallet.value.biometric?.biometric_confirmed ?? false) && biometric_secret_key.isNotEmpty}");
+    return (widget.c.resWallet.value.biometric?.biometric_confirmed ?? false) && biometric_secret_key.isNotEmpty;
   }
 
   bool nowAbleBioAuthDevice() {
@@ -925,17 +924,24 @@ class BioRouterState extends State<BioContainer> {
   }
 
   goTotalPay() {
-    c.requestType.value = BioConstants.REQUEST_TOTAL_PAY;
-    showWebView();
+    // widget.c.requestTotalPay();
+    if(widget.c.isShowWebView.value == true) {
+      // widget.c.requestBioForPay(getOTPValue(secretKey, serverUnixTime));
+      widget.c.requestTotalPay();
+    } else {
+      // widget.c.requestBioForPay(getOTPValue(secretKey, serverUnixTime), doWorkNow: false);
+      widget.c.requestTotalPay(doWorkNow: false);
+      showWebView();
+    }
   }
 
   showWebView({bool? isShowWebViewHalf}) {
-    if(isShowWebView == false) {
+    if(widget.c.isShowWebView.value == false) {
       if(mounted) {
         setState(() {
-          isShowWebView = true;
+          widget.c.isShowWebView.value = true;
           if(isShowWebViewHalf != null) {
-            isShowWebViewHalfSize = isShowWebViewHalf;
+            widget.c.isShowWebViewHalfSize.value = isShowWebViewHalf;
           }
         });
       }
@@ -943,11 +949,11 @@ class BioRouterState extends State<BioContainer> {
   }
 
   showCardView() {
-    if(isShowWebView == true) {
+    if(widget.c.isShowWebView.value == true) {
       if(mounted) {
         setState(() {
-          isShowWebView = false;
-          isShowWebViewHalfSize = false;
+          widget.c.isShowWebView.value = false;
+          widget.c.isShowWebViewHalfSize.value = false;
         });
       }
     }
@@ -1012,6 +1018,7 @@ class BioRouterState extends State<BioContainer> {
               child: const Text('삭제'),
               onPressed: () {
                 Navigator.of(context).pop();
+                setPasswordToken(''); //결제수단 삭제 전 무조건 초기화하여, 비밀번호를 재입력하도록 한다
                 requestDeleteCard(walletData: walletData);
               },
             ),
@@ -1032,7 +1039,7 @@ class BioRouterState extends State<BioContainer> {
           color: Colors.transparent,
           child: InkWell(
               onTap: () {
-                c.selectedCardIndex = c.resWallet.value.wallets.indexOf(walletData);
+                widget.c.selectedCardIndex = widget.c.resWallet.value.wallets.indexOf(walletData);
                 startPayWithSelectedCard();
               },
               child: Center(

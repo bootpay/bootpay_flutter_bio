@@ -2,17 +2,13 @@ import 'dart:io';
 import 'package:bootpay/bootpay.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/bio_container.dart';
-import 'package:bootpay_bio/webview/bootpay_bio_webview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../bootpay_bio.dart';
 import '../bootpay_bio_api.dart';
-import '../controller/bio_controller.dart';
 import '../controller/bio_debounce_close_controller.dart';
 import '../models/bio_theme_data.dart';
-import '../password_container.dart';
 
 class BootpayPlatform extends BootpayBioApi {
   bool isShowModal = false;

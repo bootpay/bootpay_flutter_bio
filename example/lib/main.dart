@@ -322,6 +322,7 @@ class _MyAppState extends State<MyApp> {
     bioPayload.items = itemList; // 상품정보 배열
 
 
+
     BioExtra extra = BioExtra(); // 결제 옵션
     extra.appScheme = 'bootpayFlutterExample';
     extra.cardQuota = "3";
@@ -329,6 +330,7 @@ class _MyAppState extends State<MyApp> {
 
     bioPayload.user = user;
     bioPayload.extra = extra;
+    bioPayload.extra?.openType = 'iframe';
     bioPayload.names = ["블랙 (COLOR)", "55 (SIZE)"];
     bioPayload.prices = [
       BioPrice(name: '상품가격', price: 89000),
