@@ -321,12 +321,10 @@ class _MyAppState extends State<MyApp> {
     }; // 전달할 파라미터, 결제 후 되돌려 주는 값
     bioPayload.items = itemList; // 상품정보 배열
 
-
-
     BioExtra extra = BioExtra(); // 결제 옵션
     extra.appScheme = 'bootpayFlutterExample';
     extra.cardQuota = "3";
-    // extra.separatelyConfirmedBio = true;
+    extra.separatelyConfirmedBio = true;
 
     bioPayload.user = user;
     bioPayload.extra = extra;
@@ -392,7 +390,9 @@ class _MyAppState extends State<MyApp> {
         // });
         //서버 승인을 위한 로직 끝
 
-        return true;
+        // return true;
+        // BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+        return false;
       },
       // onConfirmAsync: (String data)  async {
       //   return true;

@@ -555,11 +555,11 @@ class BioRouterState extends State<BioContainer> {
   }
 
   addNewCard() async {
-    if(!await isAblePasswordToken()) {
-      widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_FOR_ADD_CARD, doWorkNow: false);
-      showWebView();
-      return;
-    }
+    // if(!await isAblePasswordToken()) {
+    //   widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_FOR_ADD_CARD, doWorkNow: false);
+    //   showWebView();
+    //   return;
+    // }
 
     widget.c.addNewCard(doWorkNow: false);
     showWebView();
@@ -754,13 +754,13 @@ class BioRouterState extends State<BioContainer> {
         if(widget.onCancel != null) { widget.onCancel!('{"action":"BootpayCancel","status":-100,"message":"인증이 취소되었거나 실패하였습니다."}'); }
         bootpayClose();
         // if(widget.onClose != null) { widget.onClose!(); }
-        BootpayBio().dismiss(context);
+        // BootpayBio().dismiss(context);
       }
     } on PlatformException catch (e) {
       if(widget.onError != null) { widget.onError!(e.toString()); }
       bootpayClose();
       // if(widget.onClose != null) { widget.onClose!(); }
-      BootpayBio().dismiss(context);
+      // BootpayBio().dismiss(context);
       // Widget.on
     }
   }

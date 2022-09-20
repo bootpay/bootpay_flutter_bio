@@ -430,13 +430,13 @@ extension BCWebViewProviderCallback on BioController {
         // if (widget.onNextJob != null) widget.onNextJob!(job);
       }
 
-      // if(widget.c.requestType.value != BioConstants.REQUEST_ADD_CARD) {
-      //   widget.c.requestType.value = BioConstants.REQUEST_TYPE_NONE;
-      // }
-      // if(requestType.value != BioConstants.REQUEST_ADD_CARD) {
-      //   requestType.value = BioConstants.REQUEST_TYPE_NONE;
-      // }
-
+      if([
+        BioConstants.REQUEST_DELETE_CARD,
+        BioConstants.REQUEST_ADD_CARD,
+      ].contains(requestType.value)) {
+        //카드 등록과 삭제시에는 confirm을 보내지 않는다
+        return;
+      }
 
       if(payload?.extra?.separatelyConfirmedBio == true) {
         if(onCallbackConfirm != null) {
