@@ -172,8 +172,14 @@ extension BCApiProvider on BioController {
     String deviceId = await UserInfo.getBootpayUUID();
 
     var res = await _provider.getWalletList(deviceId, userToken);
+
+    BootpayPrint("getWalletList : ${res.body}");
+
     if(res.statusCode == HttpStatus.ok) {
       resWallet.value = ResWalletList.fromJson(res.body);
+
+
+      resWallet.refresh();
       return true;
     }
 
@@ -285,8 +291,10 @@ extension BCWebViewProviderCallback on BioController {
   }
 
   void onWebViewError(JavascriptMessage message) {
-    BootpayPrint('onWebViewError: ${requestType}, ${message.message}');
+
+    // BootpayPrint('onWebViewError: ${requestType}, ${message.message}, ${data["error_code"]}, ${data["error_code"] == "USER_BIOMETRIC_OTP_INVALID"}');
     if(onCallbackError != null) onCallbackError!(message.message);
+
     if(payload?.extra?.displayErrorResult != true) {
       if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
     }
@@ -296,9 +304,24 @@ extension BCWebViewProviderCallback on BioController {
     BootpayPrint('onWebViewClose: ${requestType}, ${message.message}');
 
     if([
-      BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY,
-      BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY
+      BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY, //토큰 받은 후 결제
+      BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY, //토큰 받은 후 결제
     ].contains(requestType.value)) {
+      // getWalletList(payload?.userToken ?? '');
+      isShowWebView.value = false; //카드 선택화면으로 돌아간다
+      return;
+    }
+
+    if([
+      BioConstants.REQUEST_ADD_CARD, //카드 추가
+      BioConstants.REQUEST_DELETE_CARD, //카드 삭제
+    ].contains(requestType.value)) {
+      getWalletList(payload?.userToken ?? '');
+      isShowWebView.value = false; //카드 선택화면으로 돌아간다
+      return;
+    }
+
+    if(requestType.value == BioConstants.REQUEST_BIO_FOR_PAY) { //생체인증 결제시 가끔 done보다 빨리 떨어짐 - 아무것도 하지 않겠다
       return;
     }
 
@@ -464,23 +487,46 @@ extension BCWebViewProviderCallback on BioController {
 
         //그 외 처리
         if(onCallbackDone != null) onCallbackDone!(message.message);
+        if(onCallbackDebounceClose != null) onCallbackDebounceClose!(); //생체인증 결제시 가끔 done보다 close가 빨리 떨어져서, 여기서 close이벤트를 보낸다
+        // if(requestType.value == BioConstants.REQUEST_BIO_FOR_PAY) { //생체인증 결제시 가끔 done보다 close가 빨리 떨어져서, 여기서 close이벤트를 보낸다
+        //   if(payload?.extra?.displaySuccessResult != true) {
+        //
+        //
+        //   }
+        // }
       }
     }
+  }
+
+  Future<void> initBioAuthDevice() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('biometric_secret_key', "");
+
   }
 
   void onWebViewEasyError(JavascriptMessage message) {
     BootpayPrint('onWebViewEasyError: ${requestType}, ${message.message}');
     final data = json.decode(message.message);
-    if(data["error_code"] == "USER_PW_TOKEN_NOT_FOUND" || data["error_code"] == "USER_PW_TOKEN_EXPIRED") {
+    if(data["error_code"] == "USER_BIOMETRIC_OTP_INVALID") {
+      NextJob job = NextJob();
+      job.initToken = true;
+      if(onCallbackNextJob != null) onCallbackNextJob!(job);
+      initBioAuthDevice();
+      requestType.value = BioConstants.REQUEST_TYPE_NONE;
+      if(onCallbackError != null) onCallbackError!(message.message);
+
+      return;
+    }
+
+    if(["USER_PW_TOKEN_NOT_FOUND",
+        "USER_PW_TOKEN_EXPIRED"].contains(data["error_code"])) {
       NextJob job = NextJob();
       job.initToken = true;
       job.nextType = BioConstants.REQUEST_PASSWORD_FOR_PAY;
-      // if (onNextJob != null) widget.onNextJob!(job);
-
       if(onCallbackNextJob != null) onCallbackNextJob!(job);
+
     } else {
       requestType.value = BioConstants.REQUEST_TYPE_NONE;
-
       if(onCallbackError != null) onCallbackError!(message.message);
     }
   }

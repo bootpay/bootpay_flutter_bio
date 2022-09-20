@@ -245,7 +245,7 @@ class _MyAppState extends State<MyApp> {
 
   User getUser() {
     User user = User();
-    user.id = '123411aaaaaaaaaa1aabd4ss121567821125221253145678';
+    user.id = '123411aaaaaaaaaa1aabd4ss1215678211252212531456789';
     user.gender = 1;
     user.email = 'test1234@gmail.com';
     user.phone = '01012345678';
@@ -324,7 +324,7 @@ class _MyAppState extends State<MyApp> {
     BioExtra extra = BioExtra(); // 결제 옵션
     extra.appScheme = 'bootpayFlutterExample';
     extra.cardQuota = "3";
-    extra.separatelyConfirmedBio = true;
+    // extra.separatelyConfirmedBio = true;
 
     bioPayload.user = user;
     bioPayload.extra = extra;
@@ -379,7 +379,7 @@ class _MyAppState extends State<MyApp> {
         print('------- onIssued: $data');
       },
       onConfirm: (String data)  {
-        print('------- onConfirm: $data');
+        print('------- onConfirm2: $data');
         // return true; //결제를 최종 승인하고자 할때 return true
 
         // return false;
@@ -433,7 +433,7 @@ class _MyAppState extends State<MyApp> {
 
         // BootpayBio().dismiss(context);
 
-        return true; //결제를 최종 승인하고자 할때 return true
+        return false; //결제를 최종 승인하고자 할때 return true
 
         //서버승인을 위한 로직 시작
         // _data = data;
