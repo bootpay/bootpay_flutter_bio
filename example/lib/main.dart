@@ -355,7 +355,7 @@ class _MyAppState extends State<MyApp> {
       payload: payload,
       showCloseButton: false,
       themeData: BioThemeData(
-        titleWidget: Image.asset("images/title_widget.png", height: 22),
+        titleWidget: Image.asset("images/title_widget.png", height: 22), 
       ),
       onCancel: (String data) {
         print('------- onCancel: $data');

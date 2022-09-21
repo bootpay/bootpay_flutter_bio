@@ -29,7 +29,8 @@ class BioThemeData {
   Color? cardBgColor; //카드 배경 2
   Color? cardIconColor; //아이콘 색상
 
-  Color? buttonBgColor;
+  Color? buttonActiveColor;
+  Color? buttonInActiveColor;
   Color? buttonTextColor;
 
   BioThemeData({
@@ -43,7 +44,8 @@ class BioThemeData {
       this.cardText2Color,
       this.cardBgColor,
       this.cardIconColor,
-      this.buttonBgColor,
+      this.buttonActiveColor,
+      this.buttonInActiveColor,
       this.buttonTextColor});
 
 // BioThemeData({this.bgColor, this.textColor, this.buttonBgColor, this.buttonTextColor, this.pointColor, this.cardColor, this.cardBgColor, this.titleWidget});

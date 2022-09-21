@@ -191,7 +191,7 @@ class BioRouterState extends State<BioContainer> {
   Color get cardBgColor => widget.themeData?.cardBgColor ?? const Color(0x12000000);
   Color get cardIconColor => widget.themeData?.cardIconColor ?? CardCode.COLOR_BLUE;
 
-  Color get buttonBgColor => widget.themeData?.buttonBgColor ?? CardCode.COLOR_BLUE;
+  Color get buttonBgColor => widget.themeData?.buttonActiveColor ?? CardCode.COLOR_BLUE;
   Color get buttonTextColor => widget.themeData?.buttonTextColor ?? Colors.white;
 
   Widget payInfoContainer() {
@@ -351,7 +351,7 @@ class BioRouterState extends State<BioContainer> {
                   SizedBox(width: 40),
                   Expanded(child:
                     widget.themeData?.titleWidget ?? Text(
-                        '등록된 결제수단',
+                        '결제하기',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, color: textColor)
                     )
@@ -998,31 +998,144 @@ class BioRouterState extends State<BioContainer> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('카드 삭제', style: TextStyle(fontSize: 16)),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('등록된 카드를 삭제합니다.', style: TextStyle(fontSize: 14)),
-                Text('정말 삭제하시겠습니까?', style: TextStyle(fontSize: 14)),
-              ],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          elevation: 0,
+          // insetPadding: EdgeInsets.all(20.0),
+          // buttonPadding: EdgeInsets.zero,
+          // actionsPadding: EdgeInsets.zero,
+          contentPadding: EdgeInsets.zero,
+          actionsOverflowAlignment: OverflowBarAlignment.center,
+          title: Text('카드 삭제', style: TextStyle(fontSize: 16, color: widget.themeData?.textColor ?? Colors.black87), textAlign: TextAlign.center),
+          content: Container(
+
+            // decoration: BoxDecoration(
+            //     color: widget.themeData?.buttonInActiveColor ?? Colors.white24,
+            //     borderRadius: const BorderRadius.only(
+            //       bottomRight: Radius.circular(10.0),
+            //     )
+            // ),
+            child: SingleChildScrollView(
+              child: Column(
+
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // crossAxisAlignment: CrossAxisAlignment.baseline,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 25.0),
+                    child: Column(
+                      children: [
+                        Text('등록된 카드를 삭제합니다.', style: TextStyle(fontSize: 14, color: widget.themeData?.textColor ?? Colors.black87)),
+                        Text('정말 삭제하시겠습니까?', style: TextStyle(fontSize: 14, color: widget.themeData?.textColor ?? Colors.black87)),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    // decoration: BoxDecoration(
+                    //     color: Colors.transparent,
+                    //     borderRadius: const BorderRadius.only(
+                    //       bottomRight: Radius.circular(10.0),
+                    //     )
+                    // ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    color: widget.themeData?.buttonInActiveColor ?? Colors.black12,
+                                    borderRadius: const BorderRadius.only(
+                                      bottomLeft: Radius.circular(5.0),
+                                    )
+                                ),
+                                child: const Center(child: Text('닫기', style: TextStyle(fontWeight: FontWeight.w500))),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                setPasswordToken(''); //결제수단 삭제 전 무조건 초기화하여, 비밀번호를 재입력하도록 한다
+                                requestDeleteCard(walletData: walletData);
+                              },
+                              child: Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    color: widget.themeData?.buttonActiveColor ?? const Color(0x08000000),
+                                    borderRadius: const BorderRadius.only(
+                                      bottomRight: Radius.circular(5.0),
+                                    )
+                                ),
+                                child: const Center(child: Text('삭제', style: TextStyle(fontWeight: FontWeight.w500))),
+                              ),
+                            ),
+                          ),
+                        ),
+
+
+                        // TextButton(
+                        //   style: TextButton.styleFrom(
+                        //     backgroundColor: widget.themeData?.buttonBgColor ?? Colors.white,
+                        //   ),
+                        //   child: const Text('닫기'),
+                        //   onPressed: () {
+                        //     Navigator.of(context).pop();
+                        //   },
+                        // ),
+                        // TextButton(
+                        //   child: const Text('삭제'),
+                        //
+                        //   style: TextButton.styleFrom(
+                        //     backgroundColor: widget.themeData?.buttonBgColor ?? Colors.white,
+                        //   ),
+                        //   onPressed: () {
+                        //     Navigator.of(context).pop();
+                        //     setPasswordToken(''); //결제수단 삭제 전 무조건 초기화하여, 비밀번호를 재입력하도록 한다
+                        //     requestDeleteCard(walletData: walletData);
+                        //   },
+                        // ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('닫기'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('삭제'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                setPasswordToken(''); //결제수단 삭제 전 무조건 초기화하여, 비밀번호를 재입력하도록 한다
-                requestDeleteCard(walletData: walletData);
-              },
-            ),
-          ],
+          // actions: <Widget>[
+          //   TextButton(
+          //     style: TextButton.styleFrom(
+          //       backgroundColor: widget.themeData?.buttonBgColor ?? Colors.white,
+          //     ),
+          //     child: const Text('닫기'),
+          //     onPressed: () {
+          //       Navigator.of(context).pop();
+          //     },
+          //   ),
+          //   TextButton(
+          //     child: const Text('삭제'),
+          //
+          //     style: TextButton.styleFrom(
+          //       backgroundColor: widget.themeData?.buttonBgColor ?? Colors.white,
+          //     ),
+          //     onPressed: () {
+          //       Navigator.of(context).pop();
+          //       setPasswordToken(''); //결제수단 삭제 전 무조건 초기화하여, 비밀번호를 재입력하도록 한다
+          //       requestDeleteCard(walletData: walletData);
+          //     },
+          //   ),
+          // ],
         );
       },
     );
