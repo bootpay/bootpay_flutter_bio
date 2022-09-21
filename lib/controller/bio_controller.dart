@@ -177,8 +177,6 @@ extension BCApiProvider on BioController {
 
     if(res.statusCode == HttpStatus.ok) {
       resWallet.value = ResWalletList.fromJson(res.body);
-
-
       resWallet.refresh();
       return true;
     }
@@ -312,16 +310,22 @@ extension BCWebViewProviderCallback on BioController {
       return;
     }
 
-    if([
-      BioConstants.REQUEST_ADD_CARD, //카드 추가
-      BioConstants.REQUEST_DELETE_CARD, //카드 삭제
-    ].contains(requestType.value)) {
-      getWalletList(payload?.userToken ?? '');
-      isShowWebView.value = false; //카드 선택화면으로 돌아간다
-      return;
-    }
+    /* close가 가끔 done 보다 빨리올때가 있다. done 으로 옮기자 */
+    // if([
+    //   BioConstants.REQUEST_ADD_CARD, //카드 추가
+    //   BioConstants.REQUEST_DELETE_CARD, //카드 삭제
+    // ].contains(requestType.value)) {
+    //   // widget.showCardView();
+    //   // c.show
+    //   getWalletList(payload?.userToken ?? '');
+    //   isShowWebView.value = false; //카드 선택화면으로 돌아간다
+    //   return;
+    // }
 
-    if(requestType.value == BioConstants.REQUEST_BIO_FOR_PAY) { //생체인증 결제시 가끔 done보다 빨리 떨어짐 - 아무것도 하지 않겠다
+    if([BioConstants.REQUEST_BIO_FOR_PAY,
+      BioConstants.REQUEST_ADD_CARD,
+      BioConstants.REQUEST_DELETE_CARD
+    ].contains(requestType.value)) { //생체인증 결제시 가끔 done보다 빨리 떨어짐 - 아무것도 하지 않겠다
       return;
     }
 
@@ -458,6 +462,8 @@ extension BCWebViewProviderCallback on BioController {
         BioConstants.REQUEST_ADD_CARD,
       ].contains(requestType.value)) {
         //카드 등록과 삭제시에는 confirm을 보내지 않는다
+        getWalletList(payload?.userToken ?? '');
+        isShowWebView.value = false; //카드 선택화면으로 돌아간다
         return;
       }
 
