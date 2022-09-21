@@ -1,3 +1,7 @@
+## 4.4.0
+* 결제수단 삭제팝업창에도 커스텀 테마 적용될 수 있도록 기능 추가 
+* 기존 bioTheme.buttonBgColor -> bioTheme.buttonActiveColor 로 수정 
+
 ## 4.3.9
 * 간헐적으로 카드추가, 삭제시 카드리스트가 새로고침 안되는 현상 개선 
 
