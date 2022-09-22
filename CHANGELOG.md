@@ -1,3 +1,6 @@
+## 4.4.1
+* 통합결제창 내 가상결제 발급시 조건부 발급완료창 보여지도록 수정 
+
 ## 4.4.0
 * 결제수단 삭제팝업창에도 커스텀 테마 적용될 수 있도록 기능 추가 
 * 기존 bioTheme.buttonBgColor -> bioTheme.buttonActiveColor 로 수정 
