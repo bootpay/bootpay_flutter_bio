@@ -356,7 +356,7 @@ extension BCWebViewProviderCallback on BioController {
     BootpayPrint('onWebViewDone: ${requestType}, ${message.message}');
 
     if(onCallbackDone != null) onCallbackDone!(message.message);
-    if(payload?.extra?.displayErrorResult != true) {
+    if(payload?.extra?.displaySuccessResult != true) {
       if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
     }
   }
