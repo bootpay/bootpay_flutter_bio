@@ -245,7 +245,8 @@ class _MyAppState extends State<MyApp> {
 
   User getUser() {
     User user = User();
-    user.id = '123411aaaaaaaaaa1aabd4ss1215678211252212531456789';
+    // user.id = '123411aaaaaaaaaa1aabd4ss1215678211252212531456789';
+    user.id = '123411aaaaaaaaaaaabd4ss11234';
     user.gender = 1;
     user.email = 'test1234@gmail.com';
     user.phone = '01012345678';

@@ -333,6 +333,7 @@ extension BCWebViewProviderCallback on BioController {
       NextJob job = NextJob();
       job.initToken = true;
       if (onCallbackNextJob != null) onCallbackNextJob!(job);
+      return;
     }
 
     if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
