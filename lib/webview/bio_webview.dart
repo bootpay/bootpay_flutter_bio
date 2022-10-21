@@ -13,7 +13,7 @@ import 'package:bootpay_bio/shims/bootpay_app.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:bootpay_webview_flutter/webview_flutter.dart';
+import 'package:bootpay_webview_flutter/bootpay_webview_flutter.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -139,8 +139,11 @@ class _BioWebViewState extends State<BioWebView> {
           onEasySuccess(context)
         },
         navigationDelegate: (NavigationRequest request) {
-          if(Platform.isAndroid)  return NavigationDecision.prevent;
-          else return NavigationDecision.navigate;
+          // if(Platform.isAndroid)  return NavigationDecision.prevent;
+          // else return NavigationDecision.navigate;
+
+          // print('allowing navigation to $request');
+          return NavigationDecision.navigate;
         },
 
         onPageFinished: (String url) {
@@ -148,11 +151,11 @@ class _BioWebViewState extends State<BioWebView> {
             widget.controller?.future.then((controller) async {
               for (String script in await BioConstants.getBootpayJSBeforeContentLoaded()) {
                 // controller.evaluateJavascript(script);
-                controller.evaluateJavascript(script);
+                controller.runJavascript(script);
               }
               // controller.evaluateJavascript(getBootpayJS());
-              controller.evaluateJavascript(widget.startScript ?? '');
-              BootpayPrint("onPageFinished : ${widget.startScript}");
+              controller.runJavascript(widget.startScript ?? '');
+              // BootpayPrint("onPageFinished : ${widget.startScript}");
             });
           }
 

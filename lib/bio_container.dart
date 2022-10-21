@@ -568,7 +568,7 @@ class BioRouterState extends State<BioContainer> {
 
 
   startPayWithSelectedCard() async {
-    BootpayPrint("startPayWithSelectedCard : ${widget.c.requestType.value}");
+    // BootpayPrint("startPayWithSelectedCard : ${widget.c.requestType.value}");
 
     // BootpayPrint("widget.c.selectedCardIndex: ${widget.c.selectedCardIndex}, wallets: ${widget.c.resWallet.value.wallets.length}");
     widget.payload?.walletId = widget.c.resWallet.value.wallets[widget.c.selectedCardIndex].wallet_id;
@@ -674,7 +674,7 @@ class BioRouterState extends State<BioContainer> {
   }
 
   requestAddBioData(int type) {
-    BootpayPrint("requestAddBioData : $type");
+    // BootpayPrint("requestAddBioData : $type");
     updateProgressShow(true);
 
     // widget.c.requestType.value = type;
@@ -691,7 +691,7 @@ class BioRouterState extends State<BioContainer> {
     final bool isDeviceSupported = await localAuth.isDeviceSupported();
 
     final List<BiometricType> availableBiometrics = await localAuth.getAvailableBiometrics();
-    BootpayPrint("goBiometricAuth : $canCheckBiometrics, :$isDeviceSupported, ${availableBiometrics.map((e) => e.name).join(', ')}");
+    // BootpayPrint("goBiometricAuth : $canCheckBiometrics, :$isDeviceSupported, ${availableBiometrics.map((e) => e.name).join(', ')}");
 
 
     return canCheckBiometrics && isDeviceSupported && availableBiometrics.isNotEmpty;
@@ -768,7 +768,7 @@ class BioRouterState extends State<BioContainer> {
   onAuthenticationSucceeded(int type) {
     onVibration();
 
-    BootpayPrint("onAuthenticationSucceeded : $type, ${widget.c.requestType.value}");
+    // BootpayPrint("onAuthenticationSucceeded : $type, ${widget.c.requestType.value}");
 
     if(type == BioConstants.REQUEST_ADD_BIOMETRIC) {
       requestAddBioData(BioConstants.REQUEST_ADD_BIOMETRIC);
@@ -786,7 +786,7 @@ class BioRouterState extends State<BioContainer> {
   }
 
   onNextJob(NextJob data) async {
-    BootpayPrint("onNextJob: ${data.toJson()}");
+    // BootpayPrint("onNextJob: ${data.toJson()}");
 
     if(data.initToken) {
       setPasswordToken("");
@@ -871,7 +871,7 @@ class BioRouterState extends State<BioContainer> {
     String secretKey = prefs.getString("biometric_secret_key") ?? '';
     int serverUnixTime = widget.c.resWallet.value.biometric?.server_unixtime ?? 0;
 
-    BootpayPrint("key: $secretKey, time: $serverUnixTime, otp: ${widget.c.otp}, ${widget.c.isShowWebView.value}");
+    // BootpayPrint("key: $secretKey, time: $serverUnixTime, otp: ${widget.c.otp}, ${widget.c.isShowWebView.value}");
 
     if(widget.c.isShowWebView.value == true) {
       widget.c.requestBioForPay(getOTPValue(secretKey, serverUnixTime));
@@ -902,7 +902,7 @@ class BioRouterState extends State<BioContainer> {
   Future<bool> isAblePasswordToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String passwordToken =  prefs.getString('password_token') ?? '';
-    BootpayPrint('isAblePasswordToken : $passwordToken, ${widget.c.requestType.value}');
+    // BootpayPrint('isAblePasswordToken : $passwordToken, ${widget.c.requestType.value}');
     return passwordToken.isNotEmpty;
   }
 
@@ -914,7 +914,7 @@ class BioRouterState extends State<BioContainer> {
   Future<bool> didAbleBioAuthDevice() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String biometric_secret_key =  prefs.getString('biometric_secret_key') ?? '';
-    BootpayPrint("didAbleBioAuthDevice: ${biometric_secret_key}, ${widget.c.resWallet.value.biometric?.biometric_confirmed}, ${(widget.c.resWallet.value.biometric?.biometric_confirmed ?? false) && biometric_secret_key.isNotEmpty}");
+    // BootpayPrint("didAbleBioAuthDevice: ${biometric_secret_key}, ${widget.c.resWallet.value.biometric?.biometric_confirmed}, ${(widget.c.resWallet.value.biometric?.biometric_confirmed ?? false) && biometric_secret_key.isNotEmpty}");
     return (widget.c.resWallet.value.biometric?.biometric_confirmed ?? false) && biometric_secret_key.isNotEmpty;
   }
 

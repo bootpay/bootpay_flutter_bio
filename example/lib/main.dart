@@ -393,7 +393,8 @@ class _MyAppState extends State<MyApp> {
 
         // return true;
         // BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
-        return false;
+        // return false;
+        return true;
       },
       // onConfirmAsync: (String data)  async {
       //   return true;

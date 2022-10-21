@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:bootpay/bootpay.dart';
 import 'package:bootpay_bio/bio_container.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
-import 'package:bootpay_webview_flutter/webview_flutter.dart';
+import 'package:bootpay_webview_flutter/bootpay_webview_flutter.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -78,7 +78,7 @@ class ApiWebviewProvider {
     String script = await BioConstants.getJSPasswordPay(payload);
     if(doWorkNow == true) {
       webView?.controller?.future.then((controller) {
-        controller.evaluateJavascript(
+        controller.runJavascript(
             callJavascriptAsync(script)
         );
       });
@@ -90,7 +90,7 @@ class ApiWebviewProvider {
 
   void removePaymentWindow() {
     webView?.controller?.future.then((controller) {
-      controller.evaluateJavascript(
+      controller.runJavascript(
           "Bootpay.removePaymentWindow();"
       );
     });
@@ -110,7 +110,7 @@ class ApiWebviewProvider {
     updateProgressShow(true);
     if(doWorkNow == true) {
       webView?.controller?.future.then((controller) {
-        controller.evaluateJavascript(
+        controller.runJavascript(
             callJavascriptAsync(script)
         );
       });
@@ -124,12 +124,12 @@ class ApiWebviewProvider {
     requestType = type;
     String script = BioConstants.getJSTotalPay(payload);
 
-    BootpayPrint("requestTotalPay : $script");
+    // BootpayPrint("requestTotalPay : $script");
 
     updateProgressShow(true);
     if(doWorkNow == true) {
       webView?.controller?.future.then((controller) {
-        controller.evaluateJavascript(
+        controller.runJavascript(
             callJavascriptAsync(script)
         );
       });
@@ -144,12 +144,12 @@ class ApiWebviewProvider {
       requestType = type;
     }
     String script = await BioConstants.getJSBiometricAuthenticate(payload);
-    BootpayPrint("requestAddBioData : $script, $type");
+    // BootpayPrint("requestAddBioData : $script, $type");
 
     updateProgressShow(true);
     if(doWorkNow == true) {
       webView?.controller?.future.then((controller) {
-        controller.evaluateJavascript(
+        controller.runJavascript(
             callJavascriptAsync(script)
         );
       });
@@ -163,12 +163,12 @@ class ApiWebviewProvider {
     requestType = type;
     String script = await BioConstants.getJSBioOTPPay(payload, otp, cardQuota ?? "0");
 
-    BootpayPrint("requestBioForPay : $script");
+    // BootpayPrint("requestBioForPay : $script");
 
     updateProgressShow(true);
     if(doWorkNow == true) {
       webView?.controller?.future.then((controller) {
-        controller.evaluateJavascript(
+        controller.runJavascript(
             callJavascriptAsync(script)
         );
       });
@@ -190,7 +190,7 @@ class ApiWebviewProvider {
 
     if(doWorkNow == true) {
       webView?.controller?.future.then((controller) {
-        controller.evaluateJavascript(
+        controller.runJavascript(
             callJavascriptAsync(script)
         );
       });
@@ -212,7 +212,7 @@ class ApiWebviewProvider {
     updateProgressShow(true);
     if(doWorkNow == true) {
       webView?.controller?.future.then((controller) {
-        controller.evaluateJavascript(
+        controller.runJavascript(
             callJavascriptAsync(script)
         );
       });
@@ -271,18 +271,18 @@ extension InnerFunction on ApiWebviewProvider {
         _cancel() +
         "});";
 
-    BootpayPrint("transactionConfirm : $script");
 
     webView?.controller?.future.then((controller) {
-      controller.evaluateJavascript(
-          "setTimeout(function() { $script }, 30);"
+      controller.runJavascript(
+        script
       );
     });
   }
 
 
   String callJavascriptAsync(String script) {
-    return "setTimeout(function() { $script }, 30);";
+    return script;
+    // return "setTimeout(function() { $script }, 30);";
   }
 }
 
