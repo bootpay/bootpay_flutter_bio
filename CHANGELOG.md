@@ -1,3 +1,6 @@
+## 4.4.4
+* bootpay 4.4.2 update 
+
 ## 4.4.3
 * bootpay_webview 3.x 적용
 

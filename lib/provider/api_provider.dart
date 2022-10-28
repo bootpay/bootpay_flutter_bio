@@ -19,14 +19,18 @@ class ApiProvider extends GetConnect {
   Future<Response> getWalletList(String deviceUUID, String userToken) async {
     var url = "$defaultUrl/v2/sdk/easy/wallet.json";
 
+    var headers =  {
+    'Accept': 'application/json',
+    'Bootpay-Device-UUID': deviceUUID,
+    'Bootpay-User-Token': userToken,
+    };
+
+    print('url: $url, headers: $headers');
+
     return get(
         url,
         contentType: 'application/json',
-        headers: {
-          'Accept': 'application/json',
-          'Bootpay-Device-UUID': deviceUUID,
-          'Bootpay-User-Token': userToken,
-        }
+        headers: headers
     );
   }
 }

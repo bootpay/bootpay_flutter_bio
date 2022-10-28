@@ -151,11 +151,12 @@ class _BioWebViewState extends State<BioWebView> {
             widget.controller?.future.then((controller) async {
               for (String script in await BioConstants.getBootpayJSBeforeContentLoaded()) {
                 // controller.evaluateJavascript(script);
+                BootpayPrint("runJavascript : ${script}");
                 controller.runJavascript(script);
               }
               // controller.evaluateJavascript(getBootpayJS());
               controller.runJavascript(widget.startScript ?? '');
-              // BootpayPrint("onPageFinished : ${widget.startScript}");
+              BootpayPrint("runJavascript : ${widget.startScript}");
             });
           }
 

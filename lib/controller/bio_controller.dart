@@ -173,7 +173,7 @@ extension BCApiProvider on BioController {
 
     var res = await _provider.getWalletList(deviceId, userToken);
 
-    // BootpayPrint("getWalletList : ${res.body}");
+    BootpayPrint("getWalletList : ${res.body}");
 
     if(res.statusCode == HttpStatus.ok) {
       resWallet.value = ResWalletList.fromJson(res.body);
@@ -281,7 +281,7 @@ extension BCWebViewProvider on BioController {
 
 extension BCWebViewProviderCallback on BioController {
   void onWebViewCancel(JavascriptMessage message) {
-    // BootpayPrint('onWebViewCancel: ${requestType}, ${message.message}');
+    BootpayPrint('onWebViewCancel: ${requestType}, ${message.message}');
 
     if(onCallbackCancel != null) onCallbackCancel!(message.message);
     if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
@@ -289,8 +289,6 @@ extension BCWebViewProviderCallback on BioController {
   }
 
   void onWebViewError(JavascriptMessage message) {
-
-    // BootpayPrint('onWebViewError: ${requestType}, ${message.message}, ${data["error_code"]}, ${data["error_code"] == "USER_BIOMETRIC_OTP_INVALID"}');
     if(onCallbackError != null) onCallbackError!(message.message);
 
     if(payload?.extra?.displayErrorResult != true) {
@@ -299,7 +297,7 @@ extension BCWebViewProviderCallback on BioController {
   }
 
   void onWebViewClose(JavascriptMessage message) {
-    // BootpayPrint('onWebViewClose: ${requestType}, ${message.message}');
+    BootpayPrint('onWebViewClose: ${requestType}, ${message.message}');
 
     if([
       BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY, //토큰 받은 후 결제
@@ -340,7 +338,7 @@ extension BCWebViewProviderCallback on BioController {
   }
 
   void onWebViewIssued(JavascriptMessage message) {
-    // BootpayPrint('onWebViewIssued: ${requestType}, ${message.message}');
+    BootpayPrint('onWebViewIssued: ${requestType}, ${message.message}');
     if(onCallbackIssued != null) onCallbackIssued!(message.message);
     if(payload?.extra?.displaySuccessResult != true) {
       if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
@@ -348,13 +346,13 @@ extension BCWebViewProviderCallback on BioController {
   }
 
   void onWebViewConfirm(JavascriptMessage message) {
-    // BootpayPrint('onWebViewConfirm: ${requestType}, ${message.message}');
+    BootpayPrint('onWebViewConfirm: ${requestType}, ${message.message}');
 
     goConfirmEvent(message);
   }
 
   void onWebViewDone(JavascriptMessage message) {
-    // BootpayPrint('onWebViewDone: ${requestType}, ${message.message}');
+    BootpayPrint('onWebViewDone: ${requestType}, ${message.message}');
 
     if(onCallbackDone != null) onCallbackDone!(message.message);
     if(payload?.extra?.displaySuccessResult != true) {
@@ -363,7 +361,7 @@ extension BCWebViewProviderCallback on BioController {
   }
 
   void onWebViewRedirect(JavascriptMessage message) {
-    // BootpayPrint('onWebViewRedirect: ${requestType}, ${message.message}');
+    BootpayPrint('onWebViewRedirect: ${requestType}, ${message.message}');
 
     final data = json.decode(message.message);
     switch(data["event"]) {
@@ -418,7 +416,7 @@ extension BCWebViewProviderCallback on BioController {
   }
 
   void onWebViewEasySuccess(JavascriptMessage message) {
-    // BootpayPrint('onWebViewEasySuccess: ${requestType}, ${message.message}');
+    BootpayPrint('onWebViewEasySuccess: ${requestType}, ${message.message}');
 
     NextJob job = NextJob();
     if([BioConstants.REQUEST_PASSWORD_TOKEN,
@@ -512,7 +510,7 @@ extension BCWebViewProviderCallback on BioController {
   }
 
   void onWebViewEasyError(JavascriptMessage message) {
-    // BootpayPrint('onWebViewEasyError: ${requestType}, ${message.message}');
+    BootpayPrint('onWebViewEasyError: ${requestType}, ${message.message}');
     final data = json.decode(message.message);
     if(data["error_code"] == "USER_BIOMETRIC_OTP_INVALID") {
       NextJob job = NextJob();
