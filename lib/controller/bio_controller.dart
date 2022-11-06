@@ -378,10 +378,17 @@ extension BCWebViewProviderCallback on BioController {
         // if(this.widget.payload?.extra?.displayErrorResult != true) {
         //   bootpayClose();
         // }
-        if(onCallbackError != null) onCallbackError!(message.message);
-        if(payload?.extra?.displayErrorResult != true) {
+        if(data["error_code"] == "PASSWORD_TOKEN_STOP") {
+          if(onCallbackCancel != null) onCallbackCancel!(message.message);
           if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
+
+        } else {
+          if(onCallbackError != null) onCallbackError!(message.message);
+          if(payload?.extra?.displayErrorResult != true) {
+            if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
+          }
         }
+
         break;
       case "close":
         // widget.updateProgressShow(false);
