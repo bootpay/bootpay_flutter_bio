@@ -1,3 +1,6 @@
+## 4.4.5
+* error로 리턴되는 cancel을 cancel로 개선
+
 ## 4.4.4
 * bootpay 4.4.2 update 
 
