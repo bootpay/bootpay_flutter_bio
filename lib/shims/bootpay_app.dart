@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../bootpay_bio_api.dart';
+import '../config/bio_config.dart';
 import '../controller/bio_debounce_close_controller.dart';
 import '../models/bio_theme_data.dart';
 
@@ -108,7 +109,12 @@ class BootpayPlatform extends BootpayBioApi {
       },
     ).whenComplete(() {
       isShowModal = false;
-      // closeController.isBootpayShow = false;
+      if(closeController.isBootpayShow) { //즉시 실행
+        BootpayPrint("bootpayClose call 즉시실행");
+        if (onClose != null) onClose();
+        closeController.isBootpayShow = false;
+      }
+
       // print('Hey there, I\'m calling after hide bottomSheet');
     });
   }

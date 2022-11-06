@@ -1,3 +1,6 @@
+## 4.4.6
+* showModal이 닫힐때 debounce close가 호출되지 않는 현상이 있어서, 즉시실행 로직을 추가함 
+
 ## 4.4.5
 * error로 리턴되는 cancel을 cancel로 개선
 

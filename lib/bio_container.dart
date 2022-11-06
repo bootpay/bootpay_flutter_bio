@@ -365,6 +365,7 @@ class BioRouterState extends State<BioContainer> {
                           // icon: Image.asset('assets/close.png'),
                           iconSize: 20,
                           onPressed: () {
+
                             if (widget.onCancel != null) {
                               widget.onCancel!('{"action":"BootpayCancel","status":-100,"message":"사용자에 의한 취소"}');
                             }
