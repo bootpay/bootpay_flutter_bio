@@ -12,7 +12,7 @@ PODS:
   - shared_preferences_ios (0.0.1):
     - Flutter
   - Toast (4.0.0)
-  - vibration (1.7.4-nullsafety.0):
+  - vibration (1.7.5):
     - Flutter
 
 DEPENDENCIES:
@@ -47,12 +47,12 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   bootpay_webview_flutter_wkwebview: baf2884591d215ae8bf446f97f1acc282f9527a6
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  fluttertoast: 16fbe6039d06a763f3533670197d01fc73459037
+  fluttertoast: 74526702fea2c060ea55dde75895b7e1bde1c86b
   local_auth_ios: 0d333dde7780f669e66f19d2ff6005f3ea84008d
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
-  vibration: 1ec279c4a1a7a646627b54039d812334b3f1114a
+  vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
 
 PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
 

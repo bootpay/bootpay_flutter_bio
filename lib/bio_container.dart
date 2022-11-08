@@ -562,8 +562,8 @@ class BioRouterState extends State<BioContainer> {
     //   return;
     // }
 
-    widget.c.addNewCard(doWorkNow: false);
     showWebView();
+    widget.c.addNewCard(doWorkNow: false);
   }
 
 
@@ -590,8 +590,9 @@ class BioRouterState extends State<BioContainer> {
     if(!await isAblePasswordToken()) {
       // widget.c.requestType.value = BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY;
       // showWebView();
-      widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY, doWorkNow: false);
       showWebView();
+      widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY, doWorkNow: false);
+
       return;
     }
 
@@ -628,8 +629,8 @@ class BioRouterState extends State<BioContainer> {
       if(widget.c.isShowWebView.value == true) {
         widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD);
       } else {
-        widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD, doWorkNow: false);
         showWebView();
+        widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_DELETE_CARD, doWorkNow: false);
       }
       return;
     }
@@ -638,8 +639,8 @@ class BioRouterState extends State<BioContainer> {
     if(widget.c.isShowWebView.value == true) {
       widget.c.requestDeleteCard();
     } else {
-      widget.c.requestDeleteCard(doWorkNow: false);
       showWebView();
+      widget.c.requestDeleteCard(doWorkNow: false);
     }
   }
 
@@ -647,13 +648,15 @@ class BioRouterState extends State<BioContainer> {
   requestPasswordForPay() async {
     updateProgressShow(true);
 
+    BootpayPrint('requestPasswordForPay : ${await isAblePasswordToken()}, ${widget.c.isShowWebView.value}');
+
     if(!await isAblePasswordToken()) {
       if(widget.c.isShowWebView.value == true) {
         // widget.webView?.requestPasswordToken();
         widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY);
       } else {
-        widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY, doWorkNow: false);
         showWebView();
+        widget.c.requestPasswordToken(type: BioConstants.REQUEST_PASSWORD_TOKEN_FOR_PASSWORD_FOR_PAY, doWorkNow: false);
       }
       return;
     }
@@ -661,8 +664,8 @@ class BioRouterState extends State<BioContainer> {
     if(widget.c.isShowWebView.value == true) {
       widget.c.requestPasswordForPay();
     } else {
-      widget.c.requestPasswordForPay(doWorkNow: false);
       showWebView();
+      widget.c.requestPasswordForPay(doWorkNow: false);
     }
 
     // if(widget.c.isShowWebView.value == true) {
@@ -931,12 +934,14 @@ class BioRouterState extends State<BioContainer> {
       widget.c.requestTotalPay();
     } else {
       // widget.c.requestBioForPay(getOTPValue(secretKey, serverUnixTime), doWorkNow: false);
-      widget.c.requestTotalPay(doWorkNow: false);
       showWebView();
+      widget.c.requestTotalPay(doWorkNow: false);
     }
   }
 
   showWebView({bool? isShowWebViewHalf}) {
+    BootpayPrint("showWebView : ${widget.c.isShowWebView.value} ${isShowWebViewHalf}");
+
     if(widget.c.isShowWebView.value == false) {
       if(mounted) {
         setState(() {
