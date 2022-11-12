@@ -761,7 +761,8 @@ class BioRouterState extends State<BioContainer> {
         // BootpayBio().dismiss(context);
       }
     } on PlatformException catch (e) {
-      if(widget.onError != null) { widget.onError!(e.toString()); }
+      if(widget.onError != null) { widget.onError!("생체인식에 실패하였습니다."); }
+      // if(widget.onError != null) { widget.onError!(e.toString()); }
       bootpayClose();
       // if(widget.onClose != null) { widget.onClose!(); }
       // BootpayBio().dismiss(context);

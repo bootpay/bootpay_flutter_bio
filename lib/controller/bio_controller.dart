@@ -530,6 +530,12 @@ extension BCWebViewProviderCallback on BioController {
       return;
     }
 
+    if(data["error_code"] == "PASSWORD_TOKEN_STOP") {
+      if(onCallbackCancel != null) onCallbackCancel!(message.message);
+      if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
+      return;
+    }
+
     if(["USER_PW_TOKEN_NOT_FOUND",
         "USER_PW_TOKEN_EXPIRED"].contains(data["error_code"])) {
       NextJob job = NextJob();
