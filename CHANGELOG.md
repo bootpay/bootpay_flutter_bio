@@ -1,5 +1,10 @@
+
 ## 4.5.0
-* bootpay version update 
+* bootpay version update
+
+## 4.4.8
+* 간편결제창 닫기 진행시 toast 에러 메시지 나오는 현상 안나오도록 수정 
+
 
 ## 4.4.7
 * 토큰 만료시 ios 에서 비밀번호 입력창으로 안가는 현상이 있어서 로직 순서를 바꿈 
