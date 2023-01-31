@@ -22,14 +22,18 @@ import '../config/bio_config.dart';
 import '../controller/bio_debounce_close_controller.dart';
 
 
+import 'package:bootpay_webview_flutter_android/bootpay_webview_flutter_android.dart';
+import 'package:bootpay_webview_flutter_wkwebview/bootpay_webview_flutter_wkwebview.dart';
+
+
 // typedef void BootpayNextJobCallback(NextJob data);
 
 
-typedef WebViewCallback = void Function(JavascriptMessage message);
+typedef WebViewCallback = void Function(JavaScriptMessage message);
 
 // 1. 웹앱을 대체하는 뷰를 활용한 샘플
 // 2. api 역할
-class BioWebView extends WebView {
+class BioWebView extends StatefulWidget {
   // Payload;
   // Event
   // controller
@@ -55,8 +59,11 @@ class BioWebView extends WebView {
   Widget? closeButton;
   bool? isEditMode = false;
 
-  WebView? webView;
-  Completer<WebViewController>? controller;
+  // WebView? webView;
+  // Completer<WebViewController>? controller;
+  // late final WebViewController _controller;
+  WebViewController? controller;
+
   String? startScript;
 
 
@@ -92,7 +99,7 @@ class BioWebView extends WebView {
 }
 
 class _BioWebViewState extends State<BioWebView> {
-  final String INAPP_URL = 'https://webview.bootpay.co.kr/4.2.2/';
+  final String INAPP_URL = 'https://webview.bootpay.co.kr/4.2.7/';
   bool isClosed = false;
   final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers = {
     Factory(() => EagerGestureRecognizer())
@@ -111,14 +118,123 @@ class _BioWebViewState extends State<BioWebView> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
-    widget.controller = Completer<WebViewController>();
+    // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+    // widget.controller = Completer<WebViewController>();
+
+    late final PlatformWebViewControllerCreationParams params;
+    if (WebViewPlatform.instance is BTWebKitWebViewPlatform) {
+      params = WebKitWebViewControllerCreationParams(
+        allowsInlineMediaPlayback: true,
+        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+      );
+    } else {
+      params = const PlatformWebViewControllerCreationParams();
+    }
+
+    final WebViewController controller =
+    WebViewController.fromPlatformCreationParams(params);
+    // #enddocregion platform_features
+
+    controller
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            // debugPrint('WebView is loading (progress : $progress%)');
+          },
+          onPageStarted: (String url) {
+            // debugPrint('Page started loading: $url');
+          },
+          onPageFinished: (String url) async {
+            if (url.startsWith(INAPP_URL)) {
+              // widget._controller
+              for (String script in await BioConstants.getBootpayJSBeforeContentLoaded()) {
+                // controller.evaluateJavascript(script);
+                BootpayPrint("runJavascript : ${script}");
+                widget.controller?.runJavaScript(script);
+              }
+              // controller.evaluateJavascript(getBootpayJS());
+              widget.controller?.runJavaScript(widget.startScript ?? '');
+              BootpayPrint("runJavascript : ${widget.startScript}");
+            }
+          },
+          // onNavi
+          onWebResourceError: (WebResourceError error) {
+            debugPrint('''
+            Page resource error:
+            code: ${error.errorCode}
+            description: ${error.description}
+            errorType: ${error.errorType}
+            isForMainFrame: ${error.isForMainFrame}
+                    ''');
+          },
+          onNavigationRequest: (NavigationRequest request) {
+            // if(widget.onShowHeader != null) {
+            //   widget.onShowHeader!(request.url.contains("https://nid.naver.com") || request.url.contains("naversearchthirdlogin://"));
+            // }
+            // print('allowing navigation to $request');
+            return NavigationDecision.navigate;
+          },
+          // Navigation
+
+        ),
+      )
+      ..addJavaScriptChannel(
+        'BootpayCancel',
+        onMessageReceived: onCancel,
+      )
+      ..addJavaScriptChannel(
+        'BootpayError',
+        onMessageReceived: onError,
+      )
+      ..addJavaScriptChannel(
+        'BootpayClose',
+        onMessageReceived: onClose,
+      )
+      ..addJavaScriptChannel(
+        'BootpayIssued',
+        onMessageReceived: onIssued,
+      )
+      ..addJavaScriptChannel(
+        'BootpayConfirm',
+        onMessageReceived: onConfirm,
+      )
+      ..addJavaScriptChannel(
+        'BootpayDone',
+        onMessageReceived: onDone,
+      )
+      ..addJavaScriptChannel(
+        'BootpayFlutterWebView',
+        onMessageReceived: onRedirect,
+      )
+      ..addJavaScriptChannel(
+        'BootpayEasyError',
+        onMessageReceived: onEasyError,
+      )
+      ..addJavaScriptChannel(
+        'BootpayEasySuccess',
+        onMessageReceived: onEasySuccess,
+      )
+      ..loadRequest(Uri.parse(INAPP_URL));
+
+    // #docregion platform_features
+    if (controller.platform is AndroidWebViewController) {
+      AndroidWebViewController.enableDebugging(true);
+      (controller.platform as AndroidWebViewController)
+          .setMediaPlaybackRequiresUserGesture(false);
+    }
+    // #enddocregion platform_features
+
+    widget.controller = controller;
   }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
 
 
+    /*
     widget.webView ??= WebView(
         key: widget.key,
         initialUrl: INAPP_URL,
@@ -171,108 +287,96 @@ class _BioWebViewState extends State<BioWebView> {
       );
 
     return widget.webView!;
+    */
+
+    if(widget.controller == null) return Container();
+    return  WebViewWidget(controller: widget.controller!);
 
   }
 }
+
 
 
 extension BootpayCallback on _BioWebViewState {
 
-  JavascriptChannel onCancel(BuildContext context) {
-    return JavascriptChannel(
-        name: 'BootpayCancel',
-        onMessageReceived: (JavascriptMessage message) {
-          if(this.widget.onWebViewCancel != null) {
-            this.widget.onWebViewCancel!(message);
-          }
-        });
+  Future<void> onCancel(JavaScriptMessage message) async {
+    if(this.widget.onWebViewCancel != null) {
+      this.widget.onWebViewCancel!(message);
+    }
   }
 
-  JavascriptChannel onError(BuildContext context) {
-    return JavascriptChannel(
-        name: 'BootpayError',
-        onMessageReceived: (JavascriptMessage message) {
-          if(this.widget.onWebViewError != null) {
-            this.widget.onWebViewError!(message);
-          }
-        });
+  Future<void> onError(JavaScriptMessage message) async {
+    if(this.widget.onWebViewError != null) {
+      this.widget.onWebViewError!(message);
+    }
   }
 
-  JavascriptChannel onClose(BuildContext context) {
-    return JavascriptChannel(
-        name: 'BootpayClose',
-        onMessageReceived: (JavascriptMessage message) {
-          if(this.widget.onWebViewClose != null) {
-            this.widget.onWebViewClose!(message);
-          }
-        });
+  Future<void> onClose(JavaScriptMessage message) async {
+    if(this.widget.onWebViewClose != null) {
+      this.widget.onWebViewClose!(message);
+    }
   }
 
-  JavascriptChannel onIssued(BuildContext context) {
-    return JavascriptChannel(
-        name: 'BootpayReady',
-        onMessageReceived: (JavascriptMessage message) {
-          if(this.widget.onWebViewIssued != null) {
-            this.widget.onWebViewIssued!(message);
-          }
-        });
+  Future<void> onIssued(JavaScriptMessage message) async {
+    if(this.widget.onWebViewIssued != null) {
+      this.widget.onWebViewIssued!(message);
+    }
   }
 
-  JavascriptChannel onConfirm(BuildContext context) {
-    return JavascriptChannel(
-        name: 'BootpayConfirm',
-        onMessageReceived: (JavascriptMessage message) async {
-          if(this.widget.onWebViewConfirm != null) {
-            this.widget.onWebViewConfirm!(message);
-          }
-        });
+
+  Future<void> onConfirm(JavaScriptMessage message) async {
+    if(this.widget.onWebViewConfirm != null) {
+      this.widget.onWebViewConfirm!(message);
+    }
   }
 
-  JavascriptChannel onDone(BuildContext context) {
-    return JavascriptChannel(
-        name: 'BootpayDone',
-        onMessageReceived: (JavascriptMessage message) {
-          if(this.widget.onWebViewDone != null) {
-            this.widget.onWebViewDone!(message);
-          }
-        });
+
+  Future<void> onDone(JavaScriptMessage message) async {
+    if(this.widget.onWebViewDone != null) {
+      this.widget.onWebViewDone!(message);
+    }
   }
 
-  JavascriptChannel onRedirect(BuildContext context) {
-    return JavascriptChannel(
-        name: 'BootpayFlutterWebView', //이벤트 이름은 Android로 하자
-        onMessageReceived: (JavascriptMessage message) async {
-          if(this.widget.onWebViewRedirect != null) {
-            this.widget.onWebViewRedirect!(message);
-          }
-        });
+  Future<void> onRedirect(JavaScriptMessage message) async {
+    if(this.widget.onWebViewRedirect != null) {
+      this.widget.onWebViewRedirect!(message);
+    }
   }
 
-  // JavascriptChannel onEasyCancel(BuildContext context) {
-  //   return JavascriptChannel(
-  //       name: 'BootpayEasyCancel',
-  //       onMessageReceived: (JavascriptMessage message) {
-  //         if (this.widget.onCancel != null) this.widget.onCancel!(message.message);
-  //       });
-  // }
-
-  JavascriptChannel onEasyError(BuildContext context) {
-    return JavascriptChannel(
-        name: 'BootpayEasyError',
-        onMessageReceived: (JavascriptMessage message) {
-          if(this.widget.onWebViewEasyError != null) {
-            this.widget.onWebViewEasyError!(message);
-          }
-        });
+  Future<void> onEasyError(JavaScriptMessage message) async {
+    if(this.widget.onWebViewEasyError != null) {
+      this.widget.onWebViewEasyError!(message);
+    }
   }
 
-  JavascriptChannel onEasySuccess(BuildContext context) {
-    return JavascriptChannel(
-        name: 'BootpayEasySuccess',
-        onMessageReceived: (JavascriptMessage message) async {
-          if(this.widget.onWebViewEasySuccess != null) {
-            this.widget.onWebViewEasySuccess!(message);
-          }
-        });
+
+  Future<void> onEasySuccess(JavaScriptMessage message) async {
+    if(this.widget.onWebViewEasySuccess != null) {
+      this.widget.onWebViewEasySuccess!(message);
+    }
   }
 }
+
+
+/*
+JavascriptChannel onEasyError(BuildContext context) {
+  return JavascriptChannel(
+      name: 'BootpayEasyError',
+      onMessageReceived: (JavascriptMessage message) {
+        if(this.widget.onWebViewEasyError != null) {
+          this.widget.onWebViewEasyError!(message);
+        }
+      });
+}
+
+JavascriptChannel onEasySuccess(BuildContext context) {
+  return JavascriptChannel(
+      name: 'BootpayEasySuccess',
+      onMessageReceived: (JavascriptMessage message) async {
+        if(this.widget.onWebViewEasySuccess != null) {
+          this.widget.onWebViewEasySuccess!(message);
+        }
+      });
+}
+}
+*/

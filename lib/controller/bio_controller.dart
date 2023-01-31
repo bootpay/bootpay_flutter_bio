@@ -140,7 +140,7 @@ extension BCInnerFunction on BioController {
   }
 
 
-  Future<void> goConfirmEvent(JavascriptMessage message) async {
+  Future<void> goConfirmEvent(JavaScriptMessage message) async {
     // if (onConfirm != null) {
     //   bool goTransactionConfirm = onConfirm!(message.message);
     //   if (goTransactionConfirm) {
@@ -280,15 +280,15 @@ extension BCWebViewProvider on BioController {
 }
 
 extension BCWebViewProviderCallback on BioController {
-  void onWebViewCancel(JavascriptMessage message) {
-    BootpayPrint('onWebViewCancel: ${requestType}, ${message.message}');
+  void onWebViewCancel(JavaScriptMessage message) {
+    BootpayPrint('onWebViewCancel: $requestType, ${message.message}');
 
     if(onCallbackCancel != null) onCallbackCancel!(message.message);
     if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
     // if(onCancel != null) { onCancel();}
   }
 
-  void onWebViewError(JavascriptMessage message) {
+  void onWebViewError(JavaScriptMessage message) {
     if(onCallbackError != null) onCallbackError!(message.message);
 
     if(payload?.extra?.displayErrorResult != true) {
@@ -296,8 +296,8 @@ extension BCWebViewProviderCallback on BioController {
     }
   }
 
-  void onWebViewClose(JavascriptMessage message) {
-    BootpayPrint('onWebViewClose: ${requestType}, ${message.message}');
+  void onWebViewClose(JavaScriptMessage message) {
+    BootpayPrint('onWebViewClose: $requestType, ${message.message}');
 
     if([
       BioConstants.REQUEST_PASSWORD_TOKEN_FOR_BIO_FOR_PAY, //토큰 받은 후 결제
@@ -337,7 +337,7 @@ extension BCWebViewProviderCallback on BioController {
     if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
   }
 
-  void onWebViewIssued(JavascriptMessage message) {
+  void onWebViewIssued(JavaScriptMessage message) {
     BootpayPrint('onWebViewIssued: ${requestType}, ${message.message}');
     if(onCallbackIssued != null) onCallbackIssued!(message.message);
     if(payload?.extra?.displaySuccessResult != true) {
@@ -345,13 +345,13 @@ extension BCWebViewProviderCallback on BioController {
     }
   }
 
-  void onWebViewConfirm(JavascriptMessage message) {
+  void onWebViewConfirm(JavaScriptMessage message) {
     BootpayPrint('onWebViewConfirm: ${requestType}, ${message.message}');
 
     goConfirmEvent(message);
   }
 
-  void onWebViewDone(JavascriptMessage message) {
+  void onWebViewDone(JavaScriptMessage message) {
     BootpayPrint('onWebViewDone: ${requestType}, ${message.message}');
 
     if(onCallbackDone != null) onCallbackDone!(message.message);
@@ -360,7 +360,7 @@ extension BCWebViewProviderCallback on BioController {
     }
   }
 
-  void onWebViewRedirect(JavascriptMessage message) {
+  void onWebViewRedirect(JavaScriptMessage message) {
     BootpayPrint('onWebViewRedirect: ${requestType}, ${message.message}');
 
     final data = json.decode(message.message);
@@ -422,7 +422,7 @@ extension BCWebViewProviderCallback on BioController {
     }
   }
 
-  void onWebViewEasySuccess(JavascriptMessage message) {
+  void onWebViewEasySuccess(JavaScriptMessage message) {
     BootpayPrint('onWebViewEasySuccess: ${requestType}, ${message.message}');
 
     NextJob job = NextJob();
@@ -516,7 +516,7 @@ extension BCWebViewProviderCallback on BioController {
 
   }
 
-  void onWebViewEasyError(JavascriptMessage message) {
+  void onWebViewEasyError(JavaScriptMessage message) {
     BootpayPrint('onWebViewEasyError: ${requestType}, ${message.message}');
     final data = json.decode(message.message);
     if(data["error_code"] == "USER_BIOMETRIC_OTP_INVALID") {

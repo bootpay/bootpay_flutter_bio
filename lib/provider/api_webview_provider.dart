@@ -77,11 +77,15 @@ class ApiWebviewProvider {
     requestType = type;
     String script = await BioConstants.getJSPasswordPay(payload);
     if(doWorkNow == true) {
-      webView?.controller?.future.then((controller) {
-        controller.runJavascript(
-            callJavascriptAsync(script)
-        );
-      });
+      webView?.controller?.runJavaScript(
+          callJavascriptAsync(script)
+      );
+
+      // webView?.controller?.future.then((controller) {
+      //   controller.runJavascript(
+      //       callJavascriptAsync(script)
+      //   );
+      // });
     } else {
       webView?.startScript = script;
     }
@@ -89,11 +93,9 @@ class ApiWebviewProvider {
   }
 
   void removePaymentWindow() {
-    webView?.controller?.future.then((controller) {
-      controller.runJavascript(
-          "Bootpay.removePaymentWindow();"
-      );
-    });
+    webView?.controller?.runJavaScript(
+        "Bootpay.removePaymentWindow();"
+    );
   }
 
 
@@ -109,11 +111,15 @@ class ApiWebviewProvider {
     String script = BioConstants.getJSAddCard(payload);
     updateProgressShow(true);
     if(doWorkNow == true) {
-      webView?.controller?.future.then((controller) {
-        controller.runJavascript(
-            callJavascriptAsync(script)
-        );
-      });
+      webView?.controller?.runJavaScript(
+          callJavascriptAsync(script)
+      );
+
+      // webView?.controller?.future.then((controller) {
+      //   controller.runJavascript(
+      //       callJavascriptAsync(script)
+      //   );
+      // });
     } else {
       webView?.startScript = script;
     }
@@ -128,11 +134,15 @@ class ApiWebviewProvider {
 
     updateProgressShow(true);
     if(doWorkNow == true) {
-      webView?.controller?.future.then((controller) {
-        controller.runJavascript(
-            callJavascriptAsync(script)
-        );
-      });
+      webView?.controller?.runJavaScript(
+          callJavascriptAsync(script)
+      );
+
+      // webView?.controller?.future.then((controller) {
+      //   controller.runJavascript(
+      //       callJavascriptAsync(script)
+      //   );
+      // });
     } else {
       webView?.startScript = script;
     }
@@ -148,11 +158,15 @@ class ApiWebviewProvider {
 
     updateProgressShow(true);
     if(doWorkNow == true) {
-      webView?.controller?.future.then((controller) {
-        controller.runJavascript(
-            callJavascriptAsync(script)
-        );
-      });
+      webView?.controller?.runJavaScript(
+          callJavascriptAsync(script)
+      );
+
+      // webView?.controller?.future.then((controller) {
+      //   controller.runJavascript(
+      //       callJavascriptAsync(script)
+      //   );
+      // });
     } else {
       webView?.startScript = script;
     }
@@ -167,11 +181,15 @@ class ApiWebviewProvider {
 
     updateProgressShow(true);
     if(doWorkNow == true) {
-      webView?.controller?.future.then((controller) {
-        controller.runJavascript(
-            callJavascriptAsync(script)
-        );
-      });
+      webView?.controller?.runJavaScript(
+          callJavascriptAsync(script)
+      );
+
+      // webView?.controller?.future.then((controller) {
+      //   controller.runJavascript(
+      //       callJavascriptAsync(script)
+      //   );
+      // });
     } else {
       webView?.startScript = script;
 
@@ -189,11 +207,15 @@ class ApiWebviewProvider {
     updateProgressShow(true);
 
     if(doWorkNow == true) {
-      webView?.controller?.future.then((controller) {
-        controller.runJavascript(
-            callJavascriptAsync(script)
-        );
-      });
+      webView?.controller?.runJavaScript(
+          callJavascriptAsync(script)
+      );
+
+      // webView?.controller?.future.then((controller) {
+      //   controller.runJavascript(
+      //       callJavascriptAsync(script)
+      //   );
+      // });
     } else {
       webView?.startScript = script;
     }
@@ -211,11 +233,15 @@ class ApiWebviewProvider {
     String script = await BioConstants.getJSDestroyWallet(payload);
     updateProgressShow(true);
     if(doWorkNow == true) {
-      webView?.controller?.future.then((controller) {
-        controller.runJavascript(
-            callJavascriptAsync(script)
-        );
-      });
+      webView?.controller?.runJavaScript(
+          callJavascriptAsync(script)
+      );
+
+      // webView?.controller?.future.then((controller) {
+      //   controller.runJavascript(
+      //       callJavascriptAsync(script)
+      //   );
+      // });
     } else {
       webView?.startScript = script;
     }
@@ -271,12 +297,15 @@ extension InnerFunction on ApiWebviewProvider {
         _cancel() +
         "});";
 
-
-    webView?.controller?.future.then((controller) {
-      controller.runJavascript(
+    webView?.controller?.runJavaScript(
         script
-      );
-    });
+    );
+
+    // webView?.controller?.future.then((controller) {
+    //   controller.runJavascript(
+    //     script
+    //   );
+    // });
   }
 
 

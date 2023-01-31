@@ -323,7 +323,7 @@ class _MyAppState extends State<MyApp> {
     bioPayload.items = itemList; // 상품정보 배열
 
     BioExtra extra = BioExtra(); // 결제 옵션
-    extra.appScheme = 'bootpayFlutterExample';
+    extra.appScheme = 'bootpayBioFlutterExample';
     extra.cardQuota = "3";
     // extra.separatelyConfirmedBio = true;
 
