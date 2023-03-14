@@ -1,143 +1,146 @@
+## 4.5.1
+* more_horiz icon customization option provided
+* BootPay version update
 
 ## 4.5.0
-* bootpay version update
+* BootPay version update
 
 ## 4.4.8
-* 간편결제창 닫기 진행시 toast 에러 메시지 나오는 현상 안나오도록 수정 
+* Close the easy payment window
 
 
 ## 4.4.7
-* 토큰 만료시 ios 에서 비밀번호 입력창으로 안가는 현상이 있어서 로직 순서를 바꿈 
+* A number of logical changes in the amount that does not go to the full input window in ios at the end of precision
 
 ## 4.4.6
-* showModal이 닫힐때 debounce close가 호출되지 않는 현상이 있어서, 즉시실행 로직을 추가함 
+* Since debounce close is not called when showModal is closehill, add immediate execution logic
 
 ## 4.4.5
-* error로 리턴되는 cancel을 cancel로 개선
+* Improved cancellation returned as an error to cancellation
 
 ## 4.4.4
-* bootpay 4.4.2 update 
+* BootPay 4.4.2 update
 
 ## 4.4.3
-* bootpay_webview 3.x 적용
+* apply bootpay_webview 3.x
 
 ## 4.4.2
-* 비밀번호 결제시 간헐적으로 close가 먼저 응답되는 현상 개선 
- 
+*Improved the problem that close was responded first during comprehensive payment intermittently
+
 ## 4.4.1
-* 통합결제창 내 가상결제 발급시 조건부 발급완료창 보여지도록 수정 
+* Modified so that the conditional issuance completion window is displayed when issuing a virtual payment in the integrated payment window
 
 ## 4.4.0
-* 결제수단 삭제팝업창에도 커스텀 테마 적용될 수 있도록 기능 추가 
-* 기존 bioTheme.buttonBgColor -> bioTheme.buttonActiveColor 로 수정 
+* Added a function to keep the custom theme even in the payment method deletion pop-up window
+* Original bioTheme.buttonBgColor -> modified to bioTheme.buttonActiveColor
 
 ## 4.3.9
-* 간헐적으로 카드추가, 삭제시 카드리스트가 새로고침 안되는 현상 개선 
+* Improved the phenomenon that the card list is refreshed intermittently when adding or deleting a card
 
 ## 4.3.8
-* 카드 등록, 삭제시 바로 닫히지 않고, 이어나갈 수 있게 처리 
-* 사용자가 바뀔 경우 초기화되어 진행되는 시나리오에 대한 사용성 개선 
+* When registering or deleting a card, if it does not close immediately and continues, it is processed gradually
+* Improved usability for users working and ongoing requests
 
 ## 4.3.7
-* 카드등록, 삭제시 confirm 함수를 호출하는 현상은 버그로 정리, 수정  
-* 카드 연속해서 등록시 이상현상 버그 수정 
+* Arranged and corrected a bug requesting confirmation when registering or deleting a card
+* Fix abnormal bug when registering cards consecutively
 
 ## 4.3.6
-* 생체인증 결제 진행 후, 비밀번호 결제 진행시 토큰만료 관련 버그 수정
-* 리팩토링 
-* 생체인증 분리 승인일때, confirm 후 close 호출되도록 수정 
+* Fixed bug related to token expiry when proceeding with password payment after biometric authentication payment
+* Refactoring
+* Modified so that close is called after confirmation when biometric separation approval is given
 
 ## 4.3.5
-* 셍체인증 진행시 bio 인증을 할 수 없으면 비밀번호 결제로 대체하여 진행 
+* If bio authentication is not possible during biometric authentication, proceed with password payment instead.
 
 ## 4.3.4
-* setState 호출 전 mounted 체크 추가 
+* Added mounted check before calling setState
 
 ## 4.3.3
-* 비밀번호 결제 버그 수정 
+* Fixed password payment bug
 
 ## 4.3.2
-* bootpay 4.3.2 적용
-* confirm async 지원
+* Apply bootpay 4.3.2
+* confirm async support
 
 ## 4.3.1
-* bootpay_webview_flutter 3.2.21 적용 
-* bootpay 4.3.1 적용 
-* event async 지원 
+* Apply bootpay_webview_flutter 3.2.21
+* Apply bootpay 4.3.1
+* event async support
 
 ## 4.3.0
-* 중요 
-* 간편결제는 생체인증, 통합결제 2가지를 사용중 
-* 간편결제시 서버 분리 승인 로직을 추가하면서 사이드 이펙트가 생긴것을 확인하여 아래와 같이 수정함
-  * 발견된 사이드 이펙트는 서버 승인 로직이 추가되면서 클라이언트에서 간편결제 승인이 진행되지 않는 것임 (separatelyConfirmed 옵션 기본값이 true)
-  * 수정사항) extra -> bio_extra 모델로 대체 
-    * bio_extra.separatelyConfirmed 옵션은 통합결제에만 적용되도록 수정 
-    * bio_extra.separatelyConfirmedBio 옵션은 간편결제에만 적용되도록 수정 
-      - 단 이 옵션이 true일 경우 특성상 서버승인으로만 진행을 해야함 
+* important
+* For simple payment, biometric authentication and integrated payment are being used.
+* After adding server separation approval logic during simple payment, it was confirmed that a side effect occurred and modified as follows.
+  * The discovered side effect is that simple payment approval is not processed on the client as server approval logic is added (separatelyConfirmed option default value is true)
+  * Fix) Extra -> replaced with bio_extra model
+    * The bio_extra.separatelyConfirmed option is modified to apply only to integrated payment.
+    * The bio_extra.separatelyConfirmedBio option is modified to apply only to simple payment.
+      - However, if this option is true, you must proceed only with server approval due to its nature.
 
 ## 4.2.9
-* bootpay js 4.2.2 적용 
-* bootpay 4.2.7 적용 
+* apply bootpay js 4.2.2
+* apply bootpay 4.2.7
 
 ## 4.2.8
-* extra.separatelyConfirmed 옵션 일 경우 done -> confirm 으로 이벤트를 주는 것으로 수정 
+* In the case of the extra.separatelyConfirmed option, it is modified to give an event as done -> confirm
 
 ## 4.2.7
-* android 기기에서 onClose가 호출이 간헐적으로 안되는 버그 수정 
+* Fixed a bug where onClose could not be called intermittently on android devices
 
 ## 4.2.6
-* bootpay 4.2.6 적용 
-* debounceClose 개선시도 (재현이 안되는 버그가 있음)
-* bootpay js 4.2.1 적용
+* Apply bootpay 4.2.6
+* Attempt to improve debounceClose (there is a bug that cannot be reproduced)
+* apply bootpay js 4.2.1
 
 ## 4.2.4
-* 결제수단 삭제 기능 추가 
-* 결제수단 편집 API 추가 
+* Added payment method deletion function
+* Payment method edit API added
 
 ## 4.2.3
-* bootpay bio 결제창 커스텀 테마 가능하도록 업데이트 
+* Bootpay bio payment window custom theme updated
 
 ## 4.2.2
-* bootpay 4.2.5 적용
-* bootpay js 4.2.0 적용
-* 생체인증 결제진행시 해당 화면사이즈에서 결제진행하도록 수정
-* closeHardware 제거, debounce close 적용 
+* apply bootpay 4.2.5
+* apply bootpay js 4.2.0
+* Modified to proceed with payment in the corresponding screen size when proceeding with biometric authentication payment
+* Remove closeHardware, apply debounce close
 
 ## 4.2.1
-* 생체인증 결제 인증취소시 예외처리 추가 
+* Addition of exception handling when biometric payment authentication is canceled
 
 ## 4.2.0
-* bootpay js 4.1.0 적용 
+* apply bootpay js 4.1.0
 
 ## 4.1.6
-* 생체인증 결제 후 비밀번호 결제시 간헐적 버그 수정
+* Fixed intermittent bug when paying password after biometric payment
 
 ## 4.1.5
-* 생체인증 결제 후 비밀번호 결제시 간헐적 버그 수정
+* Fixed intermittent bug when paying password after biometric payment
 
 ## 4.1.4
-* 생체인증 결제 후 비밀번호 결제시 간헐적 버그 수정 
+* Fixed intermittent bug when paying password after biometric payment
 
 ## 4.1.3
 * onReady -> onIssued renamed
 
 ## 4.1.2
-* boot_extra, boot_item 삭제 
-* 예제 update 
+* Delete boot_extra, boot_item
+* example update
 
 ## 4.1.1
-* bootpay 4.1.1 반영
+* Reflect bootpay 4.1.1
 
 ## 4.1.0
-* bootpay 4.1.0 반영 
-* 생체인식 카드 케로셀 버그 수정 (ipad)
+* Reflect bootpay 4.1.0
+* Fixed biometric card kerosell bug (ipad)
 
 
 ## 4.0.9
-* 비밀번호 간편결제 password_token 만료시 창 닫지않고, 재갱신해서 로직수행하도록 버그 수정 
+* Fixed a bug so that when the password easy payment password_token expires, the window is not closed, and the logic is performed by renewing
 
 ## 4.0.8
-* 비밀번호 간편결제 지원
+* Password easy payment support
 
 ## 4.0.7
-* flutter bio 공식 지원 
+* Flutter bio official support

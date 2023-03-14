@@ -44,6 +44,7 @@ class BioContainer extends StatefulWidget {
   bool? showCloseButton;
 
   Widget? closeButton;
+  Widget? bioCardMoreIcon;
   BootpayDefaultCallback? onCancel;
   BootpayDefaultCallback? onError;
   BootpayCloseCallback? onClose;
@@ -62,6 +63,7 @@ class BioContainer extends StatefulWidget {
       this.showCloseButton,
       this.themeData,
       this.closeButton,
+      this.bioCardMoreIcon,
       this.onCancel,
       this.onError,
       this.onClose,
@@ -1196,7 +1198,7 @@ class BioRouterState extends State<BioContainer> {
                               width: 40,
                               child: IconButton(
                                 padding: EdgeInsets.zero,
-                                icon: Icon(Icons.more_horiz, color: Colors.white),
+                                icon: widget.bioCardMoreIcon ?? const Icon(Icons.more_horiz, color: Colors.white),
                                 // icon: Image.asset('assets/close.png'),
                                 // iconSize: 20,
                                 onPressed: () {

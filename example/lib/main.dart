@@ -355,6 +355,7 @@ class _MyAppState extends State<MyApp> {
       context: context,
       payload: payload,
       showCloseButton: false,
+      // bioCardMoreIcon: const Icon(Icons.more_horiz, color: Colors.yellow),
       themeData: BioThemeData(
         titleWidget: Image.asset("images/title_widget.png", height: 22), 
       ),
