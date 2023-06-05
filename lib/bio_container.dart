@@ -53,7 +53,7 @@ class BioContainer extends StatefulWidget {
   BootpayConfirmCallback? onConfirm;
   BootpayAsyncConfirmCallback? onConfirmAsync;
   BootpayDefaultCallback? onDone;
-  bool? isPasswordMode;
+  int? easyType;
   bool? isEditMode;
 
 
@@ -72,7 +72,7 @@ class BioContainer extends StatefulWidget {
       this.onConfirm,
       this.onConfirmAsync,
       this.onDone,
-      this.isPasswordMode,
+      this.easyType,
       this.isEditMode,
   }) {
   } // BioContainer(this.webView, this.payload);
@@ -104,10 +104,16 @@ class BioRouterState extends State<BioContainer> {
   void initState() {
     super.initState();
     // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
-    widget.c.isPasswordMode = widget.isPasswordMode ?? false;
-    if(widget.isPasswordMode == true) {
+    widget.c.easyType = widget.easyType ?? BioConstants.EASY_TYPE_BIO;
+
+    if(widget.easyType == BioConstants.EASY_TYPE_PASSWORD_NO_BILL){
+      widget.payload?.easyType = '';
+      setPasswordToken('');
+    } else if(widget.easyType == BioConstants.EASY_TYPE_PASSWORD) {
+      widget.payload?.easyType = 'easy_subscribe';
       setPasswordToken('');
     }
+
     createWebView();
     widget.c.initValues(createWebViewProvider(), widget.payload!);
     widget.c.initCallbackEvent(
@@ -582,7 +588,10 @@ class BioRouterState extends State<BioContainer> {
       return;
     }
 
-    if(widget.c.isPasswordMode) {
+    if(widget.c.easyType == BioConstants.EASY_TYPE_PASSWORD) {
+      requestPasswordForPay();
+      return;
+    } else  if(widget.c.easyType == BioConstants.EASY_TYPE_PASSWORD_NO_BILL) {
       requestPasswordForPay();
       return;
     }
@@ -650,7 +659,7 @@ class BioRouterState extends State<BioContainer> {
   requestPasswordForPay() async {
     updateProgressShow(true);
 
-    BootpayPrint('requestPasswordForPay : ${await isAblePasswordToken()}, ${widget.c.isShowWebView.value}');
+    // BootpayPrint('requestPasswordForPay : ${await isAblePasswordToken()}, ${widget.c.isShowWebView.value}');
 
     if(!await isAblePasswordToken()) {
       if(widget.c.isShowWebView.value == true) {

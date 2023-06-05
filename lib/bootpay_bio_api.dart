@@ -41,6 +41,21 @@ abstract class BootpayBioApi {
         BootpayDefaultCallback? onDone
       });
 
+  void requestPaymentPasswordNoBilling( {
+    Key? key,
+    BuildContext? context,
+    BioPayload? payload,
+    bool? showCloseButton,
+    Widget? closeButton,
+    BootpayDefaultCallback? onCancel,
+    BootpayDefaultCallback? onError,
+    BootpayCloseCallback? onClose,
+    // BootpayCloseCallback? onCloseHardware,
+    BootpayDefaultCallback? onIssued,
+    BootpayConfirmCallback? onConfirm,
+    BootpayDefaultCallback? onDone
+  });
+
   void requestEditPayment({
         Key? key,
         BuildContext? context,

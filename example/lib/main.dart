@@ -29,6 +29,7 @@ class _MyAppState extends State<MyApp> {
 
   final String PAY_TYPE_BIO = "bio";
   final String PAY_TYPE_PASSWORD = "password";
+  final String PAY_TYPE_PASSWORD_NO_BILLING = "password_no_billing";
 
   String get applicationId {
     if(BioConstants.DEBUG) {
@@ -73,6 +74,12 @@ class _MyAppState extends State<MyApp> {
                 child: TextButton(
                   onPressed: () => goBootpayTest(context, PAY_TYPE_PASSWORD),
                   child: Text('비밀번호 간편결제 테스트'),
+                ),
+              ),
+              Center(
+                child: TextButton(
+                  onPressed: () => goBootpayTest(context, PAY_TYPE_PASSWORD_NO_BILLING),
+                  child: Text('비밀번호 간편결제 테스트 (카드자동 - 빌링키 X)'),
                 ),
               ),
               Center(
@@ -342,8 +349,10 @@ class _MyAppState extends State<MyApp> {
 
     if(payType == PAY_TYPE_BIO) {
       requestPaymentBio(context, bioPayload);
-    } else {
+    } else if(payType == PAY_TYPE_PASSWORD){
       requestPaymentPassword(context, bioPayload);
+    } else if(payType == PAY_TYPE_PASSWORD_NO_BILLING){
+      requestPaymentPasswordNoBilling(context, bioPayload);
     }
   }
 
@@ -406,6 +415,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+
   requestPaymentPassword(BuildContext context, BioPayload payload) {
 
     BootpayBio().requestPaymentPassword(
@@ -445,6 +455,44 @@ class _MyAppState extends State<MyApp> {
         // });
         // return false;
         //서버 승인을 위한 로직 끝
+      },
+      onDone: (String data) {
+        print('------- onDone: $data');
+      },
+    );
+  }
+
+
+  requestPaymentPasswordNoBilling(BuildContext context, BioPayload payload) {
+    BootpayBio().requestPaymentPasswordNoBilling(
+      context: context,
+      payload: payload,
+      showCloseButton: false,
+      // closeButton: Icon(Icons.close, size: 35.0, color: Colors.black54),
+      onCancel: (String data) {
+        print('------- onCancel: $data');
+      },
+      onError: (String data) {
+        print('------- onError: $data');
+      },
+      onClose: () {
+        print('------- onClose');
+        BootpayBio().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+
+        //TODO - 원하시는 라우터로 페이지 이동
+      },
+      // onCloseHardware: () {
+      //   print('------- onCloseHardware');
+      // },
+      onIssued: (String data) {
+        print('------- onIssued: $data');
+      },
+      onConfirm: (String data) {
+        print('------- onConfirm: $data');
+
+
+        return false; //결제를 최종 승인하고자 할때 return true
+
       },
       onDone: (String data) {
         print('------- onDone: $data');

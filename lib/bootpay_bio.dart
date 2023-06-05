@@ -103,6 +103,42 @@ class BootpayBio extends BootpayBioApi{
 
 
   @override
+  void requestPaymentPasswordNoBilling({Key? key,
+      BuildContext? context,
+      BioPayload? payload,
+      bool? showCloseButton,
+      Widget? closeButton,
+      Widget? bioCardMoreIcon,
+      BioThemeData? themeData,
+      BootpayDefaultCallback? onCancel,
+      BootpayDefaultCallback? onError,
+      BootpayCloseCallback? onClose,
+      // BootpayCloseCallback? onCloseHardware,
+      BootpayDefaultCallback? onIssued,
+      BootpayConfirmCallback? onConfirm,
+      BootpayAsyncConfirmCallback? onConfirmAsync,
+      BootpayDefaultCallback? onDone}) {
+    // TODO: implement requestPaymentPasswordNoBilling
+    _platform.requestPaymentPasswordNoBilling(
+        context: context,
+        payload: payload,
+        themeData: themeData,
+        showCloseButton: showCloseButton,
+        closeButton: closeButton,
+        bioCardMoreIcon: bioCardMoreIcon,
+        onCancel: onCancel,
+        onError: onError,
+        onClose: onClose,
+        onIssued: onIssued,
+        // onCloseHardware: onCloseHardware,
+        onConfirm: onConfirm,
+        onConfirmAsync: onConfirmAsync,
+        onDone: onDone
+    );
+  }
+
+
+  @override
   void requestEditPayment({
     Key? key,
     BuildContext? context,
@@ -142,5 +178,6 @@ class BootpayBio extends BootpayBioApi{
   void dismiss(BuildContext context) {
     _platform.dismiss(context);
   }
+
 
 }

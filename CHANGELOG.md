@@ -1,3 +1,7 @@
+## 4.6.4
+* bootpay version update
+* 비밀번호 자동결제 추가 
+
 ## 4.5.1
 * more_horiz icon customization option provided
 * BootPay version update

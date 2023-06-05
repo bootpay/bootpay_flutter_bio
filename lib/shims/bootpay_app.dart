@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:bootpay/bootpay.dart';
+import 'package:bootpay_bio/constants/bio_constants.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:bootpay_bio/bio_container.dart';
 import 'package:flutter/cupertino.dart';
@@ -54,7 +55,7 @@ class BootpayPlatform extends BootpayBioApi {
         onConfirmAsync: onConfirmAsync,
         onDone: onDone,
         context: context,
-        isPasswordMode: false
+        easyType: BioConstants.EASY_TYPE_BIO
     );
   }
 
@@ -75,7 +76,7 @@ class BootpayPlatform extends BootpayBioApi {
         BootpayAsyncConfirmCallback? onConfirmAsync,
         BootpayDefaultCallback? onDone,
         BuildContext? context,
-        bool? isPasswordMode,
+        int? easyType,
         bool? isEditMode,
 
       }) {
@@ -97,7 +98,7 @@ class BootpayPlatform extends BootpayBioApi {
       onConfirm: onConfirm,
       onConfirmAsync: onConfirmAsync,
       onDone: onDone,
-      isPasswordMode: isPasswordMode,
+      easyType: easyType,
       isEditMode: isEditMode,
     );
 
@@ -159,7 +160,46 @@ class BootpayPlatform extends BootpayBioApi {
         onConfirmAsync: onConfirmAsync,
         onDone: onDone,
         context: context,
-        isPasswordMode: true
+        easyType: BioConstants.EASY_TYPE_PASSWORD
+    );
+  }
+  @override
+  void requestPaymentPasswordNoBilling(
+      {Key? key,
+        BuildContext? context,
+        BioPayload? payload,
+        BioThemeData? themeData,
+        bool? showCloseButton,
+        Widget? closeButton,
+        Widget? bioCardMoreIcon,
+        BootpayDefaultCallback? onCancel,
+        BootpayDefaultCallback? onError,
+        BootpayCloseCallback? onClose,
+        // BootpayCloseCallback? onCloseHardware,
+        BootpayDefaultCallback? onIssued,
+        BootpayConfirmCallback? onConfirm,
+        BootpayAsyncConfirmCallback? onConfirmAsync,
+        BootpayDefaultCallback? onDone}) {
+    // TODO: implement requestPaymentPassword
+
+    if (context == null) return;
+
+    showModalBioContainer(
+        key: key,
+        payload: payload,
+        themeData: themeData,
+        showCloseButton: showCloseButton,
+        closeButton: closeButton,
+        bioCardMoreIcon: bioCardMoreIcon,
+        onCancel: onCancel,
+        onError: onError,
+        onClose: onClose,
+        onIssued: onIssued,
+        onConfirm: onConfirm,
+        onConfirmAsync: onConfirmAsync,
+        onDone: onDone,
+        context: context,
+        easyType: BioConstants.EASY_TYPE_PASSWORD_NO_BILL
     );
   }
 

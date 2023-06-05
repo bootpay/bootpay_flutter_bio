@@ -30,7 +30,7 @@ class BioController extends GetxController {
   /** view model **/
   var isShowWebView = false.obs;
   var isShowWebViewHalfSize = false.obs;
-  var isPasswordMode = false; //비밀번호 간편결제 호출인지
+  var easyType = BioConstants.EASY_TYPE_BIO; //비밀번호 간편결제 호출인지
   var isEditMode = false; //편집 모드인지
   var resWallet = ResWalletList().obs;
   var selectedCardIndex = -1;
