@@ -1,3 +1,7 @@
+## 4.8.8
+* bootpay webview android 삼성폰 버그 개선 
+* extra isShowTotalPay 옵션 추가 
+
 ## 4.6.4
 * bootpay version update
 * 비밀번호 자동결제 추가 

@@ -304,7 +304,7 @@ class BioRouterState extends State<BioContainer> {
             )
         ),
       ),
-      Container(
+      if(widget.payload?.extra?.isShowTotalPay ?? true) Container(
         // height: 50,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4.0),
@@ -330,7 +330,7 @@ class BioRouterState extends State<BioContainer> {
                 )
             )
         ),
-      ),
+      )
     ];
   }
 

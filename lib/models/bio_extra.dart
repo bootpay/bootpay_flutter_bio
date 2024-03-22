@@ -51,6 +51,7 @@ class BioExtra  {
   List<String>? enableEasyPayments = []; // 노출될 간편결제 리스트
   int? confirmGraceSeconds = 10; // 결제승인 유예시간 ( 승인 요청을 여러번하더라도 승인 이후 특정 시간동안 계속해서 결제 response_data 를 리턴한다 )
 
+  bool? isShowTotalPay = true;
 
 
   BioExtra();
@@ -91,6 +92,7 @@ class BioExtra  {
     exceptCardCompanies = json["except_card_companies"];
     enableEasyPayments = json["enable_easy_payments"];
     confirmGraceSeconds = json["confirm_grace_seconds"];
+    isShowTotalPay = json["isShowTotalPay"];
   }
 
   Map<String, dynamic> toJson() => {
@@ -125,6 +127,7 @@ class BioExtra  {
     "except_card_companies": this.exceptCardCompanies,
     "enable_easy_payments": this.enableEasyPayments,
     "confirm_grace_seconds": this.confirmGraceSeconds,
+    "is_show_total_pay": this.isShowTotalPay
   };
 
 
@@ -159,6 +162,7 @@ class BioExtra  {
     "except_card_companies": this.exceptCardCompanies,
     "enable_easy_payments": this.enableEasyPayments,
     "confirm_grace_seconds": this.confirmGraceSeconds,
+    "is_show_total_pay": this.isShowTotalPay
   };
 
 

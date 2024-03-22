@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:bootpay/bootpay.dart';
+import 'package:bootpay/config/bootpay_config.dart';
 import 'package:bootpay/user_info.dart';
 import 'package:bootpay_bio/constants/bio_constants.dart';
 import 'package:bootpay_bio/controller/bio_controller.dart';
@@ -151,12 +152,10 @@ class _BioWebViewState extends State<BioWebView> {
               // widget._controller
               for (String script in await BioConstants.getBootpayJSBeforeContentLoaded()) {
                 // controller.evaluateJavascript(script);
-                BootpayPrint("runJavascript : ${script}");
                 widget.controller?.runJavaScript(script);
               }
               // controller.evaluateJavascript(getBootpayJS());
               widget.controller?.runJavaScript(widget.startScript ?? '');
-              BootpayPrint("runJavascript : ${widget.startScript}");
             }
           },
           // onNavi
@@ -231,67 +230,23 @@ class _BioWebViewState extends State<BioWebView> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-
-
-    /*
-    widget.webView ??= WebView(
-        key: widget.key,
-        initialUrl: INAPP_URL,
-        javascriptMode: JavascriptMode.unrestricted,
-        gestureRecognizers: gestureRecognizers,
-        onWebViewCreated: (WebViewController webViewController) {
-          widget.controller?.complete(webViewController);
-        },
-        javascriptChannels: <JavascriptChannel>{
-          onCancel(context),
-          onError(context),
-          onClose(context),
-          onIssued(context),
-          onConfirm(context),
-          onDone(context),
-          onRedirect(context),
-          onEasyError(context),
-          onEasySuccess(context)
-        },
-        navigationDelegate: (NavigationRequest request) {
-          // if(Platform.isAndroid)  return NavigationDecision.prevent;
-          // else return NavigationDecision.navigate;
-
-          // print('allowing navigation to $request');
-          return NavigationDecision.navigate;
-        },
-
-        onPageFinished: (String url) {
-          if (url.startsWith(INAPP_URL)) {
-            widget.controller?.future.then((controller) async {
-              for (String script in await BioConstants.getBootpayJSBeforeContentLoaded()) {
-                // controller.evaluateJavascript(script);
-                BootpayPrint("runJavascript : ${script}");
-                controller.runJavascript(script);
-              }
-              // controller.evaluateJavascript(getBootpayJS());
-              controller.runJavascript(widget.startScript ?? '');
-              BootpayPrint("runJavascript : ${widget.startScript}");
-            });
-          }
-
-          //네이버페이 일 경우 뒤로가기 버튼 제거 - 그러나 작동하지 않는다 (아마 팝업이라)
-          // if(url.startsWith("https://nid.naver.com/nidlogin.login")) {
-          //   widget._controller.future.then((controller) async {
-          //     controller.evaluateJavascript('window.document.getElementById("back").remove();');
-          //   });
-          // }
-        },
-        gestureNavigationEnabled: true,
-      );
-
-    return widget.webView!;
-    */
-
     if(widget.controller == null) return Container();
-    return  WebViewWidget(controller: widget.controller!);
+    // return  WebViewWidget(controller: widget.controller!);
+    return platformWebViewWidget();
+  }
 
+  Widget platformWebViewWidget() {
+    if(widget.controller!.platform is AndroidWebViewController && BootpayConfig.DISPLAY_WITH_HYBRID_COMPOSITION) {
+      return WebViewWidget.fromPlatformCreationParams(
+        params: AndroidWebViewWidgetCreationParams.fromPlatformWebViewWidgetCreationParams(
+          AndroidWebViewWidgetCreationParams(
+            controller: widget.controller!.platform,
+          ),
+          displayWithHybridComposition: true,
+        ),
+      );
+    }
+    return WebViewWidget(controller: widget.controller!);
   }
 }
 
