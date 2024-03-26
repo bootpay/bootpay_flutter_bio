@@ -167,6 +167,18 @@ class _BioWebViewState extends State<BioWebView> {
             errorType: ${error.errorType}
             isForMainFrame: ${error.isForMainFrame}
                     ''');
+
+            if(error.errorCode == 3) { // SSL 인증서 에러, update 유도
+              if(error.description.contains("sslerror:")) {
+                JavaScriptMessage message = JavaScriptMessage(message: error.description);
+                if (this.widget.onWebViewError != null) {
+                  this.widget.onWebViewError!(message);
+                }
+                if(this.widget.onWebViewClose != null) {
+                  this.widget.onWebViewClose!(message);
+                }
+              }
+            }
           },
           onNavigationRequest: (NavigationRequest request) {
             // if(widget.onShowHeader != null) {
