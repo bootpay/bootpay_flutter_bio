@@ -175,6 +175,8 @@ class CardCode {
         return const Color(0xFF808CAD);
       case JC:
         return const Color(0xFF423c3c);
+      case NH:
+        return const Color(0xFF095BAA);
       default:
         return COLOR_DEFAULT;
     }

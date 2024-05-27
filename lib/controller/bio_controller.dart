@@ -173,7 +173,7 @@ extension BCApiProvider on BioController {
 
     var res = await _provider.getWalletList(deviceId, userToken);
 
-    BootpayPrint("getWalletList : ${res.body}");
+    // BootpayPrint("getWalletList : ${res.body}");
 
     if(res.statusCode == HttpStatus.ok) {
       resWallet.value = ResWalletList.fromJson(res.body);
@@ -423,7 +423,7 @@ extension BCWebViewProviderCallback on BioController {
   }
 
   void onWebViewEasySuccess(JavaScriptMessage message) {
-    BootpayPrint('onWebViewEasySuccess: ${requestType}, ${message.message}');
+    // BootpayPrint('onWebViewEasySuccess: ${requestType}, ${message.message}');
 
     NextJob job = NextJob();
     if([BioConstants.REQUEST_PASSWORD_TOKEN,
