@@ -6,15 +6,14 @@ PODS:
   - Flutter (1.0.0)
   - fluttertoast (0.0.2):
     - Flutter
-    - Toast
   - local_auth_darwin (0.0.1):
     - Flutter
+    - FlutterMacOS
   - package_info_plus (0.4.5):
     - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - Toast (4.1.1)
   - vibration (1.7.5):
     - Flutter
 
@@ -27,10 +26,6 @@ DEPENDENCIES:
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - vibration (from `.symlinks/plugins/vibration/ios`)
-
-SPEC REPOS:
-  trunk:
-    - Toast
 
 EXTERNAL SOURCES:
   bootpay_webview_flutter_wkwebview:
@@ -51,14 +46,13 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/vibration/ios"
 
 SPEC CHECKSUMS:
-  bootpay_webview_flutter_wkwebview: baf2884591d215ae8bf446f97f1acc282f9527a6
-  device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
+  bootpay_webview_flutter_wkwebview: 4020fe794c27b0d080fc4abd9f9f39d2b8af67e3
+  device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  fluttertoast: 9f2f8e81bb5ce18facb9748d7855bf5a756fe3db
-  local_auth_darwin: 4d56c90c2683319835a61274b57620df9c4520ab
-  package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
+  fluttertoast: 21eecd6935e7064cc1fcb733a4c5a428f3f24f0f
+  local_auth_darwin: 66e40372f1c29f383a314c738c7446e2f7fdadc3
+  package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
-  Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
   vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
 
 PODFILE CHECKSUM: cc1f88378b4bfcf93a6ce00d2c587857c6008d3b

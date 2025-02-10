@@ -335,7 +335,7 @@ class _MyAppState extends State<MyApp> {
     BioExtra extra = BioExtra(); // 결제 옵션
     extra.appScheme = 'bootpayBioFlutterExample';
     extra.cardQuota = "3";
-    extra.isShowTotalPay = false;
+    // extra.isShowTotalPay = false;
     // extra.separatelyConfirmedBio = true;
 
     bioPayload.user = user;
