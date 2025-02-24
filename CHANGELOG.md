@@ -1,3 +1,6 @@
+## 5.0.12
+* android webview version update
+
 ## 4.9.1
 * android webview ssl error 개선 
 
