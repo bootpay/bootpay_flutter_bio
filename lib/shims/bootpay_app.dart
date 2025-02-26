@@ -82,6 +82,7 @@ class BootpayPlatform extends BootpayBioApi {
       }) {
 
     if(context == null) return;
+    if(isShowModal == true) return;
 
     bioContainer = BioContainer(
       key: key,
