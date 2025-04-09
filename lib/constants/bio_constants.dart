@@ -261,7 +261,7 @@ class BioConstants {
     payload.userToken = "";
 
     return "Bootpay.requestPayment(" +
-        payload.toString() +
+        payload.toTotalPay() +
         ")" +
         ".then( function (data) {" +
         easySuccess() +

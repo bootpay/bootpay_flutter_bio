@@ -171,6 +171,29 @@ class BioPayload  {
     // return "{application_id: '${getApplicationId()}', pg: '$pg', method: '$method', methods: ${methodListString()}, name: '${name.queryReplace()}', price: $price, tax_free: $taxFree, order_id: '${orderId.queryReplace()}', use_order_id: $useOrderId, params: ${getMetadataStringAndroid()}, account_expire_at: '$accountExpireAt', show_agree_window: $showAgreeWindow, user_token: '$userToken', extra: ${extra.toString()}, user_info: ${user.toString()}, items: ${getItems()}}";
   }
 
+  String toTotalPay() {
+    return """
+    {application_id: '${getApplicationId()}', 
+     pg: '$pg',  
+     order_name: '${orderName?.queryReplace()}', 
+     price: $price, 
+     tax_free: $taxFree, 
+     order_id: '${orderId.queryReplace()}', 
+     subscription_id: '$subscriptionId',
+     authentication_id: '$authenticationId',      
+     wallet_id: '$walletId', 
+     token: '$token', 
+     authenticate_type: '$authenticateType', 
+     user_token: '$userToken',       
+     easy_type: '$easyType',
+     metadata: ${getMetadataStringAndroid()},
+     extra: ${json.encode(extra?.toJson()).replaceAll("\"", "'")},
+     user: ${user.toString()},
+     items: ${getItems()}
+   }
+    """;
+  }
+
 
   //toJson 대신에 이 함수가 사용됨
   String toStringEasyPay() {
