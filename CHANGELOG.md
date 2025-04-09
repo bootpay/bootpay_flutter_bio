@@ -1,3 +1,6 @@
+## 5.0.13
+* 다른 결제수단 버그 수정 
+
 ## 5.0.12
 * android webview version update
 

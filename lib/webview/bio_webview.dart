@@ -100,7 +100,7 @@ class BioWebView extends StatefulWidget {
 }
 
 class _BioWebViewState extends State<BioWebView> {
-  final String INAPP_URL = 'https://webview.bootpay.co.kr/5.0.0-beta.36/';
+  final String INAPP_URL = 'https://webview.bootpay.co.kr/5.1.0/';
   bool isClosed = false;
   final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers = {
     Factory(() => EagerGestureRecognizer())

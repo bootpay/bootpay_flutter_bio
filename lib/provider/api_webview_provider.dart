@@ -270,6 +270,7 @@ class ApiWebviewProvider {
       BioConstants.REQUEST_ADD_BIOMETRIC_FOR_PAY].contains(requestType)) {
       script = await BioConstants.getJSBiometricAuthenticate(payload);
     } else if(BioConstants.REQUEST_TOTAL_PAY == requestType) {
+      print("requestTotalPay : ${requestType}");
       script = BioConstants.getJSTotalPay(payload);
     } else if(BioConstants.REQUEST_DELETE_CARD == requestType) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
