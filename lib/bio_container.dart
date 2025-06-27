@@ -131,7 +131,6 @@ class BioRouterState extends State<BioContainer> {
     // widget.c
 
     // closeController 초기화
-    closeController.setBootpayShow(true);
     
     widget.c.getWalletList(widget.payload?.userToken ?? "").then((value) {
       if(value) updateSelectedCardIndexForButton();
@@ -182,7 +181,7 @@ class BioRouterState extends State<BioContainer> {
 
 
   void bootpayClose() {
-    closeController.setBootpayShow(true); // 결제창이 보여지고 있음을 설정
+    // closeController.setBootpayShow(true); // 결제창이 보여지고 있음을 설정
     closeController.bootpayClose(widget.onClose);
   }
 
