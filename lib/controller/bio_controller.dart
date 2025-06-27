@@ -480,6 +480,7 @@ extension BCWebViewProviderCallback on BioController {
         return;
       }
 
+      // separatelyConfirmedBio가 true면 무조건 서버승인을 해야한다. 부트페이 정책이다. confirm 이벤트만 보낸다
       if(payload?.extra?.separatelyConfirmedBio == true) {
         if(onCallbackConfirm != null) {
           onCallbackConfirm!(message.message);
