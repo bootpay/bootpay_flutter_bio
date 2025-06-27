@@ -551,14 +551,15 @@ class BioRouterState extends State<BioContainer> {
     double cardViewHeight = MediaQuery.of(context).size.width * 0.6;
 
     return WillPopScope(
-      child: Wrap(
+      child: SafeArea(
+        child: Wrap(
+          children: [
+            Obx(() =>
+              widget.c.isShowWebView.value == false || widget.c.isShowWebViewHalfSize.value == true ? cardContainer(cardViewHeight) : webviewContainer(context)
+            )
 
-        children: [
-          Obx(() =>
-            widget.c.isShowWebView.value == false || widget.c.isShowWebViewHalfSize.value == true ? cardContainer(cardViewHeight) : webviewContainer(context)
-          )
-
-        ],
+          ],
+        ),
       ),
       onWillPop: () async {
         // if(widget.webView?.onCloseHardware != null) widget.webView?.onCloseHardware!();
