@@ -152,16 +152,26 @@ extension BCInnerFunction on BioController {
     //     transactionConfirm();
     //   }
     // }
+    BootpayPrint('goConfirmEvent: $requestType, ${message.message}');
+    
     if(onCallbackConfirm != null) {
       bool goTransactionConfirm = onCallbackConfirm!(message.message);
       if (goTransactionConfirm) {
+        BootpayPrint('transactionConfirm called - waiting for done event');
         webViewProvider?.transactionConfirm();
+      } else {
+        // 사용자가 false를 반환한 경우, close 처리
+        if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
       }
     } else if(onCallbackConfirmAsync != null) {
       bool goTransactionConfirm = await onCallbackConfirmAsync!(message.message);
       if (goTransactionConfirm) {
+        BootpayPrint('transactionConfirm called (async) - waiting for done event');
         webViewProvider?.transactionConfirm();
         // transactionConfirm();
+      } else {
+        // 사용자가 false를 반환한 경우, close 처리
+        if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
       }
     }
   }
@@ -320,10 +330,13 @@ extension BCWebViewProviderCallback on BioController {
     //   return;
     // }
 
+    // 생체인증 결제시 confirm 후 done을 기다리는 상태라면 close를 무시
     if([BioConstants.REQUEST_BIO_FOR_PAY,
       BioConstants.REQUEST_ADD_CARD,
       BioConstants.REQUEST_DELETE_CARD
-    ].contains(requestType.value)) { //생체인증 결제시 가끔 done보다 빨리 떨어짐 - 아무것도 하지 않겠다
+    ].contains(requestType.value)) { 
+      // confirm 이후의 close는 무시하고, done에서만 처리하도록 함
+      BootpayPrint('onWebViewClose ignored for bio payment - waiting for done event');
       return;
     }
 
@@ -499,13 +512,17 @@ extension BCWebViewProviderCallback on BioController {
 
         //그 외 처리
         if(onCallbackDone != null) onCallbackDone!(message.message);
-        if(onCallbackDebounceClose != null) onCallbackDebounceClose!(); //생체인증 결제시 가끔 done보다 close가 빨리 떨어져서, 여기서 close이벤트를 보낸다
-        // if(requestType.value == BioConstants.REQUEST_BIO_FOR_PAY) { //생체인증 결제시 가끔 done보다 close가 빨리 떨어져서, 여기서 close이벤트를 보낸다
-        //   if(payload?.extra?.displaySuccessResult != true) {
-        //
-        //
-        //   }
-        // }
+        
+        // 생체인증 결제의 경우 done 이벤트에서만 close 처리
+        if(requestType.value == BioConstants.REQUEST_BIO_FOR_PAY) {
+          BootpayPrint('Bio payment done - closing payment window');
+          if(payload?.extra?.displaySuccessResult != true) {
+            if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
+          }
+        } else {
+          // 다른 결제 방식의 경우 기존 로직 유지
+          if(onCallbackDebounceClose != null) onCallbackDebounceClose!(); 
+        }
       }
     }
   }
