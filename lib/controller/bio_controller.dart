@@ -295,7 +295,10 @@ extension BCWebViewProviderCallback on BioController {
   void onWebViewError(JavaScriptMessage message) {
     if(onCallbackError != null) onCallbackError!(message.message);
 
-    if(payload?.extra?.displayErrorResult != true) {
+    // if(payload?.extra?.displayErrorResult != true) {
+    //   if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
+    // }
+    if(isShowWebView.value) { //생체인증 결제는 결과창 보여주지 말자
       if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
     }
   }
@@ -391,7 +394,10 @@ extension BCWebViewProviderCallback on BioController {
 
         } else {
           if(onCallbackError != null) onCallbackError!(message.message);
-          if(payload?.extra?.displayErrorResult != true) {
+          // if(payload?.extra?.displayErrorResult != true) {
+          //   if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
+          // }
+          if(isShowWebView.value) { //생체인증 결제는 결과창 보여주지 말자
             if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
           }
         }
@@ -399,7 +405,11 @@ extension BCWebViewProviderCallback on BioController {
         break;
       case "close":
         // widget.updateProgressShow(false);
-        if(payload?.extra?.displayErrorResult != true) {
+        // if(payload?.extra?.displayErrorResult != true) {
+        //   BootpayPrint('onWebViewClose: ${requestType}, ${message.message}');
+        //   if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
+        // }
+        if(isShowWebView.value) { //생체인증 결제는 결과창 보여주지 말자
           if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
         }
         // if(this.widget.onClose != null) this.widget.onClose!();
@@ -408,7 +418,10 @@ extension BCWebViewProviderCallback on BioController {
       case "issued":
         // widget.updateProgressShow(false);
         if(onCallbackIssued != null) onCallbackIssued!(message.message);
-        if(payload?.extra?.displayErrorResult != true) {
+        // if(payload?.extra?.displayErrorResult != true) {
+        //   if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
+        // }
+        if(isShowWebView.value) { //생체인증 결제는 결과창 보여주지 말자
           if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
         }
         break;
@@ -422,7 +435,10 @@ extension BCWebViewProviderCallback on BioController {
         //   bootpayClose();
         // }
         if(onCallbackDone != null) onCallbackDone!(message.message);
-        if(payload?.extra?.displaySuccessResult != true) {
+        // if(payload?.extra?.displaySuccessResult != true) {
+        //   if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
+        // }
+        if(isShowWebView.value) { //생체인증 결제는 결과창 보여주지 말자
           if(onCallbackDebounceClose != null) onCallbackDebounceClose!();
         }
         break;

@@ -248,6 +248,7 @@ class BootpayPlatform extends BootpayBioApi {
 
   @override
   void dismiss(BuildContext context) {
+    BootpayPrint("bootpayClose call dismiss: ${isShowModal} ");
     if(isShowModal == true) {
       Navigator.of(context).pop();
       isShowModal = false; //webview에서 실행되는 쓰레드의 경우 중단되는 버그가 있어서 수행 후 상태변경
