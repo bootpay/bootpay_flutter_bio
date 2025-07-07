@@ -52,6 +52,7 @@ class BioExtra  {
   int? confirmGraceSeconds = 10; // 결제승인 유예시간 ( 승인 요청을 여러번하더라도 승인 이후 특정 시간동안 계속해서 결제 response_data 를 리턴한다 )
 
   bool? isShowTotalPay = true;
+  bool? hideOtherPaymentMethods = false; // 다른 결제수단 버튼 숨김 옵션
 
 
   BioExtra();
@@ -93,6 +94,7 @@ class BioExtra  {
     enableEasyPayments = json["enable_easy_payments"];
     confirmGraceSeconds = json["confirm_grace_seconds"];
     isShowTotalPay = json["isShowTotalPay"];
+    hideOtherPaymentMethods = json["hideOtherPaymentMethods"];
   }
 
   Map<String, dynamic> toJson() => {
@@ -127,7 +129,8 @@ class BioExtra  {
     "except_card_companies": this.exceptCardCompanies,
     "enable_easy_payments": this.enableEasyPayments,
     "confirm_grace_seconds": this.confirmGraceSeconds,
-    "is_show_total_pay": this.isShowTotalPay
+    "is_show_total_pay": this.isShowTotalPay,
+    "hide_other_payment_methods": this.hideOtherPaymentMethods
   };
 
 
@@ -162,7 +165,8 @@ class BioExtra  {
     "except_card_companies": this.exceptCardCompanies,
     "enable_easy_payments": this.enableEasyPayments,
     "confirm_grace_seconds": this.confirmGraceSeconds,
-    "is_show_total_pay": this.isShowTotalPay
+    "is_show_total_pay": this.isShowTotalPay,
+    "hide_other_payment_methods": this.hideOtherPaymentMethods
   };
 
 

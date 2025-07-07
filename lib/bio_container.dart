@@ -308,7 +308,7 @@ class BioRouterState extends State<BioContainer> {
             )
         ),
       ),
-      if(widget.payload?.extra?.isShowTotalPay ?? true) Container(
+      if((widget.payload?.extra?.isShowTotalPay ?? true) && !(widget.payload?.extra?.hideOtherPaymentMethods ?? false)) Container(
         // height: 50,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4.0),
@@ -502,6 +502,7 @@ class BioRouterState extends State<BioContainer> {
     if(index == 0 ) {
       return "새로운 카드 등록하기";
     } else if(index == -1) {
+      // 다른 결제수단 버튼이 숨겨져 있으면 이 조건에 도달하지 않아야 함
       return "다른 결제수단으로 결제하기";
     } else {
       return widget.isEditMode == true ? "이 카드를 편집하기" :  "이 카드로 결제하기";
@@ -513,6 +514,7 @@ class BioRouterState extends State<BioContainer> {
     if(index == 0 ) {
       addNewCard();
     } else if(index == -1) {
+      // 다른 결제수단 버튼이 숨겨져 있으면 이 조건에 도달하지 않아야 함
       goTotalPay();
     } else {
       widget.c.selectedCardIndex = currentCardIndex;
