@@ -82,7 +82,13 @@ class BootpayPlatform extends BootpayBioApi {
       }) {
 
     if(context == null) return;
-    if(isShowModal == true) return;
+    
+    // 이전 모달이 완전히 닫히지 않았을 경우를 대비해 강제로 리셋
+    if(isShowModal == true) {
+      BootpayPrint("Previous modal still showing, forcing reset");
+      isShowModal = false;
+      closeController.isBootpayShow = false;
+    }
 
     bioContainer = BioContainer(
       key: key,
@@ -114,12 +120,18 @@ class BootpayPlatform extends BootpayBioApi {
         return bioContainer!;
       },
     ).whenComplete(() {
+      BootpayPrint("Modal bottom sheet completed, resetting flags");
       isShowModal = false;
+
       if(closeController.isBootpayShow) { //즉시 실행
         BootpayPrint("bootpayClose call 즉시실행");
         if (onClose != null) onClose();
         closeController.isBootpayShow = false;
       }
+
+      // closeController.isBootpayShow = false;
+      
+      // if (onClose != null) onClose();
 
       // print('Hey there, I\'m calling after hide bottomSheet');
     });
@@ -252,6 +264,7 @@ class BootpayPlatform extends BootpayBioApi {
     if(isShowModal == true) {
       Navigator.of(context).pop();
       isShowModal = false; //webview에서 실행되는 쓰레드의 경우 중단되는 버그가 있어서 수행 후 상태변경
+      closeController.isBootpayShow = false; // closeController도 함께 리셋
     }
   }
 

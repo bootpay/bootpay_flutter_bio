@@ -348,7 +348,7 @@ class _MyAppState extends State<MyApp> {
     extra.cardQuota = "3";
     // extra.isShowTotalPay = false;
     extra.separatelyConfirmed = true;
-    extra.hideOtherPaymentMethods = true;
+    extra.hideOtherPaymentMethods = false;
 
     bioPayload.user = user;
     bioPayload.extra = extra;
