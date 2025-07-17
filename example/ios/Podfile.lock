@@ -47,7 +47,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   bootpay_webview_flutter_wkwebview: 9b80e1ac2dc82471e0b95f5f45749e066103e328
-  device_info_plus: 71ffc6ab7634ade6267c7a93088ed7e4f74e5896
+  device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   fluttertoast: 2c67e14dce98bbdb200df9e1acf610d7a6264ea1
   local_auth_darwin: 553ce4f9b16d3fdfeafce9cf042e7c9f77c1c391

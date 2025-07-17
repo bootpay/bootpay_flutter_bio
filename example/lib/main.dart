@@ -1,4 +1,5 @@
 import 'package:bootpay_bio/bootpay_bio.dart';
+import 'package:bootpay_bio/config/bio_config.dart';
 import 'package:bootpay_bio/constants/bio_constants.dart';
 import 'package:bootpay_bio/models/bio_extra.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
@@ -38,7 +39,7 @@ class _MyAppState extends State<MyApp> {
   final String PAY_TYPE_PASSWORD_NO_BILLING = "password_no_billing";
 
   String get applicationId {
-    if(BioConstants.DEBUG) {
+    if(BootpayBioConfig.ENV == BootpayBioConfig.ENV_DEBUG) {
       return Bootpay().applicationId(
           '5b9f51264457636ab9a07cdb',
           '5b9f51264457636ab9a07cdc',
@@ -115,8 +116,8 @@ class _MyAppState extends State<MyApp> {
 
 
     await Bootpay().userTrace(
-        id: 'user_12345',
-        email: 'user1234@gmail.com',
+        id: 'user_123451',
+        email: 'user12341@gmail.com',
         gender: -1,
         birth: '19941014',
         area: '서울',
@@ -149,7 +150,7 @@ class _MyAppState extends State<MyApp> {
         url: 'main_1234',
         pageType: 'sub_page_1234',
         applicationId: applicationId,
-        userId: 'user_1234',
+        userId: 'user_123451',
         items: items
     );
   }
@@ -169,7 +170,7 @@ class _MyAppState extends State<MyApp> {
     item2.price = 500; // 상품의 가격
     List<Item> itemList = [item1, item2];
 
-    if(BioConstants.DEBUG) {
+    if(BootpayBioConfig.ENV == BootpayBioConfig.ENV_DEBUG) {
       bioPayload.webApplicationId = '5b9f51264457636ab9a07cdb'; // web application id
       bioPayload.androidApplicationId = '5b9f51264457636ab9a07cdc'; // android application id
       bioPayload.iosApplicationId = '5b9f51264457636ab9a07cdd'; // ios application id
@@ -195,6 +196,7 @@ class _MyAppState extends State<MyApp> {
     bioPayload.items = itemList; // 상품정보 배열
 
     User user = User(); // 구매자 정보
+    user.id = '123411aaaaaaaaaa1ad42531456789';
     user.username = "사용자 이름";
     user.email = "user1234@gmail.com";
     user.area = "서울";
@@ -216,7 +218,7 @@ class _MyAppState extends State<MyApp> {
 
     String restApplicationId = "";
     String pk = "";
-    if(BioConstants.DEBUG) {
+    if(BootpayBioConfig.ENV == BootpayBioConfig.ENV_DEBUG) {
       restApplicationId = "5b9f51264457636ab9a07cde";
       pk = "sfilSOSVakw+PZA+PRux4Iuwm7a//9CXXudCq9TMDHk=";
     } else {
@@ -266,7 +268,7 @@ class _MyAppState extends State<MyApp> {
     User user = User();
     // user.id = '123411aaaaaaaaaa1aabd4ss1215678211252212531456789';
     // user.id = '123411aaaaaaaaaaaabd4ss11234';
-    user.id = '12aaa2123';
+    user.id = '12aaa21231';
 
     user.gender = 1;
     user.email = 'test1234@gmail.com';
@@ -282,7 +284,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> goBootpayTest(BuildContext context, String payType) async {
     String restApplicationId = "";
     String pk = "";
-    if(BioConstants.DEBUG) {
+    if(BootpayBioConfig.ENV == BootpayBioConfig.ENV_DEBUG) {
       restApplicationId = "5b9f51264457636ab9a07cde";
       pk = "sfilSOSVakw+PZA+PRux4Iuwm7a//9CXXudCq9TMDHk=";
     } else {
@@ -317,7 +319,7 @@ class _MyAppState extends State<MyApp> {
 
     var bioPayload = BioPayload();
     bioPayload.userToken = easyUserToken;
-    if(BioConstants.DEBUG) {
+    if(BootpayBioConfig.ENV == BootpayBioConfig.ENV_DEBUG) {
       bioPayload.webApplicationId = '5b9f51264457636ab9a07cdb'; // web application id
       bioPayload.androidApplicationId = '5b9f51264457636ab9a07cdc'; // android application id
       bioPayload.iosApplicationId = '5b9f51264457636ab9a07cdd'; // ios application id

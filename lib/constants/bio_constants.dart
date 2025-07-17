@@ -6,6 +6,7 @@ import 'package:bootpay/user_info.dart';
 import 'package:bootpay_bio/models/bio_payload.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../config/bio_config.dart';
 import '../models/bio_extra.dart';
 
 
@@ -24,7 +25,11 @@ class BioConstants {
   static const int EASY_TYPE_PASSWORD = 2;
   static const int EASY_TYPE_PASSWORD_NO_BILL = 3;
 
-  static const bool DEBUG = false;
+  // static const bool DEBUG = false;
+  // static int ENV = ENV_PROMOTION; //-1: debug, -2: stage, 0보다 크면 실서버
+  // static const int ENV_DEBUG = -1;
+  // static const int ENV_STAGE = -2;
+  // static const int ENV_PROMOTION = 1;
 
   static const int REQUEST_TYPE_NONE = -1;
   static const int REQUEST_PASSWORD_TOKEN = 10; //최초요청시 - 비밀번호 설정하기
@@ -58,10 +63,18 @@ class BioConstants {
   static Future<List<String>> getBootpayJSBeforeContentLoaded() async {
     List<String> result = [];
     result.add("document.addEventListener('bootpayclose', function (e) { BootpayClose.postMessage('결제창이 닫혔습니다'); });");
-    if(BioConstants.DEBUG) {
-      result.add("Bootpay.setEnvironmentMode('development', 'gosomi.bootpay.co.kr');");
-      result.add("BootpaySDK.setEnvironmentMode('development', 'gosomi.bootpay.co.kr');");
+    // if(BioConstants.DEBUG) {
+    //   result.add("Bootpay.setEnvironmentMode('development', 'gosomi.bootpay.co.kr');");
+    //   result.add("BootpaySDK.setEnvironmentMode('development', 'gosomi.bootpay.co.kr');");
+    // }
+    if (BootpayBioConfig.ENV == BootpayBioConfig.ENV_DEBUG) {
+      result.add("Bootpay.setEnvironmentMode('development');");
+      result.add("BootpaySDK.setEnvironmentMode('development');");
+    } else if (BootpayBioConfig.ENV == BootpayBioConfig.ENV_STAGE) {
+      result.add("Bootpay.setEnvironmentMode('stage');");
+      result.add("BootpaySDK.setEnvironmentMode('stage');");
     }
+
     result.add("Bootpay.setLogLevel(4);");
     if (Platform.isAndroid) {
       result.add("Bootpay.setDevice('ANDROID');");
