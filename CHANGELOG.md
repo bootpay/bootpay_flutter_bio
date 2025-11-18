@@ -1,3 +1,6 @@
+## 5.0.23
+* Bootpay version update
+
 ## 5.0.22
 * DEBUG, STAGE, PRODUCTION 설정가능하도록 옵션 추가 
 
