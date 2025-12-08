@@ -45,17 +45,17 @@ packages:
     dependency: transitive
     description:
       name: bootpay
-      sha256: "92a34e16c7b0bedc7b3c7bec91e1e0222394747222da3e349fe7a6a890ff20a5"
+      sha256: "1c71e0040ac516b9d2d0d5c1d3e38d6915813c3097d3844330512221e3028fe3"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.16"
+    version: "5.0.17"
   bootpay_bio:
     dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
-    version: "5.0.23"
+    version: "5.0.24"
   bootpay_webview_flutter:
     dependency: transitive
     description:
