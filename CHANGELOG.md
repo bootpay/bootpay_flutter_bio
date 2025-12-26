@@ -1,3 +1,8 @@
+## 5.0.25
+* Flutter 3.38.5 호환성 지원
+* 의존성 버전 업데이트: bootpay ^5.0.20, bootpay_webview_flutter ^4.12.3, bootpay_webview_flutter_wkwebview ^3.23.26
+* flutter_lints ^5.0.0 업그레이드
+
 ## 5.0.24
 * intl 의존성 버전 범위 확장 (^0.19.0 -> >=0.19.0 <1.0.0) - intl 0.20.x 호환성 지원
 * bootpay 5.0.17 적용
