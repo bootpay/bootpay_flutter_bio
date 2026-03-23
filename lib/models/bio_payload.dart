@@ -19,6 +19,7 @@ class BioPayload  {
   String? webApplicationId = '';
   String? androidApplicationId = '';
   String? iosApplicationId = '';
+  String? clientKey;
 
   String? pg = '';
   String? method = '';
@@ -65,6 +66,7 @@ class BioPayload  {
   BioPayload.fromJson(Map<String, dynamic> json) {
     androidApplicationId = json["android_application_id"];
     iosApplicationId = json["ios_application_id"];
+    clientKey = json["client_key"];
 
     pg = json["pg"];
     method = json["method"];
@@ -98,8 +100,13 @@ class BioPayload  {
 
   //실제 사용되지 않음
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> result = {
-      'application_id': getApplicationId(),
+    Map<String, dynamic> result = {};
+    if(clientKey != null && clientKey!.isNotEmpty) {
+      result['client_key'] = clientKey;
+    } else {
+      result['application_id'] = getApplicationId();
+    }
+    result.addAll({
       'pg': pg,
       'method': method,
       'order_name': orderName,
@@ -113,7 +120,7 @@ class BioPayload  {
       'authenticate_type': authenticateType,
       'easy_type': easyType,
       'user_token': userToken
-    };
+    });
     if(this.methods != null && this.methods!.length > 0) {
       if(kIsWeb) result['methods'] = this.methods;
       else result['methods'] = methodListString();
@@ -129,6 +136,12 @@ class BioPayload  {
     if(items!.length > 0) {
       result['items'] = items!.map((e) => e.toJson()).toList();
     }
+    if(names != null && names!.isNotEmpty) {
+      result['names'] = names;
+    }
+    if(prices != null && prices!.isNotEmpty) {
+      result['prices'] = prices!.map((e) => e.toJson()).toList();
+    }
 
     return result;
   }
@@ -143,10 +156,10 @@ class BioPayload  {
   //toJson 대신에 이 함수가 사용됨
   String toString() {
     return """
-    {application_id: '${getApplicationId()}', 
-     pg: '$pg', 
-     method: '$method', 
-     methods: ${methodListString()}, 
+    {${clientKey != null && clientKey!.isNotEmpty ? "client_key: '$clientKey'" : "application_id: '${getApplicationId()}'"},
+     pg: '$pg',
+     method: '$method',
+     methods: ${methodListString()},
      order_name: '${orderName?.queryReplace()}', 
      price: $price, 
      tax_free: $taxFree, 
@@ -173,8 +186,8 @@ class BioPayload  {
 
   String toTotalPay() {
     return """
-    {application_id: '${getApplicationId()}', 
-     pg: '$pg',  
+    {${clientKey != null && clientKey!.isNotEmpty ? "client_key: '$clientKey'" : "application_id: '${getApplicationId()}'"},
+     pg: '$pg',
      order_name: '${orderName?.queryReplace()}', 
      price: $price, 
      tax_free: $taxFree, 
@@ -198,10 +211,10 @@ class BioPayload  {
   //toJson 대신에 이 함수가 사용됨
   String toStringEasyPay() {
     return """
-    {application_id: '${getApplicationId()}', 
-     pg: '$pg', 
-     method: '$method', 
-     methods: ${methodListString()}, 
+    {${clientKey != null && clientKey!.isNotEmpty ? "client_key: '$clientKey'" : "application_id: '${getApplicationId()}'"},
+     pg: '$pg',
+     method: '$method',
+     methods: ${methodListString()},
      order_name: '${orderName?.queryReplace()}', 
      price: $price, 
      tax_free: $taxFree, 
@@ -257,7 +270,7 @@ class BioPayload  {
   }
 
   String getParamsString() {
-    if (metadata != null || metadata!.isEmpty) return "{}";
+    if (metadata == null || metadata!.isEmpty) return "{}";
     return reVal(metadata.toString());
   }
 
@@ -273,7 +286,7 @@ class BioPayload  {
   }
 
   String getMethods() {
-    if (methods != null || methods!.isEmpty) return '';
+    if (methods == null || methods!.isEmpty) return '';
     String result = '';
     for (String method in methods!) {
       if (result.length > 0) result += ',';

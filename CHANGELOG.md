@@ -1,3 +1,10 @@
+## 5.1.0
+* webview CDN URL을 5.3.0으로 업데이트
+* client_key 인증 방식 추가
+* toJson()에 names, prices 필드 직렬화 추가
+* getParamsString(), getMethods() 논리 오류 수정
+* iOS example 최소 지원 버전 13.0 → 16.0으로 상향
+
 ## 5.0.25
 * Flutter 3.38.5 호환성 지원
 * 의존성 버전 업데이트: bootpay ^5.0.20, bootpay_webview_flutter ^4.12.3, bootpay_webview_flutter_wkwebview ^3.23.26
