@@ -7,6 +7,7 @@ import 'package:bootpay_bio/models/bio_price.dart';
 import 'package:bootpay_bio/models/bio_theme_data.dart';
 import 'package:bootpay/model/payload.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:bootpay/model/extra.dart';
 import 'dart:async';
 
@@ -14,13 +15,18 @@ import 'package:bootpay/model/stat_item.dart';
 import 'package:bootpay/model/user.dart';
 import 'package:bootpay/model/item.dart';
 
+import 'config/bootpay_env.dart';
 import 'deprecated/api_provider.dart';
 import 'package:bootpay/bootpay.dart';
 
-void main() {
-
-
-
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // .env 미존재 시 production fallback 으로 동작 (BootpayEnvConfig)
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (_) {
+    // .env 없음 — production 기본값 사용
+  }
   runApp(MyApp());
 }
 
@@ -39,19 +45,11 @@ class _MyAppState extends State<MyApp> {
   final String PAY_TYPE_PASSWORD_NO_BILLING = "password_no_billing";
 
   String get applicationId {
-    if(BootpayBioConfig.ENV == BootpayBioConfig.ENV_DEBUG) {
-      return Bootpay().applicationId(
-          '5b9f51264457636ab9a07cdb',
-          '5b9f51264457636ab9a07cdc',
-          '5b9f51264457636ab9a07cdd'
-      );
-    } else {
-      return Bootpay().applicationId(
-          '5b8f6a4d396fa665fdc2b5e7',
-          '5b8f6a4d396fa665fdc2b5e8',
-          '5b8f6a4d396fa665fdc2b5e9'
-      );
-    }
+    return Bootpay().applicationId(
+      BootpayEnvConfig.webApplicationId,
+      BootpayEnvConfig.androidApplicationId,
+      BootpayEnvConfig.iosApplicationId,
+    );
   }
 
   @override
@@ -170,15 +168,9 @@ class _MyAppState extends State<MyApp> {
     item2.price = 500; // 상품의 가격
     List<Item> itemList = [item1, item2];
 
-    if(BootpayBioConfig.ENV == BootpayBioConfig.ENV_DEBUG) {
-      bioPayload.webApplicationId = '5b9f51264457636ab9a07cdb'; // web application id
-      bioPayload.androidApplicationId = '5b9f51264457636ab9a07cdc'; // android application id
-      bioPayload.iosApplicationId = '5b9f51264457636ab9a07cdd'; // ios application id
-    } else {
-      bioPayload.webApplicationId = '5b8f6a4d396fa665fdc2b5e7'; // web application id
-      bioPayload.androidApplicationId = '5b8f6a4d396fa665fdc2b5e8'; // android application id
-      bioPayload.iosApplicationId = '5b8f6a4d396fa665fdc2b5e9'; // ios application id
-    }
+    bioPayload.webApplicationId = BootpayEnvConfig.webApplicationId;
+    bioPayload.androidApplicationId = BootpayEnvConfig.androidApplicationId;
+    bioPayload.iosApplicationId = BootpayEnvConfig.iosApplicationId;
 
     bioPayload.pg = '나이스페이';
     bioPayload.method = '카드';
@@ -216,15 +208,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> goBootpayEdit(BuildContext context) async {
 
-    String restApplicationId = "";
-    String pk = "";
-    if(BootpayBioConfig.ENV == BootpayBioConfig.ENV_DEBUG) {
-      restApplicationId = "5b9f51264457636ab9a07cde";
-      pk = "sfilSOSVakw+PZA+PRux4Iuwm7a//9CXXudCq9TMDHk=";
-    } else {
-      restApplicationId = "5b8f6a4d396fa665fdc2b5ea";
-      pk = "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=";
-    }
+    final String restApplicationId = BootpayEnvConfig.restApplicationId;
+    final String pk = BootpayEnvConfig.privateKey;
 
     var res = await _provider.getRestToken(restApplicationId, pk);
     res = await _provider.getEasyPayUserToken(res.body['access_token'], getUser());
@@ -282,15 +267,8 @@ class _MyAppState extends State<MyApp> {
 
   //버튼클릭시 부트페이 결제요청 실행
   Future<void> goBootpayTest(BuildContext context, String payType) async {
-    String restApplicationId = "";
-    String pk = "";
-    if(BootpayBioConfig.ENV == BootpayBioConfig.ENV_DEBUG) {
-      restApplicationId = "5b9f51264457636ab9a07cde";
-      pk = "sfilSOSVakw+PZA+PRux4Iuwm7a//9CXXudCq9TMDHk=";
-    } else {
-      restApplicationId = "5b8f6a4d396fa665fdc2b5ea";
-      pk = "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=";
-    }
+    final String restApplicationId = BootpayEnvConfig.restApplicationId;
+    final String pk = BootpayEnvConfig.privateKey;
     var res = await _provider.getRestToken(restApplicationId, pk);
 
     // BootpayPrint("getRestToken: ${res.body}");
@@ -319,15 +297,9 @@ class _MyAppState extends State<MyApp> {
 
     var bioPayload = BioPayload();
     bioPayload.userToken = easyUserToken;
-    if(BootpayBioConfig.ENV == BootpayBioConfig.ENV_DEBUG) {
-      bioPayload.webApplicationId = '5b9f51264457636ab9a07cdb'; // web application id
-      bioPayload.androidApplicationId = '5b9f51264457636ab9a07cdc'; // android application id
-      bioPayload.iosApplicationId = '5b9f51264457636ab9a07cdd'; // ios application id
-    } else {
-      bioPayload.webApplicationId = '5b8f6a4d396fa665fdc2b5e7'; // web application id
-      bioPayload.androidApplicationId = '5b8f6a4d396fa665fdc2b5e8'; // android application id
-      bioPayload.iosApplicationId = '5b8f6a4d396fa665fdc2b5e9'; // ios application id
-    }
+    bioPayload.webApplicationId = BootpayEnvConfig.webApplicationId;
+    bioPayload.androidApplicationId = BootpayEnvConfig.androidApplicationId;
+    bioPayload.iosApplicationId = BootpayEnvConfig.iosApplicationId;
 
 
     bioPayload.pg = '나이스페이';

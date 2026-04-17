@@ -1,3 +1,7 @@
+# Bootpay 환경 키
+.env
+!.env.example
+
 # Miscellaneous
 *.class
 *.log
