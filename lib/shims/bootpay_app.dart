@@ -115,8 +115,8 @@ class BootpayPlatform extends BootpayBioApi {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (BuildContext context) {
-        // return SafeArea(child: bioContainer!);
         return bioContainer!;
       },
     ).whenComplete(() {

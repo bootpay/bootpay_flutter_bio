@@ -1,5 +1,11 @@
 # bootpay_bio 플러터 라이브러리
 
+> ⚠️ **Deprecated 안내**
+>
+> `bootpay_bio` 는 더 이상 기능 추가/업데이트를 하지 않습니다.
+> 간편결제(생체/비밀번호) UI 는 Bootpay 결제위젯(`bootpay` 패키지)에 통합되어, 앞으로는 해당 위젯을 통해 이용하시길 권장합니다.
+> 기존 사용자의 호환을 위해 버그 수정은 최소한으로 유지되지만, 신규 프로젝트에서는 `bootpay` 의 결제위젯을 사용해주세요.
+
 부트페이에서 생체결제, 비밀번호 간편결제 공식 Flutter 라이브러리 입니다. (클라이언트 용)
 * PG 결제창 연동은 클라이언트 라이브러리에서 수행됩니다. (Javascript, Android, iOS, React Native, Flutter 등)
 * 결제 검증 및 취소, 빌링키 발급, 본인인증 등의 수행은 서버사이드에서 진행됩니다. (Java, PHP, Python, Ruby, Node.js, Go, ASP.NET 등)

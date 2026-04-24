@@ -1,3 +1,8 @@
+## 5.1.1
+* Deprecated 안내 추가 — 향후 `bootpay` 패키지의 결제위젯 사용을 권장
+* webview CDN URL 을 5.3.0 → 5.1.0 으로 되돌림 (bio 는 위젯 기반 5.3.0 JS SDK 와 비호환 — `requestPasswordToken` 시그니처가 객체 인자로 바뀌어 빈 `{}` reject 되고 간편결제 진입 시 `onWebViewEasyError: 12` → 즉시 `bootpayClose` 로 모달 닫힘 현상 발생. bio 가 마지막으로 정상 동작했던 `webview.bootpay.co.kr/5.1.0/` 로 환원)
+* `showModalBottomSheet` 에 `useSafeArea: true` 추가 — iOS status bar 와 홈 인디케이터 영역을 피하도록 수정 (기존에 상단 status bar 쪽으로 컨텐츠가 넘쳐 글자가 가려지는 문제 해결)
+
 ## 5.1.0
 * webview CDN URL을 5.3.0으로 업데이트
 * client_key 인증 방식 추가

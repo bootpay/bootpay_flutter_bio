@@ -47,7 +47,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/vibration/ios"
 
 SPEC CHECKSUMS:
-  bootpay_webview_flutter_wkwebview: 04029284684914c9183814dfcdc30e6667a89267
+  bootpay_webview_flutter_wkwebview: 220869320a60b1b06a91ad439eb8b32165158d15
   device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   fluttertoast: 2c67e14dce98bbdb200df9e1acf610d7a6264ea1
@@ -56,6 +56,6 @@ SPEC CHECKSUMS:
   shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
   vibration: 69774ad57825b11c951ee4c46155f455d7a592ce
 
-PODFILE CHECKSUM: cc1f88378b4bfcf93a6ce00d2c587857c6008d3b
+PODFILE CHECKSUM: ae273562e2241d2b1bd4b6d2d349a48b8fe1a2a7
 
 COCOAPODS: 1.16.2

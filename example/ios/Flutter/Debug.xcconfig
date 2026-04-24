@@ -1,2 +1,7 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
 #include "Generated.xcconfig"
+
+BOOTPAY_BIO_EXAMPLE_BUNDLE_ID = kr.co.bootpay.bootpayBioExample
+BOOTPAY_DEVELOPMENT_TEAM =
+
+#include? "LocalSigning.xcconfig"
